@@ -6,15 +6,15 @@ import SpotifyProvider from 'next-auth/providers/spotify';
 
 const scopes = [
     'user-read-email',
-    "playlist-read-private",
-    "playlist-read-collaborative",
+    'playlist-read-private',
+    'playlist-read-collaborative',
 ];
 
 const options: AuthOptions = {
     providers: [
         SpotifyProvider({
-            clientId: process.env.SPOTIFY_CLIENT_ID,
-            clientSecret: process.env.SPOTIFY_CLIENT_SECRET,
+            clientId: process.env.SPOTIFY_CLIENT_ID!,
+            clientSecret: process.env.SPOTIFY_CLIENT_SECRET!,
             authorization: {
                 params: { scope: scopes.join(' ') }
             },
@@ -84,9 +84,17 @@ const options: AuthOptions = {
              * profile = undefined
              *      
              */
-            console.log(`TOKEN: ${JSON.stringify(token)}`);
-            console.log(`ACCOUNT: ${JSON.stringify(account)}`);
-            console.log(`PROFILE: ${JSON.stringify(profile)}`);
+            console.log(`TOKEN: ${JSON.stringify(token, undefined, 2)}`);
+            console.log(`ACCOUNT: ${JSON.stringify(account, undefined, 2)}`);
+            console.log(`PROFILE: ${JSON.stringify(profile, undefined, 2)}`);
+            if (account) {
+                token.spotifyTokens = {
+                    accessToken: account.access_token!,
+                    tokenType: account.token_type!,
+                    expiresAt: account.expires_at!,
+                    refreshToken: account.refresh_token!,
+                };
+            }
             return token;
         },
         async session({ session, token, user }) {
@@ -115,17 +123,19 @@ const options: AuthOptions = {
              * }
              * user = undefined
              */
-            console.log(`SESSION: ${JSON.stringify(session)}`);
-            console.log(`TOKEN: ${JSON.stringify(token)}`);
-            console.log(`USER: ${JSON.stringify(user)}`);
+            if (!session.spotifyTokens || session.spotifyTokens.accessToken !== token.spotifyTokens?.accessToken) {
+                session.spotifyTokens = token.spotifyTokens;
+            }
+            console.log(`SESSION: ${JSON.stringify(session, undefined, 2)}`);
+            console.log(`TOKEN: ${JSON.stringify(token, undefined, 2)}`);
+            console.log(`USER: ${JSON.stringify(user, undefined, 2)}`);
             return session;
         },
     },
 };
 
 export default async function auth(req: NextApiRequest, res: NextApiResponse) {
-    console.log();
-    console.log(`REQ VALUES: req.method req.url req.query`);
+    console.log(`\nREQ VALUES: req.method req.url req.query`);
     console.log(`${req.method}   ${req.url}`);
     console.log(req.query);
     console.log(res.statusCode);
