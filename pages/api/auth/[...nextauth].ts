@@ -1,6 +1,7 @@
 
 
 import NextAuth, { AuthOptions } from 'next-auth';
+import { JWT } from 'next-auth/jwt';
 import { NextApiRequest, NextApiResponse } from 'next';
 import SpotifyProvider from 'next-auth/providers/spotify';
 
@@ -9,6 +10,63 @@ const scopes = [
     'playlist-read-private',
     'playlist-read-collaborative',
 ];
+
+async function refreshAccessToken(token: JWT): Promise<JWT> {
+    try {
+        console.log(`\nINSIDE refreshAccessToken()`);
+        const url = 'https://accounts.spotify.com/api/token';
+        const authorization = `Basic ${Buffer.from(`${process.env.SPOTIFY_CLIENT_ID}:${process.env.SPOTIFY_CLIENT_SECRET}`).toString('base64')}`;
+
+        const request = new Request(url, {
+            method: "POST",
+            headers: {
+                "Authorization": authorization,
+            },
+            body: new URLSearchParams({
+                "grant_type": "refresh_token",
+                "refresh_token": token.spotifyTokens!.refreshToken,
+            }),
+        });
+
+        const response = await fetch(request);
+        const resBody = await response.json();
+        console.log(`POST response body:`);
+        console.log(resBody);
+        if (!response.ok) {
+            throw resBody;
+        }
+
+        const newToken: JWT = {
+            ...token,
+            spotifyTokens: {
+                accessToken: resBody.access_token,
+                tokenType: resBody.token_type,
+                expiresAt: resBody.expires_in + Math.floor(Date.now() / 1000),
+                refreshToken: resBody.refresh_token || token.spotifyTokens!.refreshToken,
+            },
+        };
+        console.log(`SUCCESS refreshAccessToken(), returning: `);
+        console.log(newToken);
+        return newToken;
+    } catch (err) {
+        console.log(`ERROR: refreshAccessTokens()`);
+        /**
+         * Could be 
+         *  - { error: 'invalid_client' }
+         *  - { error: 'unsupported_grant_type', error_description: 'grant_type {GRANT_TYPE} is not supported }
+         *  - many others probably
+         */
+        console.log(err);
+        const errorToken: JWT = {
+            ...token,
+            error: 'RefreshAccessTokenError'
+        };
+        console.log(`FAILED refreshAccessToken(), returning: `);
+        console.log(errorToken);
+        return errorToken;
+    }
+
+}
 
 const options: AuthOptions = {
     providers: [
@@ -95,7 +153,12 @@ const options: AuthOptions = {
                     refreshToken: account.refresh_token!,
                 };
             }
-            return token;
+            if (token.spotifyTokens!.expiresAt <= Math.floor(Date.now() / 1000) + 10) {
+                console.log(`RETRIEVING NEW ACCESS TOKEN`);
+                return refreshAccessToken(token);
+            } else {
+                return token;
+            }
         },
         async session({ session, token, user }) {
             console.log(`\nINSIDE SESSION CALLBACK`);
