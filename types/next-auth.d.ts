@@ -1,7 +1,7 @@
-import NextAuth from 'next-auth';
-import { JWT } from "next-auth/jwt";
+import { DefaultSession } from 'next-auth';
 
 interface SpotifyToken {
+    providerAccountId: string,
     accessToken: string,
     tokenType: string,
     expiresAt: number,
@@ -10,7 +10,10 @@ interface SpotifyToken {
 
 declare module 'next-auth' {
     export interface Session {
-        spotifyTokens?: SpotifyToken,
+        user: DefaultSession['user'] & {
+            accessToken?: string;
+            expiresAt?: number;
+        }
     }
 }
 

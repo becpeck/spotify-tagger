@@ -4,6 +4,8 @@ import NextAuth, { AuthOptions } from 'next-auth';
 import { JWT } from 'next-auth/jwt';
 import { NextApiRequest, NextApiResponse } from 'next';
 import SpotifyProvider from 'next-auth/providers/spotify';
+import { PrismaAdapter } from '@next-auth/prisma-adapter';
+import prisma from '../../../lib/prismadb';
 
 const scopes = [
     'user-read-email',
@@ -39,6 +41,7 @@ async function refreshAccessToken(token: JWT): Promise<JWT> {
         const newToken: JWT = {
             ...token,
             spotifyTokens: {
+                providerAccountId: token.spotifyTokens!.providerAccountId,
                 accessToken: resBody.access_token,
                 tokenType: resBody.token_type,
                 expiresAt: resBody.expires_in + Math.floor(Date.now() / 1000),
@@ -69,6 +72,7 @@ async function refreshAccessToken(token: JWT): Promise<JWT> {
 }
 
 const options: AuthOptions = {
+    adapter: PrismaAdapter(prisma),
     providers: [
         SpotifyProvider({
             clientId: process.env.SPOTIFY_CLIENT_ID!,
@@ -78,6 +82,9 @@ const options: AuthOptions = {
             },
         }),
     ],
+    session: {
+        strategy: 'jwt',
+    },
     callbacks: {
         async jwt({ token, account, profile }) {
             console.log(`\nINSIDE JWT CALLBACK`);
@@ -147,6 +154,7 @@ const options: AuthOptions = {
             console.log(`PROFILE: ${JSON.stringify(profile, undefined, 2)}`);
             if (account) {
                 token.spotifyTokens = {
+                    providerAccountId: account.providerAccountId,
                     accessToken: account.access_token!,
                     tokenType: account.token_type!,
                     expiresAt: account.expires_at!,
@@ -154,11 +162,9 @@ const options: AuthOptions = {
                 };
             }
             if (token.spotifyTokens!.expiresAt <= Math.floor(Date.now() / 1000) + 10) {
-                console.log(`RETRIEVING NEW ACCESS TOKEN`);
-                return refreshAccessToken(token);
-            } else {
-                return token;
+                console.log(`NEW ACCESS TOKEN NEEDED`)
             }
+            return token;
         },
         async session({ session, token, user }) {
             console.log(`\nINSIDE SESSION CALLBACK`);
@@ -186,9 +192,64 @@ const options: AuthOptions = {
              * }
              * user = undefined
              */
-            if (!session.spotifyTokens || session.spotifyTokens.accessToken !== token.spotifyTokens?.accessToken) {
-                session.spotifyTokens = token.spotifyTokens;
+            // console.log(`SESSION: ${JSON.stringify(session, undefined, 2)}`);
+
+            if (!session.user.accessToken) {
+                console.log(`session has no accessToken, adding`)
+                session.user = {
+                    ...session.user,
+                    accessToken: token.spotifyTokens!.accessToken,
+                    expiresAt: token.spotifyTokens!.expiresAt,
+                }
+            //     try {
+            //         const tokenData = await prisma.account.findUniqueOrThrow({
+            //             where: {
+            //                 provider_providerAccountId: {
+            //                     provider: 'spotify',
+            //                     providerAccountId: session.user.name!,
+            //                 },
+            //             },
+            //             select: {
+            //                 access_token: true,
+            //                 expires_at: true,
+            //             },
+            //         });
+            //         session.user = {
+            //             ...session.user,
+            //             accessToken: tokenData.access_token,
+            //             expiresAt: tokenData.expires_at,
+            //         }
+            //     } catch (err) {
+            //         console.error(err)
+            //     }
             }
+            // if (!session.spotifyTokens) {
+            //     console.log(`NO spotifyTokens on session`)
+            //     try {
+            //         const tokenData: SpotifyToken = await prisma.account.findUniqueOrThrow({
+            //             where: {
+            //                 provider_providerAccountId: {
+            //                     provider: 'spotify',
+            //                     providerAccountId: user.name!,
+            //                 },
+            //             },
+            //             select: {
+            //                 access_token: true,
+            //                 refresh_token: true,
+            //                 expires_at: true,
+            //                 token_type: true,
+            //             }
+            //         });
+            //         session.spotifyTokens = tokenData;
+            //     } catch (err) {
+            //         console.error(err)
+            //     }
+            // }
+            // if (session.spotifyTokens!.expires_at <= Math.floor(Date.now() / 1000) + 10) {
+            //     console.log(`RETRIEVING NEW ACCESS TOKEN`);
+            //     const newSpotifyTokens = await refreshAccessToken(session.spotifyTokens!, user.name!);
+            //     session.spotifyTokens = newSpotifyTokens;
+            // }
             console.log(`SESSION: ${JSON.stringify(session, undefined, 2)}`);
             console.log(`TOKEN: ${JSON.stringify(token, undefined, 2)}`);
             console.log(`USER: ${JSON.stringify(user, undefined, 2)}`);
