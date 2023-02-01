@@ -31,7 +31,7 @@ async function refreshAccessToken(token: JWT): Promise<JWT> {
         });
 
         const response = await fetch(request);
-        const resBody = await response.json();
+        const resBody = await response.json();  // TODO: type response body
         console.log(`POST response body:`);
         console.log(resBody);
         if (!response.ok) {
@@ -48,6 +48,22 @@ async function refreshAccessToken(token: JWT): Promise<JWT> {
                 refreshToken: resBody.refresh_token || token.spotifyTokens!.refreshToken,
             },
         };
+
+        await prisma.account.update({
+            where: {
+                provider_providerAccountId: {
+                    provider: 'spotify',
+                    providerAccountId: token.spotifyTokens!.providerAccountId,
+                },
+            },
+            data: {
+                access_token: newToken.spotifyTokens!.accessToken,
+                refresh_token: newToken.spotifyTokens!.refreshToken,
+                token_type: newToken.spotifyTokens!.tokenType,
+                expires_at: newToken.spotifyTokens!.expiresAt,
+                scope: resBody.scope,
+            },
+        });
         console.log(`SUCCESS refreshAccessToken(), returning: `);
         console.log(newToken);
         return newToken;
@@ -163,6 +179,7 @@ const options: AuthOptions = {
             }
             if (token.spotifyTokens!.expiresAt <= Math.floor(Date.now() / 1000) + 10) {
                 console.log(`NEW ACCESS TOKEN NEEDED`)
+                return await refreshAccessToken(token);
             }
             return token;
         },
@@ -194,8 +211,12 @@ const options: AuthOptions = {
              */
             // console.log(`SESSION: ${JSON.stringify(session, undefined, 2)}`);
 
-            if (!session.user.accessToken) {
-                console.log(`session has no accessToken, adding`)
+            if (!session.user.accessToken || session.user.accessToken !== token.spotifyTokens?.accessToken) {
+                if (!session.user.accessToken) {
+                    console.log(`session has no accessToken, adding`)
+                } else {
+                    console.log(`session.user.accessToken !== token.spotifyTokens.accessToken, replacing`)
+                }
                 session.user = {
                     ...session.user,
                     accessToken: token.spotifyTokens!.accessToken,

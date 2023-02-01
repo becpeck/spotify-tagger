@@ -2,11 +2,11 @@
 
 ## Authentication
 
-- [ ] Reimplement `refreshAccessToken()` to handle db storage but still use jwt auth strategy
+- [X] Reimplement `refreshAccessToken()` to handle db storage but still use jwt auth strategy
 - [ ] Better error handling for `refreshAccessToken()` in `[...nextauth].ts`
     - [ ] Remove `error: 'RefreshAccessTokenError'` property on returned `token` from `catch()` after display on client
     - [ ] Handle when refresh token is revoked by user ([Details from Spotify][1])
-- [ ] See if `session.spotifyTokens` gets updated on refresh of access token
+- [X] See if `session.spotifyTokens` gets updated on refresh of access token
 - [ ] Handle when initial authentication by user through Spotify is refused by user
 
 ## Database

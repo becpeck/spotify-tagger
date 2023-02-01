@@ -1,6 +1,5 @@
 import { GetServerSideProps } from 'next';
 import { useSession, getSession, signIn, signOut } from 'next-auth/react';
-import prisma from '../lib/prismadb';
 
 export default function Home(props: Props) {
   const { data: session, status } = useSession();
@@ -46,24 +45,24 @@ export const getServerSideProps: GetServerSideProps<Props> = async ({ req, res }
   console.log(`\nINSIDE getServerSideProps, `);
   console.log(session);
 
-  if (!session) {
+  if (!session || !session.user) {
     return {
       props: { authenticated: false }
     };
-  // } else if (!session.spotifyTokens || !session.spotifyTokens.accessToken) {
-  //   return {
-  //     props: {
-  //       authenticated: true,
-  //       accessToken: 'none',
-  //     }
-  //   }
-  // } else if (session.spotifyTokens.expiresAt <= Math.floor(Date.now() / 1000)) {
-  //   return {
-  //     props: {
-  //       authenticated: true,
-  //       accessToken: 'expired',
-  //     }
-  //   }
+  } else if (!session.user.accessToken) {
+    return {
+      props: {
+        authenticated: true,
+        accessToken: 'none',
+      }
+    }
+  } else if (session.user.expiresAt! <= Math.floor(Date.now() / 1000)) {
+    return {
+      props: {
+        authenticated: true,
+        accessToken: 'expired',
+      }
+    }
   } else {
     const response = await fetch('https://api.spotify.com/v1/me/playlists', {
       method: 'GET',

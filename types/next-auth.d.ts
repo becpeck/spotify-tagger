@@ -6,6 +6,7 @@ interface SpotifyToken {
     tokenType: string,
     expiresAt: number,
     refreshToken: string,
+    error?: string,
 }
 
 declare module 'next-auth' {
