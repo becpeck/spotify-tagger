@@ -1,6 +1,6 @@
 
 
-import NextAuth, { AuthOptions } from 'next-auth';
+import NextAuth, { NextAuthOptions } from 'next-auth';
 import { JWT } from 'next-auth/jwt';
 import { NextApiRequest, NextApiResponse } from 'next';
 import SpotifyProvider from 'next-auth/providers/spotify';
@@ -87,7 +87,7 @@ async function refreshAccessToken(token: JWT): Promise<JWT> {
 
 }
 
-const options: AuthOptions = {
+export const authOptions: NextAuthOptions = {
     adapter: PrismaAdapter(prisma),
     providers: [
         SpotifyProvider({
@@ -284,5 +284,5 @@ export default async function auth(req: NextApiRequest, res: NextApiResponse) {
     console.log(`${req.method}   ${req.url}`);
     console.log(req.query);
     console.log(res.statusCode);
-    return await NextAuth(req, res, options);
+    return await NextAuth(req, res, authOptions);
 };
