@@ -6,6 +6,7 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import SpotifyProvider from 'next-auth/providers/spotify';
 import { PrismaAdapter } from '@next-auth/prisma-adapter';
 import prisma from '../../../lib/prismadb';
+import { getRefreshedAccessToken, isAccountsError, isRevokedTokenError } from '@/lib/spotify/accounts';
 
 const scopes = [
     'user-read-email',
@@ -14,38 +15,34 @@ const scopes = [
 ];
 
 async function refreshAccessToken(token: JWT): Promise<JWT> {
-    try {
-        console.log(`\nINSIDE refreshAccessToken()`);
-        const url = 'https://accounts.spotify.com/api/token';
-        const authorization = `Basic ${Buffer.from(`${process.env.SPOTIFY_CLIENT_ID}:${process.env.SPOTIFY_CLIENT_SECRET}`).toString('base64')}`;
+    console.log(`\nINSIDE refreshAccessToken()`);
+    const response = await getRefreshedAccessToken(token.spotifyTokens!.refreshToken)
+    console.log(`RESPONSE`);
+    console.log(response);
 
-        const request = new Request(url, {
-            method: "POST",
-            headers: {
-                "Authorization": authorization,
-            },
-            body: new URLSearchParams({
-                "grant_type": "refresh_token",
-                "refresh_token": token.spotifyTokens!.refreshToken,
-            }),
-        });
-
-        const response = await fetch(request);
-        const resBody = await response.json();  // TODO: type response body
-        console.log(`POST response body:`);
-        console.log(resBody);
-        if (!response.ok) {
-            throw resBody;
+    if (isAccountsError(response)) {
+        console.log(`ERROR: refreshAccessTokens()`);
+        if (isRevokedTokenError(response)) {
+            console.log(`REVOKED TOKEN ERROR`);
+            // TODO: handle revoked token
         }
-
+        console.log(response);
+        const errorToken: JWT = {
+            ...token,
+            error: 'RefreshAccessTokenError'
+        };
+        console.log(`FAILED refreshAccessToken(), returning: `);
+        console.log(errorToken);
+        return errorToken;
+    } else {
         const newToken: JWT = {
             ...token,
             spotifyTokens: {
                 providerAccountId: token.spotifyTokens!.providerAccountId,
-                accessToken: resBody.access_token,
-                tokenType: resBody.token_type,
-                expiresAt: resBody.expires_in + Math.floor(Date.now() / 1000),
-                refreshToken: resBody.refresh_token || token.spotifyTokens!.refreshToken,
+                accessToken: response.access_token,
+                tokenType: response.token_type,
+                expiresAt: response.expires_in + Math.floor(Date.now() / 1000),
+                refreshToken: response.refresh_token || token.spotifyTokens!.refreshToken,
             },
         };
 
@@ -61,30 +58,13 @@ async function refreshAccessToken(token: JWT): Promise<JWT> {
                 refresh_token: newToken.spotifyTokens!.refreshToken,
                 token_type: newToken.spotifyTokens!.tokenType,
                 expires_at: newToken.spotifyTokens!.expiresAt,
-                scope: resBody.scope,
+                scope: response.scope,
             },
         });
         console.log(`SUCCESS refreshAccessToken(), returning: `);
         console.log(newToken);
         return newToken;
-    } catch (err) {
-        console.log(`ERROR: refreshAccessTokens()`);
-        /**
-         * Could be 
-         *  - { error: 'invalid_client' }
-         *  - { error: 'unsupported_grant_type', error_description: 'grant_type {GRANT_TYPE} is not supported }
-         *  - many others probably
-         */
-        console.log(err);
-        const errorToken: JWT = {
-            ...token,
-            error: 'RefreshAccessTokenError'
-        };
-        console.log(`FAILED refreshAccessToken(), returning: `);
-        console.log(errorToken);
-        return errorToken;
     }
-
 }
 
 export const authOptions: NextAuthOptions = {
