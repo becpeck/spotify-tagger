@@ -4,6 +4,8 @@ import { unstable_getServerSession } from 'next-auth';
 import { authOptions } from '../api/auth/[...nextauth]';
 import Image from 'next/image';
 import Link from 'next/link';
+import { z } from 'zod';
+import { GetAlbumSchema, GetAlbumResponse } from '../../lib/zod/albumsSchemas';
 
 type Timestamp = {
 	hours: number,
@@ -73,7 +75,8 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 			Authorization: `Bearer ${session.user.accessToken}`
 		},
 	});
-	const data = await response.json();
+	const json = await response.json();
+	const data: GetAlbumResponse = GetAlbumSchema.parse(json);
 
 	return {
 		props: {
@@ -85,7 +88,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 				images: data.images,
 				name: data.name,
 				artists: data.artists.map((artist: any) => ({ id: artist.id, name: artist.name })),
-				copyrights: data.copyrights.map((copyright: any) => ({ type: copyright.type, text: copyright.text })),
+				copyrights: data.copyrights?.map((copyright: any) => ({ type: copyright.type, text: copyright.text })),
 				releaseDate: data.release_date,
 				releaseDatePrecision: data.release_date_precision,
 				totalTracks: data.total_tracks,
