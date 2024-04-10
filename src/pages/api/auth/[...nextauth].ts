@@ -5,7 +5,8 @@ import { JWT } from 'next-auth/jwt';
 import { NextApiRequest, NextApiResponse } from 'next';
 import SpotifyProvider from 'next-auth/providers/spotify';
 import { PrismaAdapter } from '@next-auth/prisma-adapter';
-import prisma from '../../../lib/prismadb';
+
+import prisma from '@/lib/prismadb';
 import { getRefreshedAccessToken, isAccountsError, isRevokedTokenError } from '@/lib/spotify/accounts';
 
 const scopes = [
