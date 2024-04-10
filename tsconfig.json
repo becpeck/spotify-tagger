@@ -1,25 +1,44 @@
 {
   "compilerOptions": {
-    "target": "es5",
-    "lib": ["dom", "dom.iterable", "esnext"],
-    "allowJs": true,
-    "skipLibCheck": true,
-    "strict": true,
-    "forceConsistentCasingInFileNames": true,
-    "noEmit": true,
+    /* Base Options: */
     "esModuleInterop": true,
-    "module": "esnext",
-    "moduleResolution": "node",
+    "skipLibCheck": true,
+    "target": "ESNext",
+    "allowJs": true,
     "resolveJsonModule": true,
+    "moduleDetection": "force",         // added from create-t3
     "isolatedModules": true,
+
+    /* Strictness */
+    "strict": true,
+    "noUncheckedIndexedAccess": true,   // added from create-t3
+    "checkJs": true,                    // added from create-t3
+    "forceConsistentCasingInFileNames": true,
+
+    /* Bundled projects */
+    "lib": ["DOM", "DOM.Iterable", "ESNext"],
+    "noEmit": true,
+    "module": "ESNext",
+    "moduleResolution": "Bundler",      // changed from "node" from create-next
     "jsx": "preserve",
+    "plugins": [{ "name": "next" }],    // added from create-next
     "incremental": true,
+
+    /* Path Aliases */
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"]
-    }
-    // "typeRoots": ["./node_modules/@types/**", "./types"]
+    },
+    // "typeRoots": ["./node_modules/@types/**", "./types"] // old, not sure what for
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
+  "include": [
+    ".eslintrc.cjs",                    // added from create-t3
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    "**/*.cjs",                         // added from create-t3
+    "**/*.js",                          // added from create-t3
+    ".next/types/**/*.ts"               // added from create-t3
+  ],
   "exclude": ["node_modules"]
 }
