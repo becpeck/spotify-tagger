@@ -1,22 +1,14 @@
-import React from 'react';
+// import React from 'react';
 import Link from 'next/link';
-import { useSession, signOut } from 'next-auth/react';
 
 export default function Header() {
-	const { data: session, status } = useSession();
-
 	return (
-		<nav>
-			{ 
-				status && session
-					? <div>
-							{session.user?.name}
-							<button onClick={() => signOut()}></button>
-						</div>
-					: <Link href='/api/auth/signin'>
-							<a>Log In</a>
-						</Link>
-			}
-		</nav>
-	)
+    <header className="flex items-center px-4 py-4">
+      <nav>
+        <Link href="">
+          <h1 className="text-xl font-semibold">Spotify Tagger</h1>
+        </Link>
+      </nav>
+    </header>
+	);
 }
