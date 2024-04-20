@@ -1,11 +1,25 @@
-import '@/styles/globals.css';
-import type { AppProps } from 'next/app';
-import { SessionProvider } from 'next-auth/react';
+import { type AppType } from "next/app";
+import { Inter } from "next/font/google";
+import { cn } from "@/lib/utils";
 
-export default function App({ Component, pageProps: { session, ...pageProps } }: AppProps) {
+import "@/styles/globals.css";
+
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-sans",
+});
+
+const MyApp: AppType = ({ Component, pageProps }) => {
   return (
-    <SessionProvider session={session}>
+    <main
+      className={cn(
+        "h-[100vh] bg-background font-sans antialiased",
+        inter.variable
+      )}
+    >
       <Component {...pageProps} />
-    </SessionProvider>
+    </main>
   );
 };
+
+export default MyApp;
