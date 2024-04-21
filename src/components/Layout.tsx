@@ -1,4 +1,4 @@
-import { Inter } from "next/font/google";
+import { type NextFontWithVariable } from "next/dist/compiled/@next/font";
 
 import {
   ResizableHandle,
@@ -10,22 +10,18 @@ import Sidebar from "@/components/Sidebar";
 
 import { cn } from "@/lib/utils";
 
-const inter = Inter({
-  subsets: ["latin"],
-  variable: "--font-sans",
-});
-
 export default function Layout({
+  fontSans,
   children,
-}: Readonly<{ children: React.ReactNode }>) {
+}: Readonly<{ fontSans: NextFontWithVariable, children: React.ReactNode }>) {
   return (
-    <main
+    <div
       className={cn(
         "flex flex-col h-[100vh] bg-background font-sans antialiased",
-        inter.variable
+        fontSans.variable
       )}
     >
-      <Header />
+      <Header username={"username"}/>
       <ResizablePanelGroup
         direction="horizontal"
         className="h-full w-full border"
@@ -38,6 +34,6 @@ export default function Layout({
           {children}
         </ResizablePanel>
       </ResizablePanelGroup>
-    </main>
+    </div>
   );
 }
