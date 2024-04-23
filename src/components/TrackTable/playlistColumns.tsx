@@ -1,4 +1,17 @@
 import { ColumnDef } from "@tanstack/react-table";
+import { DotsHorizontalIcon } from "@radix-ui/react-icons";
+ 
+import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+
 
 type Data = { id: string, type: string, name: string };
 
@@ -83,4 +96,31 @@ export const columns: ColumnDef<Track>[] = [
       </div>
     ),
   },
+  {
+    id: "actions",
+    cell: () => {
+      return (
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" className="h-8 w-8 p-0">
+              <span className="sr-only">Open menu</span>
+              <DotsHorizontalIcon className="" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuGroup>
+              <DropdownMenuItem>Add to Playlist</DropdownMenuItem>
+              <DropdownMenuItem>Save to Liked Songs</DropdownMenuItem>
+              <DropdownMenuItem>Add to Queue</DropdownMenuItem>
+            </DropdownMenuGroup>
+            <DropdownMenuSeparator />
+            <DropdownMenuGroup>
+              <DropdownMenuItem>Go to Artist</DropdownMenuItem>
+              <DropdownMenuItem>Go to Album</DropdownMenuItem>
+            </DropdownMenuGroup>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      )
+    }
+  }
 ];
