@@ -16,6 +16,12 @@ const data: Track[] = playlist.tracks.items.map(({ added_at, track }, i) => {
     },
     added_at,
     duration_ms,
+    playlist: {
+      // TODO: This is passing duplicated playlist data inside each track datum, fix
+      id: playlist.id,
+      name: playlist.name,
+      type: playlist.type,
+    },
   };
 });
 
