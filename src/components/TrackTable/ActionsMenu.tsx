@@ -17,10 +17,11 @@ import { Button } from "@/components/ui/button";
 import { type Data } from "@/components/TrackTable/playlistColumns";
 
 type ActionsMenuProps = {
-  album: Data;
-  artists: Data[];
-  playlist: Data;
-  track: Data;
+  album: Data,
+  artists: Data[],
+  playlist: Data,
+  track: Data,
+  userPlaylists: Array<Omit<Data, "type">>,
 };
 
 export default function ActionsMenu({
@@ -28,6 +29,7 @@ export default function ActionsMenu({
   artists,
   playlist,
   track,
+  userPlaylists,
 }: ActionsMenuProps) {
   return (
     <DropdownMenu>
@@ -39,7 +41,16 @@ export default function ActionsMenu({
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         <DropdownMenuGroup>
-          <DropdownMenuItem>Add to Playlist</DropdownMenuItem>
+          <DropdownMenuSub>
+            <DropdownMenuSubTrigger>Add to Playlist</DropdownMenuSubTrigger>
+            <DropdownMenuPortal>
+              <DropdownMenuSubContent>
+                {userPlaylists.map(playlist => (
+                  <DropdownMenuItem key={playlist.id}>{playlist.name}</DropdownMenuItem>
+                ))}
+              </DropdownMenuSubContent>
+            </DropdownMenuPortal>
+          </DropdownMenuSub>
           <DropdownMenuItem>Save to Liked Songs</DropdownMenuItem>
           <DropdownMenuItem>Add to Queue</DropdownMenuItem>
         </DropdownMenuGroup>

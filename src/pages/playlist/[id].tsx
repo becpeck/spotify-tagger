@@ -27,6 +27,7 @@ const meta: TableMeta<Track> = {
     name: playlist.name,
     type: playlist.type,
   },
+  userPlaylists: Array.from({length: 10}, (_, i) => ({ id: `${i + 1}`, name: `Playlist ${i + 1}`})),
 };
 
 export default function Playlist() {

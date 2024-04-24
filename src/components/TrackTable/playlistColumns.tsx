@@ -16,6 +16,7 @@ export type Track = {
 declare module '@tanstack/table-core' {
   interface TableMeta<TData extends RowData> {
     playlist?: Data,
+    userPlaylists: Array<Omit<Data, "type">>,
   }
 }
 
@@ -96,12 +97,14 @@ export const columns: ColumnDef<Track>[] = [
     cell: ({ row, table }) => {
       const { album, artists, track } = row.original;
       const playlist = table.options.meta!.playlist!;
+      const userPlaylists = table.options.meta!.userPlaylists!;
       return (
         <ActionsMenu 
           artists={artists}
           album={album}
           track={track}
           playlist={playlist}
+          userPlaylists={userPlaylists}
         />
       );
     },
