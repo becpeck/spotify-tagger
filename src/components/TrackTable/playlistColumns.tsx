@@ -1,4 +1,4 @@
-import { ColumnDef } from "@tanstack/react-table";
+import { type ColumnDef, type RowData } from "@tanstack/react-table";
 
 import ActionsMenu from "@/components/TrackTable/ActionsMenu";
 
@@ -11,8 +11,13 @@ export type Track = {
   album: Data,
   added_at: string,
   duration_ms: number,
-  playlist: Data,
 };
+
+declare module '@tanstack/table-core' {
+  interface TableMeta<TData extends RowData> {
+    playlist?: Data,
+  }
+}
 
 function stringifyDuration(ms: number): string {
   const totalSeconds = Math.floor(ms / 1000);
@@ -88,8 +93,9 @@ export const columns: ColumnDef<Track>[] = [
   },
   {
     id: "actions",
-    cell: ({ row }) => {
-      const { album, artists, track, playlist } = row.original;
+    cell: ({ row, table }) => {
+      const { album, artists, track } = row.original;
+      const playlist = table.options.meta!.playlist!;
       return (
         <ActionsMenu 
           artists={artists}

@@ -12,19 +12,23 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { type TableMeta } from "@tanstack/react-table";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[],
   data: TData[],
+  meta?: TableMeta<TData>,
 }
 
 export default function DataTable<TData, TValue>({
   columns,
   data,
+  meta,
 }: DataTableProps<TData, TValue>) {
   const table = useReactTable({
     data,
     columns,
+    meta,
     getCoreRowModel: getCoreRowModel(),
   });
 

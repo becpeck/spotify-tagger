@@ -1,3 +1,5 @@
+import { type TableMeta } from "@tanstack/react-table";
+
 import DataTable from "@/components/ui/data-table";
 import { type Track, columns } from "@/components/TrackTable/playlistColumns";
 
@@ -16,19 +18,21 @@ const data: Track[] = playlist.tracks.items.map(({ added_at, track }, i) => {
     },
     added_at,
     duration_ms,
-    playlist: {
-      // TODO: This is passing duplicated playlist data inside each track datum, fix
-      id: playlist.id,
-      name: playlist.name,
-      type: playlist.type,
-    },
   };
 });
+
+const meta: TableMeta<Track> = {
+  playlist: {
+    id: playlist.id,
+    name: playlist.name,
+    type: playlist.type,
+  },
+};
 
 export default function Playlist() {
   return (
     <main>
-      <DataTable columns={columns} data={data} />
+      <DataTable columns={columns} data={data} meta={meta}/>
     </main>
   );
 }
