@@ -1,5 +1,17 @@
 import Link from "next/link";
 import { DotsHorizontalIcon } from "@radix-ui/react-icons";
+import { 
+  DiscIcon,
+  ListMusicIcon,
+  PlusIcon,
+  CirclePlusIcon,
+  CopyIcon,
+  ExternalLinkIcon,
+  UserRoundIcon,
+  MonitorIcon,
+} from "lucide-react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faSpotify } from "@fortawesome/free-brands-svg-icons";
 
 import {
   DropdownMenu,
@@ -42,7 +54,10 @@ export default function ActionsMenu({
       <DropdownMenuContent align="end">
         <DropdownMenuGroup>
           <DropdownMenuSub>
-            <DropdownMenuSubTrigger>Add to Playlist</DropdownMenuSubTrigger>
+            <DropdownMenuSubTrigger className="flex gap-2">
+              <PlusIcon size={18} />
+              Add to Playlist
+            </DropdownMenuSubTrigger>
             <DropdownMenuPortal>
               <DropdownMenuSubContent>
                 {userPlaylists.map(playlist => (
@@ -51,20 +66,30 @@ export default function ActionsMenu({
               </DropdownMenuSubContent>
             </DropdownMenuPortal>
           </DropdownMenuSub>
-          <DropdownMenuItem>Save to Liked Songs</DropdownMenuItem>
-          <DropdownMenuItem>Add to Queue</DropdownMenuItem>
+          <DropdownMenuItem className="flex gap-2">
+            <CirclePlusIcon size={18}/>
+            Save to Liked Songs
+          </DropdownMenuItem>
+          <DropdownMenuItem className="flex gap-2">
+            <ListMusicIcon size={18}/>
+            Add to Queue
+          </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
           {artists.length === 1 ? (
-            <DropdownMenuItem>
+            <DropdownMenuItem className="flex gap-2" asChild>
               <Link href={`/${artists[0]?.type}/${artists[0]?.id}`}>
-                Go to Artist
+                  <UserRoundIcon size={18}/>
+                  Go to Artist
               </Link>
             </DropdownMenuItem>
           ) : (
             <DropdownMenuSub>
-              <DropdownMenuSubTrigger>Go to Artist</DropdownMenuSubTrigger>
+              <DropdownMenuSubTrigger className="flex gap-2">
+                <UserRoundIcon size={18} />
+                Go to Artist
+              </DropdownMenuSubTrigger>
               <DropdownMenuPortal>
                 <DropdownMenuSubContent>
                   {artists.map((artist) => (
@@ -78,32 +103,52 @@ export default function ActionsMenu({
               </DropdownMenuPortal>
             </DropdownMenuSub>
           )}
-          <DropdownMenuItem>
+          <DropdownMenuItem className="flex gap-2" asChild>
             <Link
               href={`/${album.type}/${album.id}?highlight=spotify:track:${track.id}`}
             >
+              <DiscIcon size={18} />
               Go to Album
             </Link>
           </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <DropdownMenuItem>
-            <a
-              href={`https://open.spotify.com/${track.type}/${track.id}`}
-              target="_blank"
-            >
+          <DropdownMenuItem className="flex gap-2" onClick={() => {navigator.clipboard.writeText(`https://open.spotify.com/${track.type}/${track.id}`)}}>
+            <CopyIcon size={18} />
+            Copy Song Link
+          </DropdownMenuItem>
+        </DropdownMenuGroup>
+        <DropdownMenuSeparator />
+        <DropdownMenuGroup>
+          <DropdownMenuSub>
+            <DropdownMenuSubTrigger className="flex gap-2">
+              <FontAwesomeIcon icon={faSpotify} size={'lg'}/>
               Open in Spotify
-            </a>
-          </DropdownMenuItem>
-          <DropdownMenuItem>
-            <a
-              href={`spotify:${track.type}:${track.id}?context=spotify:${playlist.type}:${playlist.id}`}
-              target="_blank"
-            >
-              Open in Desktop App
-            </a>
-          </DropdownMenuItem>
+            </DropdownMenuSubTrigger>
+            <DropdownMenuPortal>
+              <DropdownMenuSubContent>
+                <DropdownMenuItem className="flex gap-2" asChild>
+                  <a
+                    href={`https://open.spotify.com/${track.type}/${track.id}`}
+                    target="_blank"
+                  >
+                    <ExternalLinkIcon size={18}/>
+                    Spotify Web
+                  </a>
+                </DropdownMenuItem>
+                <DropdownMenuItem className="flex gap-2" asChild>
+                  <a
+                    href={`spotify:${track.type}:${track.id}?context=spotify:${playlist.type}:${playlist.id}`}
+                    target="_blank"
+                  >
+                    <MonitorIcon size={18} />
+                    Desktop App
+                  </a>
+                </DropdownMenuItem>
+              </DropdownMenuSubContent>
+            </DropdownMenuPortal>
+          </DropdownMenuSub>
         </DropdownMenuGroup>
       </DropdownMenuContent>
     </DropdownMenu>
