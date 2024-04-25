@@ -1,5 +1,8 @@
 import { type ColumnDef, type RowData } from "@tanstack/react-table";
+import { PlayIcon, HashIcon, ClockIcon } from "lucide-react";
 
+import { Button } from "@/components/ui/button";
+import TableLink from "@/components/TrackTable/TableLink";
 import ActionsMenu from "@/components/TrackTable/ActionsMenu";
 
 export type Data = { id: string, type: string, name: string };
@@ -34,41 +37,58 @@ function stringifyDuration(ms: number): string {
 export const columns: ColumnDef<Track>[] = [
   {
     accessorKey: "number",
-    header: () => (<div className="text-right">#</div>),
-    cell: ({ row }) => (
-      <div className="text-right">
-        {row.getValue("number")}
+    header: () => (
+      <div className="flex justify-center align-center">
+        <span className="sr-only">Track Number</span>
+        <HashIcon size={15} />
       </div>
+    ),
+    cell: ({ row }) => (
+      <Button variant="ghost" className="h-8 w-8 p-0">
+        <div className="group-hover/row:hidden">{row.getValue("number")}</div>
+        <div className="hidden group-hover/row:block">
+          <span className="sr-only">Play</span>
+          <PlayIcon size={15} fill='hsl(var(--primary))' />
+        </div>
+      </Button>
     ),
   },
   {
     accessorKey: "track",
     header: "Title",
-    cell: ({ row }) => (
-      <div>
-        {(row.getValue("track") satisfies Data).name}
-      </div>
-    ),
+    cell: ({ row }) => {
+      const { id, name, type } = row.getValue("track") satisfies Data;
+      return (
+        <TableLink href={`/${type}/${id}`}>{name}</TableLink>
+      );
+    },
   },
   {
     accessorKey: "artists",
     header: "Artist",
-    cell: ({ row }) => (
-      <>
-        {(row.getValue("artists") satisfies Data[]).map(artist => (
-          <div key={artist.id}>{artist.name}</div>
-        ))}
-      </>
-    ),
+    cell: ({ row }) => {
+      const artists = row.getValue("artists") satisfies Data[];
+      return (
+        <div>
+          {artists.map(({ id, name, type }, i) => (
+            <>
+              {i > 0 ? ', ' : null}
+              <TableLink key={id} href={`/${type}/${id}`}>{name}</TableLink>
+            </>
+          ))}
+        </div>
+      );
+    }
   },
   {
     accessorKey: "album",
     header: "Album",
-    cell: ({ row }) => (
-      <div>
-        {(row.getValue("album") satisfies Data).name}
-      </div>
-    ),
+    cell: ({ row }) => {
+      const { id, name, type } = row.getValue("album") satisfies Data;
+      return (
+        <TableLink href={`/${type}/${id}`}>{name}</TableLink>
+      );
+    }
   },
   {
     accessorKey: "added_at",
@@ -85,7 +105,12 @@ export const columns: ColumnDef<Track>[] = [
   },
   {
     accessorKey: "duration_ms",
-    header: () => (<div className="text-right">Duration</div>),
+    header: () => (
+      <div className="flex justify-center align-center">
+        <span className="sr-only">Duration</span>
+        <ClockIcon size={15} />
+      </div>
+      ),
     cell: ({ row }) => (
       <div className="text-right">
         {stringifyDuration(parseInt(row.getValue("duration_ms")))}
