@@ -48,7 +48,7 @@ export default function Playlist({}) {
           total={total}
           duration={duration}
         />
-        <PlaylistControls name={name}/>
+        <PlaylistControls playlist={playlist}/>
         <DataTable columns={columns} data={data} meta={meta}/>
       </main>
   );
