@@ -1,5 +1,17 @@
 import { useState } from "react";
-import { PlayIcon, PauseIcon, PlusIcon, CheckIcon, EllipsisIcon, CirclePlusIcon, ListMusicIcon, CopyIcon, ExternalLinkIcon, MonitorIcon } from "lucide-react";
+import {
+  CheckIcon,
+  CirclePlusIcon,
+  CopyIcon,
+  EllipsisIcon,
+  ExternalLinkIcon,
+  ListMusicIcon,
+  MonitorIcon,
+  PauseIcon,
+  PlayIcon,
+  PlusIcon,
+  ShuffleIcon
+} from "lucide-react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSpotify } from "@fortawesome/free-brands-svg-icons";
 
@@ -28,15 +40,17 @@ type PlaylistControlsProps = {
 
 export default function PlaylistControls({ playlist }: PlaylistControlsProps) {
   const [isPlaying, setIsPlaying] = useState(false);
+  const [shuffleOn, setShuffleOn] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
 
-  const toggleIsSaved = () => setIsSaved(!isSaved);
   const toggleIsPlaying = () => setIsPlaying(!isPlaying);
+  const toggleShuffleOn = () => setShuffleOn(!shuffleOn);
+  const toggleIsSaved = () => setIsSaved(!isSaved);
 
   return (
     <div className="flex items-center gap-6 m-4">
       <button
-        className="flex justify-center items-center rounded-full h-10 w-10 bg-green-500 hover:transform hover:scale-105 active:brightness-75"
+        className="flex justify-center items-center rounded-full h-10 w-10 bg-green-500 hover:transform hover:scale-105 active:transform-none active:brightness-75"
         onClick={toggleIsPlaying}
         type="button"
         aria-label={isPlaying ? `Pause ${playlist.name}` : `Play ${playlist.name}`}
@@ -56,9 +70,25 @@ export default function PlaylistControls({ playlist }: PlaylistControlsProps) {
       </button>
       <button
         className={cn(
-          "flex justify-center items-center rounded-full h-6 w-6 active:brightness-75",
+          "flex justify-center items-center h-6 w-6 hover:transform hover:scale-105 active:transform-none active:brightness-75",
+          shuffleOn
+            ? "[--shuffle-color:--green]"
+            : "[--shuffle-color:--muted-foreground] hover:[--shuffle-color:--primary]"
+        )}
+        onClick={toggleShuffleOn}
+        type="button"
+        aria-label={shuffleOn ? `Disable shuffle for ${playlist.name}` : `Enable shuffle for ${playlist.name}`}
+      >
+        <ShuffleIcon
+          size={24}
+          stroke="hsl(var(--shuffle-color))"
+        />
+      </button>
+      <button
+        className={cn(
+          "flex justify-center items-center rounded-full h-6 w-6 hover:transform hover:scale-105 active:transform-none active:brightness-75",
           isSaved 
-            ? "bg-green-500 hover:transform hover:scale-105" 
+            ? "bg-green-500" 
             : "[--plus-color:--muted-foreground] hover:[--plus-color:--primary] border-2 border-[hsl(var(--plus-color))]"
         )}
         onClick={toggleIsSaved}
@@ -83,7 +113,7 @@ export default function PlaylistControls({ playlist }: PlaylistControlsProps) {
           <EllipsisIcon
             role="button"
             size={24}
-            className="[--ellipsis-color:--muted-foreground] hover:[--ellipsis-color:--primary] active:brightness-75"
+            className="hover:transform hover:scale-105 active:transform-none active:brightness-75 [--ellipsis-color:--muted-foreground] hover:[--ellipsis-color:--primary]"
             stroke="hsl(var(--ellipsis-color))"
             aria-label={`More options for ${playlist.name}`}
           />
@@ -115,9 +145,9 @@ export default function PlaylistControls({ playlist }: PlaylistControlsProps) {
           </DropdownMenuGroup>
           <DropdownMenuSeparator />
           <DropdownMenuGroup>
-            <DropdownMenuItem className="flex gap-2" onClick={() => {navigator.clipboard.writeText(`https://open.spotify.com/${track.type}/${track.id}`)}}>
+            <DropdownMenuItem className="flex gap-2" onClick={() => {navigator.clipboard.writeText(`https://open.spotify.com/${playlist.type}/${playlist.id}`)}}>
               <CopyIcon size={18} />
-              Copy Song Link
+              Copy Playlist Link
             </DropdownMenuItem>
           </DropdownMenuGroup>
           <DropdownMenuSeparator />
