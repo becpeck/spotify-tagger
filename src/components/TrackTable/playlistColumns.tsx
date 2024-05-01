@@ -73,7 +73,11 @@ export const columns: ColumnDef<Track>[] = [
           {artists.map(({ id, name, type }, i) => (
             <>
               {i > 0 ? ', ' : null}
-              <TableLink key={id} href={`/${type}/${id}`}>{name}</TableLink>
+              <TableLink 
+                key={id} 
+                href={`/${type}/${id}`}
+                className="text-muted-foreground group-hover/row:text-primary"
+              >{name}</TableLink>
             </>
           ))}
         </div>
@@ -86,7 +90,10 @@ export const columns: ColumnDef<Track>[] = [
     cell: ({ row }) => {
       const { id, name, type } = row.getValue("album") satisfies Data;
       return (
-        <TableLink href={`/${type}/${id}`}>{name}</TableLink>
+        <TableLink
+          href={`/${type}/${id}`}
+          className="text-muted-foreground group-hover/row:text-primary"
+        >{name}</TableLink>
       );
     }
   },
