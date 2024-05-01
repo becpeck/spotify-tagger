@@ -31,7 +31,7 @@ export default function Header({ imageUrl, username }: HeaderProps) {
               <AvatarFallback>{username[0]?.toUpperCase()}</AvatarFallback>
             </Avatar>
           </DropdownMenuTrigger>
-          <DropdownMenuContent>
+          <DropdownMenuContent align="end">
             <DropdownMenuItem className="font-semibold">
               <Link href={`/user/${username}`}>
                 {username}

@@ -48,7 +48,7 @@ export default function ActionsMenu({
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" className="h-8 w-8 p-0">
           <span className="sr-only">Open menu</span>
-          <DotsHorizontalIcon className="" />
+          <DotsHorizontalIcon className="text-[hsl(var(--primary))] hidden group-hover/row:block" />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
@@ -123,7 +123,7 @@ export default function ActionsMenu({
         <DropdownMenuGroup>
           <DropdownMenuSub>
             <DropdownMenuSubTrigger className="flex gap-2">
-              <FontAwesomeIcon icon={faSpotify} size={'lg'}/>
+              <FontAwesomeIcon icon={faSpotify} className="h-[18px] w-[18px]"/>
               Open in Spotify
             </DropdownMenuSubTrigger>
             <DropdownMenuPortal>

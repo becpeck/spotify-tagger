@@ -44,11 +44,11 @@ export const columns: ColumnDef<Track>[] = [
       </div>
     ),
     cell: ({ row }) => (
-      <Button variant="ghost" className="h-8 w-8 p-0">
+      <Button variant="ghost" className="h-8 w-8 p-0 text-muted-foreground">
         <div className="group-hover/row:hidden">{row.getValue("number")}</div>
         <div className="hidden group-hover/row:block">
           <span className="sr-only">Play</span>
-          <PlayIcon size={15} fill='hsl(var(--primary))' />
+          <PlayIcon size={15} fill="hsl(var(--primary))" stroke="hsl(var(--primary))" />
         </div>
       </Button>
     ),
@@ -101,7 +101,7 @@ export const columns: ColumnDef<Track>[] = [
     accessorKey: "added_at",
     header: "Date Added",
     cell: ({ row }) => (
-      <div>
+      <div className="text-muted-foreground">
         {(new Date(String(row.getValue("added_at")))).toLocaleDateString("en-US", {
             month: "short",
             day: "numeric",
@@ -119,7 +119,7 @@ export const columns: ColumnDef<Track>[] = [
       </div>
       ),
     cell: ({ row }) => (
-      <div className="text-right">
+      <div className="text-right text-muted-foreground">
         {stringifyDuration(parseInt(row.getValue("duration_ms")))}
       </div>
     ),

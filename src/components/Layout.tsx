@@ -28,11 +28,11 @@ export default function Layout({
         direction="horizontal"
         className="h-full w-full border"
       >
-        <ResizablePanel defaultSize={20} minSize={10}>
+        <ResizablePanel defaultSize={15} minSize={10}>
           <Sidebar />
         </ResizablePanel>
         <ResizableHandle withHandle />
-        <ResizablePanel defaultSize={75}>
+        <ResizablePanel defaultSize={85}>
           <ScrollArea className="w-full h-full">
             {children}
           </ScrollArea>
