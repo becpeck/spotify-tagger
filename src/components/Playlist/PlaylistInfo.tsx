@@ -39,7 +39,7 @@ export default function PlaylistInfo({
   }
 
   return (
-    <header className="flex p-4 gap-4">
+    <header className="flex m-4 gap-4">
       {images.length > 0 ? (
         <Image
           src={images[0]!.url}

@@ -1,8 +1,9 @@
 import { type TableMeta } from "@tanstack/react-table";
 
+import PlaylistInfo from "@/components/Playlist/PlaylistInfo";
+import PlaylistControls from "@/components/Playlist/PlaylistControls";
 import DataTable from "@/components/ui/data-table";
 import { type Track, columns } from "@/components/TrackTable/playlistColumns";
-import PlaylistInfo from "@/components/Playlist/PlaylistInfo";
 
 import playlist from "@/data/playlist/Playlist.json";
 
@@ -47,6 +48,7 @@ export default function Playlist({}) {
           total={total}
           duration={duration}
         />
+        <PlaylistControls name={name}/>
         <DataTable columns={columns} data={data} meta={meta}/>
       </main>
   );
