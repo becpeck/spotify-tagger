@@ -9,7 +9,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 
 import Header from "@/components/Header";
 import Sidebar from "@/components/Sidebar";
-import PlaybackControls from "@/components/PlaybackControls/PlaybackControls";
+import PlaybackBar from "@/components/PlaybackBar/PlaybackBar";
 
 import { cn } from "@/lib/utils";
 
@@ -39,7 +39,7 @@ export default function Layout({
           </ScrollArea>
         </ResizablePanel>
       </ResizablePanelGroup>
-      <PlaybackControls />
+      <PlaybackBar />
     </div>
   );
 }

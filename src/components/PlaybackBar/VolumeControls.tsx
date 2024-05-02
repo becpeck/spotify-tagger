@@ -32,7 +32,7 @@ export default function VolumeControls() {
   }
 
   return (
-    <div className="flex justify-between items-center gap-2 group/volume">
+    <div className="flex justify-between items-center gap-2 group/volume w-full">
       <button onClick={volumeLevel === 0 ? unMute : mute}>
         {volumeLevel === 0
           ? <VolumeXIcon
