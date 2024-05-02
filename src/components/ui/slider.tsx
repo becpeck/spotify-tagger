@@ -14,13 +14,53 @@ const Slider = React.forwardRef<
       className
     )}
     {...props}
-  >
-    <SliderPrimitive.Track className="relative h-1.5 w-full grow overflow-hidden rounded-full bg-primary/20">
-      <SliderPrimitive.Range className="absolute h-full bg-primary" />
-    </SliderPrimitive.Track>
-    <SliderPrimitive.Thumb className="block h-4 w-4 rounded-full border border-primary/50 bg-background shadow transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50" />
-  </SliderPrimitive.Root>
+  />
 ))
 Slider.displayName = SliderPrimitive.Root.displayName
 
-export { Slider }
+const SliderTrack = React.forwardRef<
+  React.ElementRef<typeof SliderPrimitive.Track>,
+  React.ComponentPropsWithoutRef<typeof SliderPrimitive.Track>
+>(({ className, ...props }, ref) => (
+  <SliderPrimitive.Track
+    ref={ref}
+    className={cn(
+      "relative h-1.5 w-full grow overflow-hidden rounded-full bg-primary/20",
+      className
+    )}
+    {...props}
+  />
+))
+SliderTrack.displayName = SliderPrimitive.Track.displayName
+
+const SliderRange = React.forwardRef<
+  React.ElementRef<typeof SliderPrimitive.Range>,
+  React.ComponentPropsWithoutRef<typeof SliderPrimitive.Range>
+>(({ className, ...props }, ref) => (
+  <SliderPrimitive.Range
+    ref={ref}
+    className={cn(
+      "absolute h-full bg-primary",
+      className,
+    )}
+    {...props}
+  />
+))
+SliderRange.displayName = SliderPrimitive.Range.displayName
+
+const SliderThumb = React.forwardRef<
+  React.ElementRef<typeof SliderPrimitive.Thumb>,
+  React.ComponentPropsWithoutRef<typeof SliderPrimitive.Thumb>
+>(({ className, ...props }, ref) => (
+  <SliderPrimitive.Thumb
+    ref={ref}
+    className={cn(
+      "block h-4 w-4 rounded-full border border-primary/50 bg-background shadow transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50",
+      className,
+    )}
+    {...props}
+  />
+))
+SliderThumb.displayName = SliderPrimitive.Thumb.displayName
+
+export { Slider, SliderTrack, SliderRange, SliderThumb }
