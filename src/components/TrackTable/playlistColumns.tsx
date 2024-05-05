@@ -4,6 +4,7 @@ import { PlayIcon, HashIcon, ClockIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import TableLink from "@/components/TrackTable/TableLink";
 import ActionsMenu from "@/components/TrackTable/ActionsMenu";
+import { toDurationString, toDuration } from "@/utils/timeUtils";
 
 export type Data = { id: string, type: string, name: string };
 
@@ -21,17 +22,6 @@ declare module '@tanstack/table-core' {
     playlist?: Data,
     userPlaylists: Array<Omit<Data, "type">>,
   }
-}
-
-function stringifyDuration(ms: number): string {
-  const totalSeconds = Math.floor(ms / 1000);
-  const hours = Math.floor(totalSeconds / 3600);
-  const minutes = Math.floor((totalSeconds - (hours * 3600)) / 60);
-  const seconds = totalSeconds - (hours * 3600) - (minutes * 60);
-
-  return `${hours ? `${hours}:` : ''}`
-    + `${hours ? String(minutes).padStart(2, '0') : minutes}:`
-    + `${String(seconds).padStart(2, '0')}`;
 }
 
 export const columns: ColumnDef<Track>[] = [
@@ -118,11 +108,21 @@ export const columns: ColumnDef<Track>[] = [
         <ClockIcon size={15} />
       </div>
       ),
-    cell: ({ row }) => (
-      <div className="text-right text-muted-foreground">
-        {stringifyDuration(parseInt(row.getValue("duration_ms")))}
-      </div>
-    ),
+    cell: ({ row }) => {
+      const duration = toDuration(parseInt(row.getValue("duration_ms")));
+      return (
+        <div className="text-right text-muted-foreground">
+          {toDurationString(duration, {
+            ...(duration.hours > 0
+              ? { hours: "numeric", minutes: "2-digit" }
+              : { minutes: "numeric" }
+            ),
+            seconds: "2-digit",
+            separator: ":",
+          })}
+        </div>
+      );
+    },
   },
   {
     id: "actions",

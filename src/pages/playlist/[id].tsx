@@ -10,7 +10,7 @@ import playlist from "@/data/playlist/Playlist.json";
 export default function Playlist({}) {
   const { images, description, followers, name, owner, type, tracks } = playlist;
   const { total } = tracks;
-  const duration = tracks.items.reduce((acc, track) => acc + track.track.duration_ms, 0);
+  const duration_ms = tracks.items.reduce((acc, track) => acc + track.track.duration_ms, 0);
   const data: Track[] = tracks.items.map(({ added_at, track }, i) => {
     const { id, artists, album, name, duration_ms, type } = track;
     return {
@@ -46,7 +46,7 @@ export default function Playlist({}) {
           owner={owner}
           followers={followers}
           total={total}
-          duration={duration}
+          duration_ms={duration_ms}
         />
         <PlaylistControls playlist={playlist}/>
         <DataTable columns={columns} data={data} meta={meta}/>

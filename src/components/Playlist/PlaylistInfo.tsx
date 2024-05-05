@@ -4,6 +4,7 @@ import { HeartIcon, ListMusicIcon, ClockIcon } from "lucide-react";
 
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { toDuration, toDurationString } from "@/utils/timeUtils";
 
 type PlaylistInfoProps = {
   images: { height: number; width: number; url: string }[],
@@ -13,7 +14,7 @@ type PlaylistInfoProps = {
   owner: { id: string; display_name: string },
   followers: { total: number },
   total: number,
-  duration: number,
+  duration_ms: number,
 };
 
 export default function PlaylistInfo({
@@ -24,19 +25,9 @@ export default function PlaylistInfo({
   owner,
   followers,
   total,
-  duration,
+  duration_ms,
 }: PlaylistInfoProps) {
-  const stringifyDuration = (ms: number) => {
-    const totalSeconds = Math.floor(ms / 1000);
-    const hours = Math.floor(totalSeconds / 3600);
-    const minutes = Math.floor((totalSeconds - (hours * 3600)) / 60);
-    if (hours > 0) {
-      return `${hours} hr, ${minutes} min`;
-    } else {
-      const seconds = totalSeconds - (hours * 3600) - (minutes * 60);
-      return `${minutes} min, ${seconds} sec`;
-    }
-  }
+  const duration = toDuration(duration_ms);
 
   return (
     <header className="flex m-4 gap-4">
@@ -72,7 +63,16 @@ export default function PlaylistInfo({
         </div>
         <div className="flex items-center gap-1 text-sm text-muted-foreground">
           <ClockIcon size={15} stroke="hsl(var(--muted-foreground))" />
-          <span>{stringifyDuration(duration)}</span>
+          <span>
+            {toDurationString(duration, {
+              ...(duration.hours > 0 
+                ? { hours: "short" }
+                : { seconds: "short" }
+              ),
+              minutes: "short",
+              separator: ', ',
+            })}
+          </span>
         </div>
       </div>
     </header>
