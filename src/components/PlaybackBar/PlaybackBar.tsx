@@ -2,6 +2,7 @@ import { ListMusicIcon, MonitorSpeakerIcon } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 
+import PlaybackControls from "@/components/PlaybackBar/PlaybackControls";
 import VolumeControls from "@/components/PlaybackBar/VolumeControls";
 
 import { cn } from "@/lib/utils";
@@ -9,15 +10,11 @@ import { cn } from "@/lib/utils";
 export default function PlaybackBar() {
   return (
     <footer className="flex justify-between items-center w-full p-4 border gap-8">
-      <div>
-        Currently Playing
-      </div>
-      <div>
-        Controls
-      </div>
+      <div>Currently Playing</div>
+      <PlaybackControls />
       <div className="flex justify-end items-center grow max-w-[30%]">
         <Button
-          variant="ghost" 
+          variant="ghost"
           size="icon"
           className={cn(
             "[--queue-color:--muted-foreground] hover:[--queue-color:--primary]",
@@ -38,7 +35,10 @@ export default function PlaybackBar() {
           onClick={() => {}}
           aria-label="Devices"
         >
-          <MonitorSpeakerIcon className="h-5 w-5" stroke="hsl(var(--devices-color))" />
+          <MonitorSpeakerIcon
+            className="h-5 w-5"
+            stroke="hsl(var(--devices-color))"
+          />
         </Button>
         <VolumeControls />
       </div>
