@@ -2,6 +2,7 @@ import { ListMusicIcon, MonitorSpeakerIcon } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 
+import CurrentlyPlaying from "@/components/PlaybackBar/CurrentlyPlaying";
 import PlaybackControls from "@/components/PlaybackBar/PlaybackControls";
 import VolumeControls from "@/components/PlaybackBar/VolumeControls";
 
@@ -10,7 +11,7 @@ import { cn } from "@/lib/utils";
 export default function PlaybackBar() {
   return (
     <footer className="flex justify-between items-center w-full p-4 border gap-8">
-      <div>Currently Playing</div>
+      <CurrentlyPlaying />
       <PlaybackControls />
       <div className="flex justify-end items-center grow max-w-[30%]">
         <Button
