@@ -48,7 +48,7 @@ export default function SeekSlider({
         step={1000}
         className="group-hover/seek:cursor-pointer"
       >
-        <SliderTrack className="h-1 w-1">
+        <SliderTrack className="h-1">
           <SliderRange className="group-hover/seek:bg-green-500 rounded-full" />
         </SliderTrack>
         <SliderThumb className="bg-transparent group-hover/seek:bg-primary border-none focus-visible:ring-transparent h-3 w-3" />

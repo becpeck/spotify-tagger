@@ -61,7 +61,7 @@ export default function VolumeControls() {
         max={100}
         step={1}  
       >
-        <SliderTrack>
+        <SliderTrack className="h-1">
           <SliderRange className="group-hover/volume:bg-green-500 rounded-full" />
         </SliderTrack>
         <SliderThumb className="bg-transparent group-hover/volume:bg-primary border-none focus-visible:ring-transparent h-3 w-3" />

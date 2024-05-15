@@ -42,7 +42,7 @@ export default function PlaybackControls() {
             "rounded-full hover:transform hover:scale-105 active:transform-none active:brightness-75 hover:bg-transparent"
           )}
           onClick={toggleShuffleOn}
-          aria-label={`Turn ${shuffleOn ? "off" : "on"} shuffle`}
+          aria-label={`${shuffleOn ? "Disable" : "Enable"} shuffle`}
         >
           <ShuffleIcon className="h-5 w-5" stroke="hsl(var(--shuffle-color))" />
         </Button>
