@@ -5,6 +5,8 @@ import {
 } from "@/components/ui/resizable";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
+import Header from "@/app/(player)/header";
+
 export default function PlayerLayout({
   children,
 }: Readonly<{
@@ -12,7 +14,7 @@ export default function PlayerLayout({
 }>) {
   return (
     <div className="flex flex-col h-[100vh] bg-background font-sans antialiased">
-      {/* <Header username={"username"}/> */}
+      <Header username={"username"}/>
       <ResizablePanelGroup
         direction="horizontal"
         className="h-full w-full border"
