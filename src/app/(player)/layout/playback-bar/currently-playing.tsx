@@ -10,7 +10,11 @@ import { cn } from "@/lib/utils";
 
 import playbackState from "@/data/player/PlaybackState.json";
 
-export default function CurrentlyPlaying() {
+export default function CurrentlyPlaying({
+  className,
+}: {
+  className?: string;
+}) {
   const { name, artists, id, type, album } = playbackState.item;
   const [ image ] = album.images;
 
@@ -19,7 +23,7 @@ export default function CurrentlyPlaying() {
   const toggleIsSaved = () => setIsSaved(!isSaved);
 
   return (
-    <div className="flex items-center gap-4 grow max-w-[30%]">
+    <div className={cn("flex items-center gap-4", className)}>
       {image
         ? <Image src={image.url} alt={`${album.name} cover`} width={50} height={50}/>
         : null
