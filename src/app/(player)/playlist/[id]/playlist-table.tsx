@@ -4,7 +4,7 @@ import { type ColumnDef, type RowData, type TableMeta } from "@tanstack/react-ta
 import { PlayIcon, HashIcon, ClockIcon } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import TableLink from "@/components/TrackTable/TableLink";
+import TableLink from "@/components/TableLink";
 import ActionsMenu from "@/app/(player)/playlist/[id]/actions-menu";
 import { toDurationString, toDuration } from "@/utils/timeUtils";
 import DataTable from "@/components/ui/data-table";
