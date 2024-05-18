@@ -6,6 +6,7 @@ import {
 import { ScrollArea } from "@/components/ui/scroll-area";
 
 import Header from "@/app/(player)/header";
+import Sidebar from "@/app/(player)/sidebar";
 
 export default function PlayerLayout({
   children,
@@ -20,8 +21,7 @@ export default function PlayerLayout({
         className="h-full w-full border"
       >
         <ResizablePanel defaultSize={15} minSize={10}>
-          sidebar placeholder
-          {/* <Sidebar /> */}
+          <Sidebar />
         </ResizablePanel>
         <ResizableHandle withHandle />
         <ResizablePanel defaultSize={85}>
