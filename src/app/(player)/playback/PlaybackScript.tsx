@@ -2,6 +2,9 @@
 
 import Script from "next/script";
 import { useEffect } from "react";
+import { useSetAtom } from "jotai";
+
+import { playerAtom, playerStateAtom } from "@/app/(player)/playback/playbackAtoms";
 
 declare global {
   interface Window {
@@ -13,6 +16,8 @@ declare global {
 }
 
 export default function PlaybackScript() {
+  const setPlayer = useSetAtom(playerAtom);
+  const setPlayerState = useSetAtom(playerStateAtom);
   const token = "";
 
   useEffect(() => {
@@ -34,6 +39,10 @@ export default function PlaybackScript() {
       player.addListener("player_state_changed", (state) => {
         console.log("player_state_changed");
         console.log(state);
+
+        player.getCurrentState().then(state => {
+          setPlayerState(state ? state : undefined);
+        });
       });
 
       player.addListener("autoplay_failed", () => {
@@ -63,6 +72,8 @@ export default function PlaybackScript() {
       player.activateElement().then(() => {
         console.log("activateElement");
       });
+
+      setPlayer(player);
     };
   }, []);
 
