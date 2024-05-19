@@ -26,7 +26,10 @@ export default function PlaybackBar() {
         <div className="grow max-w-[30%] flex justify-end items-center">
           <QueueButton />
           <DeviceButton />
-          <VolumeControls />
+          <VolumeControls
+            initialVolume={1}
+            setVolume={player.setVolume.bind(player)}
+          />
         </div>
       </footer>
     );
