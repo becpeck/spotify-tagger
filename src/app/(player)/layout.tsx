@@ -5,9 +5,9 @@ import {
 } from "@/components/ui/resizable";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
-import Header from "@/app/(player)/layout/header";
-import Sidebar from "@/app/(player)/layout/sidebar";
-import PlaybackBar from "@/app/(player)/layout/playback-bar";
+import Header from "@/app/(player)/Header";
+import Sidebar from "@/app/(player)/Sidebar";
+import PlaybackBar from "@/app/(player)/PlaybackBar";
 
 export default function PlayerLayout({
   children,

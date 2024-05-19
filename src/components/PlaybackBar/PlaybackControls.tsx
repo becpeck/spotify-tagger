@@ -12,7 +12,7 @@ import {
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import SeekSlider from "@/app/(player)/layout/playback-bar/seek-slider";
+import SeekSlider from "@/components/PlaybackBar/SeekSlider";
 
 import { cn } from "@/lib/utils";
 

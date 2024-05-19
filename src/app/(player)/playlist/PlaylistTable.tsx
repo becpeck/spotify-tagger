@@ -5,11 +5,11 @@ import { PlayIcon, HashIcon, ClockIcon } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import TableLink from "@/components/TableLink";
-import ActionsMenu from "@/app/(player)/playlist/[id]/actions-menu";
+import ActionsMenu from "@/app/(player)/playlist/ActionsMenu";
 import { toDurationString, toDuration } from "@/utils/timeUtils";
 import DataTable from "@/components/ui/data-table";
 
-type Data = { id: string, type: string, name: string };
+export type Data = { id: string, type: string, name: string };
 
 export type Track = {
   number: number,

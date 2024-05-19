@@ -1,6 +1,6 @@
-import PlaylistInfo from "@/app/(player)/playlist/[id]/playlist-info";
-import PlaylistControls from "@/app/(player)/playlist/[id]/playlist-controls";
-import PlaylistTable from "@/app/(player)/playlist/[id]/playlist-table";
+import PlaylistInfo from "@/app/(player)/playlist/PlaylistInfo";
+import PlaylistControls from "@/app/(player)/playlist/PlaylistControls";
+import PlaylistTable from "@/app/(player)/playlist/PlaylistTable";
 
 import playlist from "@/data/playlist/Playlist.json";
 

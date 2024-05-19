@@ -1,8 +1,8 @@
-import CurrentlyPlaying from "@/app/(player)/layout/playback-bar/currently-playing";
-import PlaybackControls from "@/app/(player)/layout/playback-bar/playback-controls";
-import QueueButton from "@/app/(player)/layout/playback-bar/queue-button";
-import DeviceButton from "@/app/(player)/layout/playback-bar/device-button";
-import VolumeControls from "@/app/(player)/layout/playback-bar/volume-controls";
+import CurrentlyPlaying from "@/components/PlaybackBar/CurrentlyPlaying";
+import PlaybackControls from "@/components/PlaybackBar/PlaybackControls";
+import QueueButton from "@/components/PlaybackBar/QueueButton";
+import DeviceButton from "@/components/PlaybackBar/DeviceButton";
+import VolumeControls from "@/components/PlaybackBar/VolumeControls";
 
 export default function PlaybackBar() {
   return (
