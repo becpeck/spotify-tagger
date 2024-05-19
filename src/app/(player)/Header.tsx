@@ -1,5 +1,6 @@
-// import React from 'react';
-import Link from 'next/link';
+"use client";
+
+import Link from "next/link";
 
 import {
   DropdownMenu,
@@ -15,10 +16,10 @@ import { cn } from "@/lib/utils";
 type HeaderProps = {
   imageUrl?: string;
   username: string;
-}
+};
 
 export default function Header({ imageUrl, username }: HeaderProps) {
-	return (
+  return (
     <header className="flex items-center pe-4 py-4">
       <nav className="flex justify-between items-center w-full">
         <Link href="/" className={cn(buttonVariants({ variant: "link" }))}>
@@ -33,9 +34,7 @@ export default function Header({ imageUrl, username }: HeaderProps) {
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuItem className="font-semibold">
-              <Link href={`/user/${username}`}>
-                {username}
-              </Link>
+              <Link href={`/user/${username}`}>{username}</Link>
             </DropdownMenuItem>
             <DropdownMenuItem className="cursor-pointer" onClick={() => {}}>
               Sign Out
@@ -44,5 +43,5 @@ export default function Header({ imageUrl, username }: HeaderProps) {
         </DropdownMenu>
       </nav>
     </header>
-	);
+  );
 }

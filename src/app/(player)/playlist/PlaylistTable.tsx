@@ -1,10 +1,13 @@
-import { type ColumnDef, type RowData } from "@tanstack/react-table";
+"use client";
+
+import { type ColumnDef, type RowData, type TableMeta } from "@tanstack/react-table";
 import { PlayIcon, HashIcon, ClockIcon } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import TableLink from "@/components/TrackTable/TableLink";
-import ActionsMenu from "@/components/TrackTable/ActionsMenu";
+import TableLink from "@/components/TableLink";
+import ActionsMenu from "@/app/(player)/playlist/ActionsMenu";
 import { toDurationString, toDuration } from "@/utils/timeUtils";
+import DataTable from "@/components/ui/data-table";
 
 export type Data = { id: string, type: string, name: string };
 
@@ -24,7 +27,7 @@ declare module '@tanstack/table-core' {
   }
 }
 
-export const columns: ColumnDef<Track>[] = [
+const columns: ColumnDef<Track>[] = [
   {
     accessorKey: "number",
     header: () => (
@@ -142,3 +145,14 @@ export const columns: ColumnDef<Track>[] = [
     },
   }
 ];
+
+type PlaylistTableProps = {
+  data: Track[],
+  meta: TableMeta<Track>,
+}
+
+export default function PlaylistTable({ data, meta }: PlaylistTableProps) {
+  return (
+    <DataTable data={data} meta={meta} columns={columns}/>
+  );
+}

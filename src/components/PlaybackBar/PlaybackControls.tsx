@@ -1,3 +1,5 @@
+"use client";
+
 import { useState } from "react";
 import {
   PlayIcon,
@@ -14,7 +16,7 @@ import SeekSlider from "@/components/PlaybackBar/SeekSlider";
 
 import { cn } from "@/lib/utils";
 
-export default function PlaybackControls() {
+export default function PlaybackControls({ className }: { className?: string }) {
   const [isPlaying, setIsPlaying] = useState(false);
   const [shuffleOn, setShuffleOn] = useState(false);
   const [repeatState, setRepeatState] = useState<"off" | "context" | "track">("off");
@@ -30,7 +32,7 @@ export default function PlaybackControls() {
   );
 
   return (
-    <div className="flex flex-col items-center gap-2 grow max-w-[40%]">
+    <div className={cn("flex flex-col items-center gap-2", className)}>
       <div className="flex justify-center items-center gap-2">
         <Button
           variant="ghost"

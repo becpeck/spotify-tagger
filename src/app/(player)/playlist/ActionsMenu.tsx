@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import { DotsHorizontalIcon } from "@radix-ui/react-icons";
 import { 
@@ -26,7 +28,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
-import { type Data } from "@/components/TrackTable/playlistColumns";
+import { type Data } from "@/app/(player)/playlist/PlaylistTable";
 
 type ActionsMenuProps = {
   album: Data,
