@@ -1,0 +1,84 @@
+"use client";
+
+import Script from "next/script";
+import { useEffect } from "react";
+
+declare global {
+  interface Window {
+    Spotify: {
+      Player: SpotifyPlayerConstructor;
+    };
+    onSpotifyWebPlaybackSDKReady: undefined | (() => void);
+  }
+}
+
+export default function PlaybackScript() {
+  const token = "";
+
+  useEffect(() => {
+    window.onSpotifyWebPlaybackSDKReady = async () => {
+      const player = new window.Spotify.Player({
+        name: "Spotify Tagger",
+        getOAuthToken: (cb: (token: string) => void) => cb(token),
+        volume: 1,
+      });
+
+      player.addListener("ready", ({ device_id }) => {
+        console.log("ready: Device ID", device_id);
+      });
+
+      player.addListener("not_ready", ({ device_id }) => {
+        console.log("not_ready: Device ID has gone offline", device_id);
+      });
+
+      player.addListener("player_state_changed", (state) => {
+        console.log("player_state_changed");
+        console.log(state);
+      });
+
+      player.addListener("autoplay_failed", () => {
+        console.log("autoplay_failed");
+      });
+
+      player.addListener("initialization_error", ({ message }) => {
+        console.log("initialization_error", message);
+      });
+
+      player.addListener("authentication_error", ({ message }) => {
+        console.log("authentication_error", message);
+      });
+
+      player.addListener("account_error", ({ message }) => {
+        console.log("account_error", message);
+      });
+
+      player.addListener("playback_error", ({ message }) => {
+        console.log("playback_error", message);
+      });
+
+      player.connect().then((success) => {
+        console.log("connect success", success);
+      });
+
+      player.activateElement().then(() => {
+        console.log("activateElement");
+      });
+    };
+  }, []);
+
+  return (
+    <Script
+      src="https://sdk.scdn.co/spotify-player.js"
+      async={true}
+      onLoad={() => {
+        console.log("Spotify Web Playback SDK ** LOADED **");
+      }}
+      onReady={() => {
+        console.log("Spotify Web Playback SDK ** READY **");
+      }}
+      onError={() => {
+        console.error("Spotify Web Playback SDK ** ERROR **");
+      }}
+    />
+  );
+}
