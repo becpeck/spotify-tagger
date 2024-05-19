@@ -96,7 +96,12 @@ interface WebPlaybackTrack {
   album: {
     uri: string;
     name: string;
-    images: Array<{ url: string }>;
+    images: Array<{
+      height: number;
+      size: string;
+      url: string
+      width: number;
+    }>;
   };
   artists: Array<{ uri: string, name: string }>;
 }
