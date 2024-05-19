@@ -40,19 +40,18 @@ export default function CurrentlyPlaying({
         </Link>
         <div className="text-muted-foreground text-xs">
           {artists.map(({ id, name, type }, i) => (
-            <>
-              {i > 0 ? ", " : null}
+            <span key={id}>
               <Link
                 href={`/${type}/${id}`}
                 className={cn(
                   buttonVariants({ variant: "link" }),
                   "p-0 justify-start h-auto text-muted-foreground text-xs hover:text-primary"
                 )}
-                key={id}
               >
                 {name}
               </Link>
-            </>
+              {i < artists.length - 1 ? ", " : null}
+            </span>
           ))}
         </div>
       </div>
