@@ -36,11 +36,7 @@ interface SpotifyPlayer {
 interface PlayerEventMap extends PlayerErrorMap {
   "ready": WebPlaybackPlayer;
   "not_ready": WebPlaybackPlayer;
-  "player_state_changed": {
-    position: number,
-    duration: number,
-    track_window: { current_track: WebPlaybackTrack }
-  };
+  "player_state_changed": WebPlaybackState;
   "autoplay_failed": null;
 }
 
@@ -74,10 +70,17 @@ interface WebPlaybackState {
     seeking: boolean | undefined;
     skipping_next: boolean | undefined;
     skipping_prev: boolean | undefined;
+    toggling_repeat_context: boolean | undefined;
+    toggling_repeat_track: boolean | undefined;
+    toggling_shuffle: boolean | undefined;
+    undefined: boolean | undefined;
   };
+  duration: number;
+  loading: boolean;
   paused: boolean;
+  playback_speed: number;
   position: number;
-  repeatMode: number;
+  repeat_mode: number;
   shuffle: boolean;
   track_window: {
     current_track: WebPlaybackTrack;

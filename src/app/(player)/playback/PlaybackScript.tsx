@@ -40,9 +40,7 @@ export default function PlaybackScript() {
         console.log("player_state_changed");
         console.log(state);
 
-        player.getCurrentState().then(state => {
-          setPlayerState(state ? state : undefined);
-        });
+        setPlayerState(state ? state : undefined);
       });
 
       player.addListener("autoplay_failed", () => {

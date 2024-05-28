@@ -22,7 +22,16 @@ export default function PlaybackBar() {
           className="grow max-w-[30%]"
           currentTrack={playerState.track_window.current_track}
         />
-        <PlaybackControls className="grow max-w-[40%]"/>
+        <PlaybackControls
+          className="grow max-w-[40%]"
+          player={{
+            togglePlay: player.togglePlay.bind(player),
+            nextTrack: player.nextTrack.bind(player),
+            previousTrack: player.previousTrack.bind(player),
+            seek: player.seek.bind(player),
+          }}
+          playerState={playerState}
+        />
         <div className="grow max-w-[30%] flex justify-end items-center">
           <QueueButton />
           <DeviceButton />

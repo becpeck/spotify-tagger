@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Slider,
   SliderTrack,
@@ -14,15 +14,33 @@ import {
 } from "@/utils/timeUtils";
 
 type SeekSliderProps = {
-  duration_ms: number,
-  current_ms: number,
+  disabled: WebPlaybackState["disallows"]["seeking"];
+  duration_ms: WebPlaybackState["duration"];
+  paused: WebPlaybackState["paused"];
+  position_ms: WebPlaybackState["position"];
+  seek: SpotifyPlayer["seek"];
 };
 
-export default function SeekSlider({
-  duration_ms,
-  current_ms,
-}: SeekSliderProps) {
+export default function SeekSlider(props: SeekSliderProps) {
+  const { disabled, duration_ms, paused, position_ms, seek } = props;
+
+  const [ position, setPosition ] = useState(position_ms);
+
+  useEffect(() => {
+    let interval: NodeJS.Timer | undefined;
+    if (!paused) {
+      interval = setInterval(() => {
+        setPosition(p => p + 1000);
+      }, 1000);
+    } else {
+      clearInterval(interval);
+      setPosition(position_ms);
+    }
+    return () => clearInterval(interval);
+  }, [paused, position_ms]);
+
   const duration = toDuration(duration_ms);
+  
   const durationFormat: DurationFormat = {
     ...(duration.hours > 0
       ? { hours: "numeric", minutes: "2-digit" }
@@ -30,24 +48,21 @@ export default function SeekSlider({
     separator: ":",
   };
 
-  const [seekPosition, setSeekPosition] = useState(current_ms);
+  const handleChangeSeekPosition = ([value]: number[]) => setPosition(value!);
 
-  const handleChangeSeekPosition = ([value]: number[]) => setSeekPosition(value!);
-
-  const handleCommitSeekPosition = ([value]: number[]) => {
-    // api call
-  };
+  const handleCommitSeekPosition = async ([value]: number[]) => await seek(value!);
 
   return (
     <div className="flex justify-between items-center gap-2 group/seek w-full text-muted-foreground text-xs h-full">
-      <div>{toDurationString(seekPosition, durationFormat)}</div>
+      <div>{toDurationString(position, durationFormat)}</div>
       <Slider
-        value={[seekPosition]}
+        value={[position]}
         onValueChange={handleChangeSeekPosition}
         onValueCommit={handleCommitSeekPosition}
         min={0}
         max={duration_ms}
         step={1000}
+        disabled={disabled}
         className="group-hover/seek:cursor-pointer"
       >
         <SliderTrack className="h-1">
