@@ -8,15 +8,19 @@ import { CheckIcon, PlusIcon } from "lucide-react";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
-import playbackState from "@/data/player/PlaybackState.json";
-
 export default function CurrentlyPlaying({
   className,
+  currentTrack,
 }: {
   className?: string;
+  currentTrack: WebPlaybackState["track_window"]["current_track"];
 }) {
-  const { name, artists, id, type, album } = playbackState.item;
-  const [ image ] = album.images;
+  const { name, id, type, album } = currentTrack;
+  const [image] = album.images.sort((a, b) => a.height - b.height);
+  const artists = currentTrack.artists.map(({ name, uri }) => {
+    const [_, type, id] = uri.split(":");
+    return { id: id!, name, type: type! };
+  });
 
   const [isSaved, setIsSaved] = useState(false);
 
@@ -24,8 +28,13 @@ export default function CurrentlyPlaying({
 
   return (
     <div className={cn("flex items-center gap-4", className)}>
-      {image
-        ? <Image src={image.url} alt={`${album.name} cover`} width={50} height={50}/>
+      {image 
+        ? <Image
+            src={image.url}
+            alt={`${album.name} cover`}
+            width={50}
+            height={50}
+          />
         : null
       }
       <div className="flex flex-col gap-1 shrink min-w-0">
@@ -40,19 +49,18 @@ export default function CurrentlyPlaying({
         </Link>
         <div className="text-muted-foreground text-xs">
           {artists.map(({ id, name, type }, i) => (
-            <>
-              {i > 0 ? ", " : null}
+            <span key={id}>
               <Link
                 href={`/${type}/${id}`}
                 className={cn(
                   buttonVariants({ variant: "link" }),
                   "p-0 justify-start h-auto text-muted-foreground text-xs hover:text-primary"
                 )}
-                key={id}
               >
                 {name}
               </Link>
-            </>
+              {i < artists.length - 1 ? ", " : null}
+            </span>
           ))}
         </div>
       </div>

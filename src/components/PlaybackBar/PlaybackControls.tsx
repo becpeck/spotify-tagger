@@ -16,20 +16,19 @@ import SeekSlider from "@/components/PlaybackBar/SeekSlider";
 
 import { cn } from "@/lib/utils";
 
-export default function PlaybackControls({ className }: { className?: string }) {
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [shuffleOn, setShuffleOn] = useState(false);
-  const [repeatState, setRepeatState] = useState<"off" | "context" | "track">("off");
+type PlaybackControlsProps = {
+  className?: string;
+  player: {
+    togglePlay: SpotifyPlayer["togglePlay"];
+    nextTrack: SpotifyPlayer["nextTrack"];
+    previousTrack: SpotifyPlayer["previousTrack"];
+    seek: SpotifyPlayer["seek"];
+  };
+  playerState: WebPlaybackState;
+};
 
-  const toggleIsPlaying = () => setIsPlaying(!isPlaying);
-  const toggleShuffleOn = () => setShuffleOn(!shuffleOn);
-  const updateRepeatState = () => setRepeatState(
-    repeatState === "off" 
-      ? "context" 
-      : (repeatState === "context" 
-        ? "track" 
-        : "off")
-  );
+export default function PlaybackControls(props: PlaybackControlsProps) {
+  const { className, player, playerState } = props;
 
   return (
     <div className={cn("flex flex-col items-center gap-2", className)}>
@@ -38,13 +37,14 @@ export default function PlaybackControls({ className }: { className?: string }) 
           variant="ghost"
           size="icon"
           className={cn(
-            shuffleOn
+            playerState.shuffle
               ? "[--shuffle-color:--green]"
               : "[--shuffle-color:--muted-foreground] hover:[--shuffle-color:--primary]",
             "rounded-full hover:transform hover:scale-105 active:transform-none active:brightness-75 hover:bg-transparent"
           )}
-          onClick={toggleShuffleOn}
-          aria-label={`${shuffleOn ? "Disable" : "Enable"} shuffle`}
+          disabled={playerState.disallows.toggling_shuffle}
+          onClick={() => {}}
+          aria-label={`${playerState.shuffle ? "Disable" : "Enable"} shuffle`}
         >
           <ShuffleIcon className="h-5 w-5" stroke="hsl(var(--shuffle-color))" />
         </Button>
@@ -55,7 +55,8 @@ export default function PlaybackControls({ className }: { className?: string }) 
             "[--back-color:--muted-foreground] hover:[--back-color:--primary]",
             "rounded-full hover:transform hover:scale-105 active:transform-none active:brightness-75 hover:bg-transparent"
           )}
-          onClick={() => {}}
+          disabled={playerState.disallows.skipping_prev}
+          onClick={async () => await player.previousTrack()}
           aria-label="Skip Back"
         >
           <SkipBackIcon
@@ -68,16 +69,17 @@ export default function PlaybackControls({ className }: { className?: string }) 
           variant="default"
           size="icon"
           className="rounded-full bg-green-500 hover:bg-green-500 h-10 w-10 hover:transform hover:scale-105 active:transform-none active:brightness-75"
-          onClick={toggleIsPlaying}
-          aria-label={isPlaying ? `Pause ${""}` : `Play ${""}`}
+          disabled={playerState.paused ? playerState.disallows.resuming : playerState.disallows.pausing}
+          onClick={async () => await player.togglePlay()}
+          aria-label={playerState.paused ? "Play" : "Pause"}
         >
-          {isPlaying
-            ? <PauseIcon
+          {playerState.paused
+            ? <PlayIcon
                 className="h-5 w-5"
                 stroke="hsl(var(--background))"
                 fill="hsl(var(--background))"
               />
-            : <PlayIcon
+            : <PauseIcon
                 className="h-5 w-5"
                 stroke="hsl(var(--background))"
                 fill="hsl(var(--background))"
@@ -91,7 +93,8 @@ export default function PlaybackControls({ className }: { className?: string }) 
             "[--forward-color:--muted-foreground] hover:[--forward-color:--primary]",
             "rounded-full hover:transform hover:scale-105 active:transform-none active:brightness-75 hover:bg-transparent"
           )}
-          onClick={() => {}}
+          disabled={playerState.disallows.skipping_next}
+          onClick={async () => await player.nextTrack()}
           aria-label="Skip Forward"
         >
           <SkipForwardIcon
@@ -104,24 +107,31 @@ export default function PlaybackControls({ className }: { className?: string }) 
           variant="ghost"
           size="icon"
           className={cn(
-            repeatState === "off"
+            playerState.repeat_mode === 0
               ? "[--repeat-color:--muted-foreground] hover:[--repeat-color:--primary]"
               : "[--repeat-color:--green]",
             "rounded-full hover:transform hover:scale-105 active:transform-none active:brightness-75 hover:bg-transparent"
           )}
-          onClick={updateRepeatState}
-          aria-label={repeatState === "track"
+          disabled={playerState.disallows.toggling_repeat_context || playerState.disallows.toggling_repeat_track}
+          onClick={() => {}}
+          aria-label={playerState.repeat_mode === 2
             ? "Turn off repeat"
-            : `Set repeat to ${repeatState === "off" ? "context" : "track"}`
+            : `Set repeat to ${playerState.repeat_mode === 0 ? "context" : "track"}`
           }
         >
-          {repeatState === "track"
+          {playerState.repeat_mode === 2
             ? <Repeat1Icon className="h-5 w-5" stroke="hsl(var(--repeat-color))"/>
             : <RepeatIcon className="h-5 w-5" stroke="hsl(var(--repeat-color))" />
           }
         </Button>
       </div>
-      <SeekSlider current_ms={100000} duration_ms={202000} />
+      <SeekSlider
+        disabled={playerState.disallows.seeking}
+        duration_ms={playerState.duration}
+        paused={playerState.paused}
+        position_ms={playerState.position}
+        seek={player.seek.bind(player)}
+      />
     </div>
   );
 }

@@ -3,38 +3,47 @@
 import { useState } from "react";
 import { Volume1Icon, Volume2Icon, VolumeXIcon } from "lucide-react";
 
-import { Slider, SliderTrack, SliderRange, SliderThumb } from "@/components/ui/slider";
+import {
+  Slider,
+  SliderTrack,
+  SliderRange,
+  SliderThumb,
+} from "@/components/ui/slider";
 import { Button } from "@/components/ui/button";
 
 import { cn } from "@/lib/utils";
 
-export default function VolumeControls() {
-  const [previousVolumeLevel, setPreviousVolumeLevel] = useState(35);
-  const [volumeLevel, setVolumeLevel] = useState(35);
+export default function VolumeControls({
+  initialVolume,
+  setVolume,
+}: {
+  initialVolume: number;
+  setVolume: SpotifyPlayer["setVolume"];
+}) {
+  const [previousVolumeLevel, setPreviousVolumeLevel] = useState(initialVolume);
+  const [volumeLevel, setVolumeLevel] = useState(initialVolume);
 
-  const mute = () => {
+  const mute = async () => {
     setPreviousVolumeLevel(volumeLevel);
     setVolumeLevel(0);
-    // api call
-  }
+    await setVolume(0);
+  };
 
-  const unMute = () => {
+  const unMute = async () => {
     setVolumeLevel(previousVolumeLevel);
-    // api call
-  }
+    await setVolume(previousVolumeLevel);
+  };
 
-  const handleVolumeChange = ([ value ]: number[]) => {
+  const handleVolumeChange = async ([value]: number[]) => {
     setVolumeLevel(value!);
-  }
+    await setVolume(value!);
+  };
 
-  const handleVolumeCommit = ([ value ]: number[]) => {
-    if (value === 0) {
-      setVolumeLevel(0);
-    } else {
+  const handleVolumeCommit = ([value]: number[]) => {
+    if (value! !== 0) {
       setPreviousVolumeLevel(value!);
     }
-    // api call
-  }
+  };
 
   return (
     <div className="flex items-center group/volume basis-56 shrink">
@@ -50,7 +59,7 @@ export default function VolumeControls() {
       >
         {volumeLevel === 0
           ? <VolumeXIcon className="h-5 w-5" stroke="hsl(var(--volume-color))"/>
-          : volumeLevel < 51 
+          : volumeLevel < 0.51 
             ? <Volume1Icon className="h-5 w-5" stroke="hsl(var(--volume-color))"/>
             : <Volume2Icon className="h-5 w-5" stroke="hsl(var(--volume-color))"/>
         }
@@ -60,8 +69,8 @@ export default function VolumeControls() {
         onValueChange={handleVolumeChange}
         onValueCommit={handleVolumeCommit}
         min={0}
-        max={100}
-        step={1}  
+        max={1}
+        step={0.01}
       >
         <SliderTrack className="h-1">
           <SliderRange className="group-hover/volume:bg-green-500 rounded-full" />

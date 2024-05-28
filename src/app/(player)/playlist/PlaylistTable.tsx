@@ -62,16 +62,17 @@ const columns: ColumnDef<Track>[] = [
     cell: ({ row }) => {
       const artists = row.getValue("artists") satisfies Data[];
       return (
-        <div>
+        <div className="text-muted-foreground group-hover/row:text-primary">
           {artists.map(({ id, name, type }, i) => (
-            <>
-              {i > 0 ? ', ' : null}
-              <TableLink 
-                key={id} 
+            <span key={id}>
+              <TableLink
                 href={`/${type}/${id}`}
                 className="text-muted-foreground group-hover/row:text-primary"
-              >{name}</TableLink>
-            </>
+              >
+                {name}
+              </TableLink>
+              {i < artists.length - 1 ? ", " : null}
+            </span>
           ))}
         </div>
       );

@@ -1,7 +1,7 @@
 import { type Metadata } from "next";
 import { Inter } from "next/font/google";
 import "@/styles/globals.css";
-import { ThemeProvider } from "@/app/ThemeProvider";
+import { Providers } from "@/app/Providers";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -20,9 +20,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body className={`font-sans ${inter.variable}`}>
-        <ThemeProvider>{children}</ThemeProvider>
+        <Providers>{children}</Providers>
       </body>
     </html>
   );

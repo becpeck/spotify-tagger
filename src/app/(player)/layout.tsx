@@ -8,6 +8,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import Header from "@/app/(player)/Header";
 import Sidebar from "@/app/(player)/Sidebar";
 import PlaybackBar from "@/app/(player)/PlaybackBar";
+import PlaybackScript from "@/app/(player)/playback/PlaybackScript";
 
 export default function PlayerLayout({
   children,
@@ -30,6 +31,7 @@ export default function PlayerLayout({
         </ResizablePanel>
       </ResizablePanelGroup>
       <PlaybackBar />
+      <PlaybackScript />
     </div>
   );
 }
