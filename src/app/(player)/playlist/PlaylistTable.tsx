@@ -133,7 +133,7 @@ const columns: ColumnDef<Track>[] = [
     cell: ({ row, table }) => {
       const { album, artists, track } = row.original;
       const playlist = table.options.meta!.playlist!;
-      const userPlaylists = table.options.meta!.userPlaylists!;
+      const userPlaylists = table.options.meta!.userPlaylists;
       return (
         <ActionsMenu 
           artists={artists}

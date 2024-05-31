@@ -11,7 +11,7 @@ declare global {
     Spotify: {
       Player: SpotifyPlayerConstructor;
     };
-    onSpotifyWebPlaybackSDKReady: undefined | (() => void);
+    onSpotifyWebPlaybackSDKReady: undefined | (() => Promise<void>);
   }
 }
 
@@ -63,13 +63,13 @@ export default function PlaybackScript() {
         console.log("playback_error", message);
       });
 
-      player.connect().then((success) => {
-        console.log("connect success", success);
-      });
+      player.connect()
+        .then((success) => console.log("connect success", success))
+        .catch(err => console.error("connect failed", err));
 
-      player.activateElement().then(() => {
-        console.log("activateElement");
-      });
+      player.activateElement()
+        .then(() => console.log("activateElement"))
+        .catch(err => console.error(err));
 
       setPlayer(player);
     };
