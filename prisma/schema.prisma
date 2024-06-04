@@ -1,8 +1,10 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
-generator client {
-  provider = "prisma-client-js"
+generator kysely {
+  provider    = "prisma-kysely"
+  output      = "../src/db"
+  readOnlyIds = true
 }
 
 datasource db {
@@ -11,7 +13,6 @@ datasource db {
 }
 
 model Account {
-  id                 String   @id @default(cuid())
   userId             String
   type               String
   provider           String
@@ -21,30 +22,38 @@ model Account {
   expires_at         Int
   token_type         String
   scope              String
+  id_token           String?
+  session_state      String?
 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt @default(now())
 
-  @@unique([provider, providerAccountId])
+  user               User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([provider, providerAccountId])
 }
 
 model Session {
-  id           String   @id @default(cuid())
-  sessionToken String   @unique
-  userId       String
-  expires      DateTime
-  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  sessionToken  String    @unique
+  userId        String
+  expires       DateTime
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model User {
-  id            String    @id @default(cuid())
-  name          String?
-  email         String?   @unique
-  emailVerified DateTime?
-  image         String?
-  accounts      Account[]
-  sessions      Session[]
+  id             String     @id @default(dbgenerated("gen_random_uuid()"))
+  name           String
+  email          String     @unique
+  emailVerified  DateTime?
+  image          String?
+  accounts       Account[]
+  sessions       Session[]
+
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt @default(now())
 }
 
+// Not used, not expected to be used, NextAuth wants it for KyselyAuth adapter type checking
 model VerificationToken {
   identifier String
   token      String   @unique
