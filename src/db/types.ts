@@ -26,10 +26,22 @@ export type Session = {
 };
 export type User = {
   id: GeneratedAlways<string>;
+  spotifyId: string;
   name: string;
   email: string;
   emailVerified: Timestamp | null;
-  image: string | null;
+  /**
+   * @kyselyType({ url: string, height: number, width: number })
+   */
+  images: { url: string; height: number; width: number }[];
+  followers: number;
+  country: string;
+  /**
+   * @kyselyType("premium" | "free" | "open")
+   */
+  product: "premium" | "free" | "open";
+  explicitFiltered: boolean;
+  explicitLocked: boolean;
   createdAt: Generated<Timestamp>;
   updatedAt: Generated<Timestamp>;
 };

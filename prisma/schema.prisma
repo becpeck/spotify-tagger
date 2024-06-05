@@ -41,23 +41,31 @@ model Session {
 }
 
 model User {
-  id             String     @id @default(dbgenerated("gen_random_uuid()"))
-  name           String
-  email          String     @unique
-  emailVerified  DateTime?
-  image          String?
-  accounts       Account[]
-  sessions       Session[]
+  id                String     @id @default(dbgenerated("gen_random_uuid()"))
+  spotifyId         String     @unique
+  name              String
+  email             String     @unique
+  emailVerified     DateTime?
+  /// @kyselyType({ url: string, height: number, width: number })
+  images            Json[]
+  followers         Int
+  country           String
+  /// @kyselyType("premium" | "free" | "open")
+  product           String
+  explicitFiltered  Boolean
+  explicitLocked    Boolean
+  accounts          Account[]
+  sessions          Session[]
 
-  createdAt      DateTime   @default(now())
-  updatedAt      DateTime   @updatedAt @default(now())
+  createdAt         DateTime   @default(now())
+  updatedAt         DateTime   @updatedAt @default(now())
 }
 
 // Not used, not expected to be used, NextAuth wants it for KyselyAuth adapter type checking
 model VerificationToken {
-  identifier String
-  token      String   @unique
-  expires    DateTime
+  identifier  String
+  token       String    @unique
+  expires     DateTime 
 
   @@unique([identifier, token])
 }
