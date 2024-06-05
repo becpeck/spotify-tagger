@@ -15,10 +15,13 @@ declare global {
   }
 }
 
-export default function PlaybackScript() {
+interface PlaybackScriptProps {
+  token: string;
+};
+
+export default function PlaybackScript({ token }: PlaybackScriptProps) {
   const setPlayer = useSetAtom(playerAtom);
   const setPlayerState = useSetAtom(playerStateAtom);
-  const token = "";
 
   useEffect(() => {
     window.onSpotifyWebPlaybackSDKReady = async () => {
@@ -73,6 +76,7 @@ export default function PlaybackScript() {
 
       setPlayer(player);
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

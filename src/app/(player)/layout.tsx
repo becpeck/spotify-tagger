@@ -1,3 +1,6 @@
+import { redirect } from "next/navigation";
+import { auth } from "@/auth/auth";
+
 import {
   ResizableHandle,
   ResizablePanel,
@@ -10,14 +13,19 @@ import Sidebar from "@/app/(player)/Sidebar";
 import PlaybackBar from "@/app/(player)/PlaybackBar";
 import PlaybackScript from "@/app/(player)/playback/PlaybackScript";
 
-export default function PlayerLayout({
+export default async function PlayerLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const session = await auth();
+  if (!session || !session.user) {
+    redirect("/login")
+  }
+
   return (
     <div className="flex flex-col h-[100vh] bg-background font-sans antialiased">
-      <Header username={"username"}/>
+      <Header session={session}/>
       <ResizablePanelGroup
         direction="horizontal"
         className="h-full w-full border"
@@ -31,7 +39,7 @@ export default function PlayerLayout({
         </ResizablePanel>
       </ResizablePanelGroup>
       <PlaybackBar />
-      <PlaybackScript />
+      <PlaybackScript token={session.access_token} />
     </div>
   );
 }
