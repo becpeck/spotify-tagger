@@ -2,7 +2,7 @@ import NextAuth, { type NextAuthConfig, type DefaultSession } from "next-auth";
 import Spotify, { type SpotifyProfile } from "@/server/auth/spotifyProvider";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import { db } from "@/server/db";
-import authClient from "@/server/auth/authClient";
+import spotifyAuthClient from "@/server/auth/spotifyAuthClient";
 
 declare module "next-auth" {
   interface Session {
@@ -38,20 +38,18 @@ const config: NextAuthConfig = {
   providers: [Spotify],
   callbacks: {
     session: async ({ session, user }) => {
-      console.log(`===== SESSION() CALLBACK =====`);
+      // Add access token to session, refresh access token if expired
       const spotifyAccount = await db.account.findFirstOrThrow({
         where: {
           userId: user.id,
           provider: "spotify",
         }
       });
-
       session.access_token = spotifyAccount.access_token;
 
       if (spotifyAccount.expires_at * 1000 < Date.now()) {
-        console.log(`===== REFRESHING ACCESS TOKEN =====`);
         try {
-          const res = await authClient.refreshToken({
+          const res = await spotifyAuthClient.refreshToken({
             grant_type: "refresh_token",
             refresh_token: spotifyAccount.refresh_token,
           });
@@ -77,7 +75,7 @@ const config: NextAuthConfig = {
       return session;
     },
     signIn: async ({ user, profile }) => {
-      // Keep db spotify profile data in sync with spotify auth result
+      // Keep db profile data in sync with spotify auth profile
       if (profile) {
         await db.user.update({
           where: { id: user.id! },
