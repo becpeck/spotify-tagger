@@ -44,10 +44,10 @@ const refreshToken = makeEndpoint({
   }),
 });
 
-const authApi = apiBuilder().addEndpoint(refreshToken).build();
+const spotifyAuthApi = apiBuilder().addEndpoint(refreshToken).build();
 
-const authClient = new Zodios(API_BASE_URL, authApi);
-authClient.use("refreshToken", formURLPlugin());
-authClient.use("refreshToken", basicAuthorizationPlugin);
+const spotifyAuthClient = new Zodios(API_BASE_URL, spotifyAuthApi);
+spotifyAuthClient.use("refreshToken", formURLPlugin());
+spotifyAuthClient.use("refreshToken", basicAuthorizationPlugin);
 
-export default authClient;
+export default spotifyAuthClient;
