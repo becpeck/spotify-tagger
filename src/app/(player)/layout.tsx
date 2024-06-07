@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { auth } from "@/auth/auth";
+import { auth } from "@/server/auth/auth";
 
 import {
   ResizableHandle,

@@ -1,6 +1,6 @@
 import Spotify from "next-auth/providers/spotify";
 
-interface SpotifyProfile {
+export interface SpotifyProfile {
   id: string;
   display_name: string;
   email: string;
