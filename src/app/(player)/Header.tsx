@@ -1,6 +1,8 @@
 "use client";
 
 import Link from "next/link";
+import { type Session } from "next-auth";
+import { signOut } from "next-auth/react";
 
 import {
   DropdownMenu,
@@ -13,12 +15,13 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 import { cn } from "@/lib/utils";
 
-type HeaderProps = {
-  imageUrl?: string;
-  username: string;
-};
+interface HeaderProps {
+  session: Session;
+}
 
-export default function Header({ imageUrl, username }: HeaderProps) {
+export default function Header({ session }: HeaderProps) {
+  const { name, spotifyId, images } = session.user;
+
   return (
     <header className="flex items-center pe-4 py-4">
       <nav className="flex justify-between items-center w-full">
@@ -27,16 +30,19 @@ export default function Header({ imageUrl, username }: HeaderProps) {
         </Link>
         <DropdownMenu>
           <DropdownMenuTrigger className="rounded-full group">
-            <Avatar className="border-2 group-hover:border-zinc-500">
-              <AvatarImage src={imageUrl} />
-              <AvatarFallback>{username[0]?.toUpperCase()}</AvatarFallback>
+            <Avatar className="">
+              <AvatarImage src={images[0]?.url} />
+              <AvatarFallback>{name[0]?.toUpperCase()}</AvatarFallback>
             </Avatar>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuItem className="font-semibold">
-              <Link href={`/user/${username}`}>{username}</Link>
+              <Link href={`/user/${spotifyId}`}>{name}</Link>
             </DropdownMenuItem>
-            <DropdownMenuItem className="cursor-pointer" onClick={() => {}}>
+            <DropdownMenuItem
+              className="cursor-pointer"
+              onClick={() => signOut()}
+            >
               Sign Out
             </DropdownMenuItem>
           </DropdownMenuContent>

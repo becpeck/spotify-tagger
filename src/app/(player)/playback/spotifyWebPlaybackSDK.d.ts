@@ -7,15 +7,13 @@ interface SpotifyPlayerConstructorOptions {
   enableMediaSession?: boolean;
 };
 
-interface SpotifyPlayerConstructor {
-  new (options: SpotifyPlayerConstructorOptions): SpotifyPlayer
-};
+type SpotifyPlayerConstructor = new (options: SpotifyPlayerConstructorOptions) => SpotifyPlayer;
 
 interface SpotifyPlayer {
   connect: () => Promise<boolean>;
   disconnect: () => void;
-  addListener: <K extends keyof PlayerEventMap>(type: K, listener: (ev: PlayerEventMap[K]) => any) => boolean;
-  removeListener: <K extends keyof PlayerEventMap>(type: K, listener?: (ev: PlayerEventMap[K]) => any) => boolean;
+  addListener: <K extends keyof PlayerEventMap>(type: K, listener: (ev: PlayerEventMap[K]) => unknown) => boolean;
+  removeListener: <K extends keyof PlayerEventMap>(type: K, listener?: (ev: PlayerEventMap[K]) => unknown) => boolean;
   on: SpotifyPlayer["addListener"];
   getCurrentState: () => Promise<WebPlaybackState | null>;
   setName: (name: string) => Promise<void>;
@@ -60,7 +58,7 @@ interface WebPlaybackPlayer {
 interface WebPlaybackState {
   context: {
     uri: string | null;
-    metadata: { [key: string]: any } | null;
+    metadata: Record<string, unknown> | null;
   };
   disallows: {
     pausing: boolean | undefined;

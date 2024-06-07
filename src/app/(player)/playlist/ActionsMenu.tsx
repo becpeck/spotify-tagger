@@ -116,7 +116,7 @@ export default function ActionsMenu({
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <DropdownMenuItem className="flex gap-2" onClick={() => {navigator.clipboard.writeText(`https://open.spotify.com/${track.type}/${track.id}`)}}>
+          <DropdownMenuItem className="flex gap-2" onClick={async () => {await navigator.clipboard.writeText(`https://open.spotify.com/${track.type}/${track.id}`)}}>
             <CopyIcon size={18} />
             Copy Song Link
           </DropdownMenuItem>

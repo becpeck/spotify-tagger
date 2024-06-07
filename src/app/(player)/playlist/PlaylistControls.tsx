@@ -159,8 +159,8 @@ export default function PlaylistControls({ playlist }: PlaylistControlsProps) {
           <DropdownMenuGroup>
             <DropdownMenuItem
               className="flex gap-2"
-              onClick={() => {
-                navigator.clipboard.writeText(
+              onClick={async () => {
+                await navigator.clipboard.writeText(
                   `https://open.spotify.com/${playlist.type}/${playlist.id}`
                 );
               }}

@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import {
   PlayIcon,
   PauseIcon,
@@ -43,7 +42,7 @@ export default function PlaybackControls(props: PlaybackControlsProps) {
             "rounded-full hover:transform hover:scale-105 active:transform-none active:brightness-75 hover:bg-transparent"
           )}
           disabled={playerState.disallows.toggling_shuffle}
-          onClick={() => {}}
+          // onClick={() => {}}
           aria-label={`${playerState.shuffle ? "Disable" : "Enable"} shuffle`}
         >
           <ShuffleIcon className="h-5 w-5" stroke="hsl(var(--shuffle-color))" />
@@ -113,7 +112,7 @@ export default function PlaybackControls(props: PlaybackControlsProps) {
             "rounded-full hover:transform hover:scale-105 active:transform-none active:brightness-75 hover:bg-transparent"
           )}
           disabled={playerState.disallows.toggling_repeat_context || playerState.disallows.toggling_repeat_track}
-          onClick={() => {}}
+          // onClick={() => {}}
           aria-label={playerState.repeat_mode === 2
             ? "Turn off repeat"
             : `Set repeat to ${playerState.repeat_mode === 0 ? "context" : "track"}`

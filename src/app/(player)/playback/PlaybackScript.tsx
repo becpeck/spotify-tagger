@@ -11,14 +11,17 @@ declare global {
     Spotify: {
       Player: SpotifyPlayerConstructor;
     };
-    onSpotifyWebPlaybackSDKReady: undefined | (() => void);
+    onSpotifyWebPlaybackSDKReady: undefined | (() => Promise<void>);
   }
 }
 
-export default function PlaybackScript() {
+interface PlaybackScriptProps {
+  token: string;
+};
+
+export default function PlaybackScript({ token }: PlaybackScriptProps) {
   const setPlayer = useSetAtom(playerAtom);
   const setPlayerState = useSetAtom(playerStateAtom);
-  const token = "";
 
   useEffect(() => {
     window.onSpotifyWebPlaybackSDKReady = async () => {
@@ -63,16 +66,17 @@ export default function PlaybackScript() {
         console.log("playback_error", message);
       });
 
-      player.connect().then((success) => {
-        console.log("connect success", success);
-      });
+      player.connect()
+        .then((success) => console.log("connect success", success))
+        .catch(err => console.error("connect failed", err));
 
-      player.activateElement().then(() => {
-        console.log("activateElement");
-      });
+      player.activateElement()
+        .then(() => console.log("activateElement"))
+        .catch(err => console.error(err));
 
       setPlayer(player);
     };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
