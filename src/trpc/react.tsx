@@ -1,5 +1,7 @@
 "use client";
 
+import "client-only";
+
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { loggerLink, unstable_httpBatchStreamLink } from "@trpc/client";
 import { createTRPCReact } from "@trpc/react-query";
@@ -9,19 +11,7 @@ import SuperJSON from "superjson";
 
 import { type AppRouter } from "@/server/api/root";
 
-const createQueryClient = () => new QueryClient();
-
-let clientQueryClientSingleton: QueryClient | undefined = undefined;
-const getQueryClient = () => {
-  if (typeof window === "undefined") {
-    // Server: always make a new query client
-    return createQueryClient();
-  }
-  // Browser: use singleton pattern to keep the same query client
-  return (clientQueryClientSingleton ??= createQueryClient());
-};
-
-export const api = createTRPCReact<AppRouter>();
+export const rccApi = createTRPCReact<AppRouter>();
 
 /**
  * Inference helper for inputs.
@@ -37,11 +27,17 @@ export type RouterInputs = inferRouterInputs<AppRouter>;
  */
 export type RouterOutputs = inferRouterOutputs<AppRouter>;
 
-export function TRPCReactProvider(props: { children: React.ReactNode }) {
-  const queryClient = getQueryClient();
-
+export default function TRPCReactProvider({
+  children,
+  cookies,
+}: {
+  children: React.ReactNode;
+  cookies: string;
+}) {
+  const [queryClient] = useState(() => new QueryClient({}));
   const [trpcClient] = useState(() =>
-    api.createClient({
+    rccApi.createClient({
+      transformer: SuperJSON,
       links: [
         loggerLink({
           enabled: (op) =>
@@ -49,24 +45,24 @@ export function TRPCReactProvider(props: { children: React.ReactNode }) {
             (op.direction === "down" && op.result instanceof Error),
         }),
         unstable_httpBatchStreamLink({
-          transformer: SuperJSON,
           url: getBaseUrl() + "/api/trpc",
           headers: () => {
-            const headers = new Headers();
-            headers.set("x-trpc-source", "nextjs-react");
-            return headers;
+            return {
+              cookie: cookies,
+              "x-trpc-source": "react",
+            };
           },
         }),
       ],
-    })
+    }),
   );
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <api.Provider client={trpcClient} queryClient={queryClient}>
-        {props.children}
-      </api.Provider>
-    </QueryClientProvider>
+    <rccApi.Provider client={trpcClient} queryClient={queryClient}>
+      <QueryClientProvider client={queryClient}>
+        {children}
+      </QueryClientProvider>
+    </rccApi.Provider>
   );
 }
 
