@@ -1,9 +1,8 @@
 import "server-only";
 
-import { createTRPCContext } from "@/server/api/trpc";
-import { appRouter } from "@/server/api/root";
-import { env } from "@/env";
-
+import { cache } from "react";
+import { cookies } from "next/headers";
+import SuperJSON from "superjson";
 import {
   createTRPCProxyClient,
   loggerLink,
@@ -13,10 +12,9 @@ import { callProcedure } from "@trpc/server";
 import { type TRPCErrorResponse } from "@trpc/server/rpc";
 import { observable } from "@trpc/server/observable";
 
-import { cache } from "react";
-import { cookies } from "next/headers";
-
-import SuperJSON from "superjson";
+import { createTRPCContext } from "@/server/api/trpc";
+import { appRouter } from "@/server/api/routers/_app";
+import { env } from "@/env";
 
 /**
  * This wraps the `createTRPCContext` helper and provides the required context for the tRPC API when
@@ -31,7 +29,7 @@ const createContext = cache(() => {
   });
 });
 
-export const rscApi = createTRPCProxyClient<typeof appRouter>({
+export const trpc = createTRPCProxyClient<typeof appRouter>({
   transformer: SuperJSON,
   links: [
     loggerLink({

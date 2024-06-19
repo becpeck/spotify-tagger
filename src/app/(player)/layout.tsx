@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
 import { auth } from "@/server/auth/auth";
-import TRPCReactProvider from "@/trpc/react";
+import TRPCReactProvider from "@/trpc/TRPCReactProvider";
 
 import {
   ResizableHandle,
@@ -28,11 +28,11 @@ export default async function PlayerLayout({
   return (
     <TRPCReactProvider cookies={cookies().toString()}>
       <div className="flex flex-col h-[100vh] bg-background font-sans antialiased">
-        <Header session={session}/>
+        <Header session={session} />
         <ResizablePanelGroup
           direction="horizontal"
           className="h-full w-full border"
-          >
+        >
           <ResizablePanel defaultSize={15} minSize={10}>
             <Sidebar />
           </ResizablePanel>
