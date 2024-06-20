@@ -13,6 +13,7 @@ import {
 import { Button } from "@/components/ui/button";
 import SeekSlider from "@/components/PlaybackBar/SeekSlider";
 
+import { trpc } from "@/trpc/client";
 import { cn } from "@/lib/utils";
 
 type PlaybackControlsProps = {
@@ -29,6 +30,8 @@ type PlaybackControlsProps = {
 export default function PlaybackControls(props: PlaybackControlsProps) {
   const { className, player, playerState } = props;
 
+  const shuffleMutation = trpc.playback.toggleShuffle.useMutation();
+
   return (
     <div className={cn("flex flex-col items-center gap-2", className)}>
       <div className="flex justify-center items-center gap-2">
@@ -42,7 +45,7 @@ export default function PlaybackControls(props: PlaybackControlsProps) {
             "rounded-full hover:transform hover:scale-105 active:transform-none active:brightness-75 hover:bg-transparent"
           )}
           disabled={playerState.disallows.toggling_shuffle}
-          // onClick={() => {}}
+          onClick={() => shuffleMutation.mutate({ state: !playerState.shuffle })}
           aria-label={`${playerState.shuffle ? "Disable" : "Enable"} shuffle`}
         >
           <ShuffleIcon className="h-5 w-5" stroke="hsl(var(--shuffle-color))" />

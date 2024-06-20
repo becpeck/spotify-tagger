@@ -17,6 +17,22 @@ export const playbackRouter = createTRPCRouter({
         { headers: { Authorization: `Bearer ${ctx.session.access_token}` } }
       );
     }),
+  toggleShuffle: protectedProcedure
+    .input(
+      z.object({
+        state: z.boolean(),
+        device_id: z.string().optional(),
+      })
+    )
+    .mutation(async ({ input, ctx }) => {
+      return await spotifyApiClient.toggleShuffle(
+        {},
+        {
+          headers: { Authorization: `Bearer ${ctx.session.access_token}` },
+          queries: { ...input },
+        }
+      );
+    }),
   // getData: publicProcedure
   //   .query(() => {
   //     return { data: "data" }
