@@ -1,16 +1,49 @@
 import { z } from "zod";
 
+export const AlbumTypeSchema = z.literal("album");
+export const ArtistTypeSchema = z.literal("artist");
+export const PlaylistTypeSchema = z.literal("playlist");
+export const TrackTypeSchema = z.literal("track");
+export const UserTypeSchema = z.literal("user");
+
+export const AlbumIdSchema = z.string();
+export const ArtistIdSchema = z.string();
+export const PlaylistIdSchema = z.string();
+export const TrackIdSchema = z.string();
+export const UserIdSchema = z.string();
+
+export const AlbumURISchema = z.custom<`spotify:${z.infer<
+  typeof AlbumTypeSchema
+>}:${z.infer<typeof AlbumIdSchema>}`>((str) =>
+  /^spotify:album:[a-zA-Z0-9]+$/g.test(String(str))
+);
+export const ArtistURISchema = z.custom<`spotify:${z.infer<
+  typeof ArtistTypeSchema
+>}:${z.infer<typeof ArtistIdSchema>}`>((str) =>
+  /^spotify:artist:[a-zA-Z0-9]+$/g.test(String(str))
+);
+export const PlaylistURISchema = z.custom<`spotify:${z.infer<
+  typeof PlaylistTypeSchema
+>}:${z.infer<typeof PlaylistIdSchema>}`>((str) =>
+  /^spotify:playlist:[a-zA-Z0-9]+$/g.test(String(str))
+);
+export const TrackURISchema = z.custom<`spotify:${z.infer<
+  typeof TrackTypeSchema
+>}:${z.infer<typeof TrackIdSchema>}`>((str) =>
+  /^spotify:track:[a-zA-Z0-9]+$/g.test(String(str))
+);
+export const UserURISchema = z.custom<`spotify:${z.infer<
+  typeof UserTypeSchema
+>}:${z.infer<typeof UserIdSchema>}`>((str) =>
+  /^spotify:user:[a-zA-Z0-9]+$/g.test(String(str))
+);
+
 export const CountrySchema = z.string();
 
-export const ExplicitContentSchema = z
-  .object({
-    filter_enabled: z.boolean(),
-    filter_locked: z.boolean(),
-  })
-  .transform(({ filter_enabled, filter_locked }) => ({
-    filterEnabled: filter_enabled,
-    filterLocked: filter_locked,
-  }));
+export const ExplicitContentSchema = z.object({
+  filter_enabled: z.boolean(),
+  filter_locked: z.boolean(),
+});
 
 export const ExternalUrlsSchema = z.object({
   spotify: z.string(),
@@ -67,7 +100,7 @@ export const TrackObjectSchema = z.object({
     available_markets: z.array(CountrySchema),
     external_urls: ExternalUrlsSchema,
     href: z.string(),
-    id: z.string(),
+    id: AlbumIdSchema,
     images: ImagesSchema,
     name: z.string(),
     release_date: z.string(),
@@ -77,8 +110,8 @@ export const TrackObjectSchema = z.object({
       z.literal("day"),
     ]),
     // restrictions: RestrictionsSchema.optional(),
-    type: z.literal("album"),
-    uri: z.string(),
+    type: AlbumTypeSchema,
+    uri: AlbumURISchema,
     artists: z.array(SimplifiedArtistObjectSchema),
   }),
   artists: z.array(SimplifiedArtistObjectSchema),
@@ -93,7 +126,7 @@ export const TrackObjectSchema = z.object({
   }),
   external_urls: ExternalUrlsSchema,
   href: z.string(),
-  id: z.string(),
+  id: TrackIdSchema,
   // is_playable: z.boolean().optional(),
   // linked_from: z.object({}).optional(),
   // restrictions: RestrictionsSchema.optional(),
@@ -101,7 +134,7 @@ export const TrackObjectSchema = z.object({
   popularity: z.number().int().min(0).max(100),
   preview_url: z.string().nullable(),
   track_number: z.number().int(),
-  type: z.literal("track"),
-  uri: z.string(),
+  type: TrackTypeSchema,
+  uri: TrackURISchema,
   is_local: z.boolean(),
 });

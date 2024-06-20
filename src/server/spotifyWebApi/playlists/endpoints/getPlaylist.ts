@@ -6,7 +6,14 @@ import {
   ExternalUrlsSchema,
   FollowersSchema,
   ImagesSchema,
+  PlaylistIdSchema,
+  PlaylistTypeSchema,
+  PlaylistURISchema,
   TrackObjectSchema,
+  TrackTypeSchema,
+  UserIdSchema,
+  UserTypeSchema,
+  UserURISchema,
 } from "@/server/spotifyWebApi/utils/schemas";
 import {
   ErrorResponse401,
@@ -24,28 +31,34 @@ const getPlaylist = makeEndpoint({
       market: CountrySchema.optional(),
       fields: z.string().optional(),
       additional_types: z
-        .array(z.union([z.literal("track"), z.literal("episode")]))
+        .array(z.union([TrackTypeSchema, z.literal("episode")]))
         .transform((arr) => arr.join(","))
         .optional(),
     })
     .build(),
   response: z.object({
     collaborative: z.boolean(),
-    description: z.string().nullable().transform(name => name ?? ""),
+    description: z
+      .string()
+      .nullable()
+      .transform((name) => name ?? ""),
     external_urls: ExternalUrlsSchema,
     followers: FollowersSchema,
     href: z.string(),
-    id: z.string(),
+    id: PlaylistIdSchema,
     images: ImagesSchema,
     name: z.string(),
     owner: z.object({
       external_urls: ExternalUrlsSchema,
       // followers: FollowersSchema.optional(),
       href: z.string(),
-      id: z.string(),
-      type: z.literal("user"),
-      uri: z.string(),
-      display_name: z.string().nullable().transform(name => name ?? ""),
+      id: UserIdSchema,
+      type: UserTypeSchema,
+      uri: UserURISchema,
+      display_name: z
+        .string()
+        .nullable()
+        .transform((name) => name ?? ""),
     }),
     public: z.boolean().nullable(),
     snapshot_id: z.string(),
@@ -63,17 +76,17 @@ const getPlaylist = makeEndpoint({
             external_urls: ExternalUrlsSchema,
             // followers: FollowersSchema.optional(),
             href: z.string(),
-            id: z.string(),
-            type: z.literal("user"),
-            uri: z.string(),
+            id: UserIdSchema,
+            type: UserTypeSchema,
+            uri: UserURISchema,
           }),
           is_local: z.boolean(),
           track: TrackObjectSchema,
         })
       ),
     }),
-    type: z.literal("playlist"),
-    uri: z.string(),
+    type: PlaylistTypeSchema,
+    uri: PlaylistURISchema,
   }),
   errors: makeErrors([ErrorResponse401, ErrorResponse403, ErrorResponse429]),
 });

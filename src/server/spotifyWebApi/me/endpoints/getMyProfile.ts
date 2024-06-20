@@ -8,6 +8,9 @@ import {
   FollowersSchema,
   ImagesSchema,
   ProductSchema,
+  UserIdSchema,
+  UserTypeSchema,
+  UserURISchema,
 } from "@/server/spotifyWebApi/utils/schemas";
 import {
   ErrorResponse401,
@@ -27,11 +30,11 @@ const getMyProfile = makeEndpoint({
     external_urls: ExternalUrlsSchema,
     followers: FollowersSchema,
     href: z.string(),
-    id: z.string(),
+    id: UserIdSchema,
     images: ImagesSchema,
     product: ProductSchema,
-    type: z.literal("user"),
-    uri: z.string(),
+    type: UserTypeSchema,
+    uri: UserURISchema,
   }),
   errors: makeErrors([ErrorResponse401, ErrorResponse403, ErrorResponse429]),
 });
