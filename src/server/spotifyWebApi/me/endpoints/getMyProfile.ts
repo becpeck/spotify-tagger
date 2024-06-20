@@ -2,6 +2,7 @@ import { z } from "zod";
 import { makeEndpoint, makeErrors } from "@zodios/core";
 
 import {
+  CountrySchema,
   ExplicitContentSchema,
   ExternalUrlsSchema,
   FollowersSchema,
@@ -19,7 +20,7 @@ const getMyProfile = makeEndpoint({
   path: "",
   alias: "getMyProfile",
   response: z.object({
-    country: z.string(),
+    country: CountrySchema,
     display_name: z.string().nullable(),
     email: z.string(),
     explicit_content: ExplicitContentSchema,

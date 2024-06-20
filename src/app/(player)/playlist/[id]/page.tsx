@@ -1,13 +1,25 @@
+import { trpc } from "@/trpc/server";
+
 import PlaylistInfo from "@/app/(player)/playlist/PlaylistInfo";
 import PlaylistControls from "@/app/(player)/playlist/PlaylistControls";
 import PlaylistTable from "@/app/(player)/playlist/PlaylistTable";
 
-import playlist from "@/data/playlist/Playlist.json";
+export default async function Playlist({ params }: { params: { id: string } }) {
+  const playlist = await trpc.playlist.getPlaylist.query(params.id);
 
-export default function Playlist({}) {
-  const { images, description, followers, name, owner, type, tracks } = playlist;
+  const { images, description, followers, name, owner, type, tracks } =
+    playlist;
   const { total } = tracks;
-  const duration_ms = tracks.items.reduce((acc, track) => acc + track.track.duration_ms, 0);
+  const duration_ms = tracks.items.reduce(
+    (acc, track) => acc + track.track.duration_ms,
+    0
+  );
+  const imageUrl = (() => {
+    const image =
+      images.find(({ width }) => width && width >= 250) ?? images[0];
+    return image?.url ?? "";
+  })();
+
   const data = tracks.items.map(({ added_at, track }, i) => {
     const { id, artists, album, name, duration_ms, type } = track;
     return {
@@ -23,30 +35,32 @@ export default function Playlist({}) {
       duration_ms,
     };
   });
-  
   const meta = {
     playlist: {
       id: playlist.id,
       name: playlist.name,
       type: playlist.type,
     },
-    userPlaylists: Array.from({length: 10}, (_, i) => ({ id: `${i + 1}`, name: `Playlist ${i + 1}`})),
+    userPlaylists: Array.from({ length: 10 }, (_, i) => ({
+      id: `${i + 1}`,
+      name: `Playlist ${i + 1}`,
+    })),
   };
 
   return (
-      <main>
-        <PlaylistInfo
-          images={images}
-          type={type}
-          name={name}
-          description={description}
-          owner={owner}
-          followers={followers}
-          total={total}
-          duration_ms={duration_ms}
-        />
-        <PlaylistControls playlist={playlist}/>
-        <PlaylistTable data={data} meta={meta}/>
-      </main>
+    <main>
+      <PlaylistInfo
+        imageUrl={imageUrl}
+        type={type}
+        name={name}
+        description={description}
+        owner={owner}
+        followers={followers}
+        total={total}
+        duration_ms={duration_ms}
+      />
+      <PlaylistControls playlist={playlist} />
+      <PlaylistTable data={data} meta={meta} />
+    </main>
   );
 }

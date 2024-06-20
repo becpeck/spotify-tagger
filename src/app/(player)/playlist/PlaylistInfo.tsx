@@ -7,18 +7,18 @@ import { cn } from "@/lib/utils";
 import { toDuration, toDurationString } from "@/utils/timeUtils";
 
 type PlaylistInfoProps = {
-  images: { height: number; width: number; url: string }[],
-  type: string,
-  name: string,
-  description: string,
-  owner: { id: string; display_name: string },
-  followers: { total: number },
-  total: number,
-  duration_ms: number,
+  imageUrl: string;
+  type: string;
+  name: string;
+  description: string;
+  owner: { id: string; display_name: string };
+  followers: { total: number };
+  total: number;
+  duration_ms: number;
 };
 
 export default function PlaylistInfo({
-  images,
+  imageUrl,
   type,
   name,
   description,
@@ -31,9 +31,9 @@ export default function PlaylistInfo({
 
   return (
     <header className="flex m-4 gap-4">
-      {images.length > 0 ? (
+      {imageUrl ? (
         <Image
-          src={images[0]!.url}
+          src={imageUrl}
           height={250}
           width={250}
           alt={`${name} cover`}
@@ -51,7 +51,7 @@ export default function PlaylistInfo({
             "p-0 text-base font-semibold h-auto"
           )}
         >
-          {owner.display_name}
+          {owner.display_name || owner.id}
         </Link>
         <div className="flex items-center gap-1 text-sm text-muted-foreground">
           <HeartIcon size={15} stroke="hsl(var(--muted-foreground))" />
@@ -65,12 +65,11 @@ export default function PlaylistInfo({
           <ClockIcon size={15} stroke="hsl(var(--muted-foreground))" />
           <span>
             {toDurationString(duration, {
-              ...(duration.hours > 0 
+              ...(duration.hours > 0
                 ? { hours: "short" }
-                : { seconds: "short" }
-              ),
+                : { seconds: "short" }),
               minutes: "short",
-              separator: ', ',
+              separator: ", ",
             })}
           </span>
         </div>

@@ -1,11 +1,12 @@
 import { Zodios, apiBuilder, mergeApis } from "@zodios/core";
 import meApi from "@/server/spotifyWebApi/me/meApi";
+import playlistsApi from "@/server/spotifyWebApi/playlists/playlistsApi";
 
 const SPOTIFY_BASE_URL = "https://api.spotify.com/v1";
 
 const spotifyApi = mergeApis({
   "/me": meApi,
-  // "/playlists": apiBuilder().build(),
+  "/playlists": playlistsApi,
   // "/artists": apiBuilder().build(),
   // "/albums": apiBuilder().build(),
   // "/tracks": apiBuilder().build(),
@@ -23,7 +24,7 @@ const spotifyApi = mergeApis({
   // "/episodes": apiBuilder().build(),
   // "/audiobooks": apiBuilder().build(),
   // "/chapters": apiBuilder().build(),
-})
+});
 
 const spotifyApiClient = new Zodios(SPOTIFY_BASE_URL, spotifyApi);
 
