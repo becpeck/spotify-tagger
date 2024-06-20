@@ -1,26 +1,35 @@
 import { z } from "zod";
 
-import {
-  createTRPCRouter,
-  protectedProcedure,
-  publicProcedure,
-  // publicProcedure,
-} from "@/server/api/trpc";
+import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
+import spotifyApiClient from "@/server/spotifyWebApi/spotifyApiClient";
 
-export const playerRouter = createTRPCRouter({
-  getData: publicProcedure
-    .query(() => {
-      return { data: "data" }
+export const playbackRouter = createTRPCRouter({
+  transferToDevice: protectedProcedure
+    .input(
+      z.object({
+        device_id: z.string(),
+        play: z.boolean().optional(),
+      })
+    )
+    .mutation(async ({ input, ctx }) => {
+      return await spotifyApiClient.transferPlayback(
+        { ...input },
+        { headers: { Authorization: `Bearer ${ctx.session.access_token}` } }
+      );
     }),
-  getPrivateData: protectedProcedure.query(({ ctx }) => {
-    return { data: "private data" }
-  }),
-  create: publicProcedure.mutation(() => {
-    return { data: "mutation complete"}
-  }),
-  createPrivate: protectedProcedure.mutation(() => {
-    return { data: "private mutation complete" }
-  }),
+  // getData: publicProcedure
+  //   .query(() => {
+  //     return { data: "data" }
+  //   }),
+  // getPrivateData: protectedProcedure.query(({ ctx }) => {
+  //   return { data: "private data" }
+  // }),
+  // create: publicProcedure.mutation(() => {
+  //   return { data: "mutation complete"}
+  // }),
+  // createPrivate: protectedProcedure.mutation(() => {
+  //   return { data: "private mutation complete" }
+  // }),
   // hello: publicProcedure
   //   .input(z.object({ text: z.string() }))
   //   .query(({ input }) => {

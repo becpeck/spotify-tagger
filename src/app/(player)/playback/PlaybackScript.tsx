@@ -5,6 +5,7 @@ import { useEffect } from "react";
 import { useSetAtom } from "jotai";
 
 import { playerAtom, playerStateAtom } from "@/app/(player)/playback/playbackAtoms";
+import { trpc } from "@/trpc/client";
 
 declare global {
   interface Window {
@@ -23,6 +24,8 @@ export default function PlaybackScript({ token }: PlaybackScriptProps) {
   const setPlayer = useSetAtom(playerAtom);
   const setPlayerState = useSetAtom(playerStateAtom);
 
+  const deviceMutation = trpc.playback.transferToDevice.useMutation();
+
   useEffect(() => {
     window.onSpotifyWebPlaybackSDKReady = async () => {
       const player = new window.Spotify.Player({
@@ -33,6 +36,7 @@ export default function PlaybackScript({ token }: PlaybackScriptProps) {
 
       player.addListener("ready", ({ device_id }) => {
         console.log("ready: Device ID", device_id);
+        deviceMutation.mutate({ device_id });
       });
 
       player.addListener("not_ready", ({ device_id }) => {
