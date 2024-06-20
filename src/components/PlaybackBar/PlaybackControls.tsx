@@ -31,6 +31,7 @@ export default function PlaybackControls(props: PlaybackControlsProps) {
   const { className, player, playerState } = props;
 
   const shuffleMutation = trpc.playback.toggleShuffle.useMutation();
+  const repeatMutation = trpc.playback.cycleRepeat.useMutation();
 
   return (
     <div className={cn("flex flex-col items-center gap-2", className)}>
@@ -114,8 +115,9 @@ export default function PlaybackControls(props: PlaybackControlsProps) {
               : "[--repeat-color:--green]",
             "rounded-full hover:transform hover:scale-105 active:transform-none active:brightness-75 hover:bg-transparent"
           )}
+          // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
           disabled={playerState.disallows.toggling_repeat_context || playerState.disallows.toggling_repeat_track}
-          // onClick={() => {}}
+          onClick={() => repeatMutation.mutate(playerState.repeat_mode)}
           aria-label={playerState.repeat_mode === 2
             ? "Turn off repeat"
             : `Set repeat to ${playerState.repeat_mode === 0 ? "context" : "track"}`
