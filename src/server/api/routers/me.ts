@@ -1,7 +1,9 @@
 import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
 
-export const meRouter = createTRPCRouter({
+const meRouter = createTRPCRouter({
   getMyProfile: protectedProcedure.query(({ ctx }) => {
     return ctx.spotify.getMyProfile();
   }),
 });
+
+export default meRouter;

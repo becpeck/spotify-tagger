@@ -4,7 +4,7 @@ import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
 
 const repeatModes = ["off", "context", "track"] as const;
 
-export const playbackRouter = createTRPCRouter({
+const playbackRouter = createTRPCRouter({
   transferToDevice: protectedProcedure
     .input(
       z.object({
@@ -34,3 +34,5 @@ export const playbackRouter = createTRPCRouter({
       );
     }),
 });
+
+export default playbackRouter;
