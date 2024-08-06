@@ -40,6 +40,7 @@ export default async function Playlist({ params }: { params: { id: string } }) {
       id: playlist.id,
       name: playlist.name,
       type: playlist.type,
+      uri: playlist.uri,
     },
     userPlaylists: Array.from({ length: 10 }, (_, i) => ({
       id: `${i + 1}`,

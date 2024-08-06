@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+
 import {
   CheckIcon,
   CirclePlusIcon,
@@ -31,24 +32,62 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 
+import { usePlaybackStore } from "@/stores/PlaybackStoreProvider";
+import { trpc } from "@/trpc/client";
 import { cn } from "@/lib/utils";
 
 type PlaylistControlsProps = {
   playlist: {
     name: string,
-    type: string,
+    type: "playlist",
     id: string,
+    uri: `spotify:playlist:${string}`,
   },
 };
 
 export default function PlaylistControls({ playlist }: PlaylistControlsProps) {
-  const [isPlaying, setIsPlaying] = useState(false);
+  const { player, playbackState } = usePlaybackStore((state) => state);
   const [shuffleOn, setShuffleOn] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
 
-  const toggleIsPlaying = () => setIsPlaying(!isPlaying);
-  const toggleShuffleOn = () => setShuffleOn(!shuffleOn);
+  const playMutation = trpc.playback.playWithContext.useMutation();
+  const shuffleMutation = trpc.playback.toggleShuffle.useMutation();
+
+  if (!player || !playbackState) {
+    return;
+  }
+
+  const isPlaybackContext = playbackState.context.uri === playlist.uri;
+  const isPlaying = isPlaybackContext && !playbackState.paused;
+
+  if (isPlaybackContext && shuffleOn !== playbackState.shuffle) {
+    setShuffleOn(playbackState.shuffle);
+  }
+
   const toggleIsSaved = () => setIsSaved(!isSaved);
+
+  const toggleIsPlaying = async () => {
+    if (!isPlaybackContext) {
+      if (shuffleOn !== playbackState.shuffle) {
+        shuffleMutation.mutate({ state: shuffleOn });
+      }
+      playMutation.mutate({ context: { uri: playlist.uri } });
+    } else {
+      if (isPlaying) {
+        await player.pause.bind(player)();
+      } else {
+        await player.resume.bind(player)();
+      }
+    }
+  }
+
+  const toggleShuffleOn = () => {
+    if (isPlaybackContext) {
+      shuffleMutation.mutate({ state: !shuffleOn });
+    } else {
+      setShuffleOn(!shuffleOn);
+    }
+  }
 
   return (
     <div className="flex items-center gap-4 m-4">

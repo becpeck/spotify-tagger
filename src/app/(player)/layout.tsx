@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
 import { auth } from "@/server/auth/auth";
-import TRPCReactProvider from "@/trpc/TRPCReactProvider";
+import AuthenticatedProviders from "@/app/(player)/AuthenticatedProviders";
 
 import {
   ResizableHandle,
@@ -26,7 +26,7 @@ export default async function PlayerLayout({
   }
 
   return (
-    <TRPCReactProvider cookies={cookies().toString()}>
+    <AuthenticatedProviders cookies={cookies().toString()}>
       <div className="flex flex-col h-[100vh] bg-background font-sans antialiased">
         <Header session={session} />
         <ResizablePanelGroup
@@ -44,6 +44,6 @@ export default async function PlayerLayout({
         <PlaybackBar />
         <PlaybackScript token={session.access_token} />
       </div>
-    </TRPCReactProvider>
+    </AuthenticatedProviders>
   );
 }
