@@ -52,6 +52,7 @@ export default function PlaylistControls({ playlist }: PlaylistControlsProps) {
 
   const playMutation = trpc.playback.playWithContext.useMutation();
   const shuffleMutation = trpc.playback.toggleShuffle.useMutation();
+  const followPlaylistMutation = trpc.playlist.followPlaylist.useMutation();
 
   if (!player || !playbackState) {
     return;
@@ -64,7 +65,16 @@ export default function PlaylistControls({ playlist }: PlaylistControlsProps) {
     setShuffleOn(playbackState.shuffle);
   }
 
-  const toggleIsSaved = () => setIsSaved(!isSaved);
+  const toggleIsSaved = () => {
+    if (isSaved) {
+      // add unfollow mutation with optimistic update
+      setIsSaved(false);
+    } else {
+      followPlaylistMutation.mutate({ id: playlist.id });
+      // add optimistic update
+      setIsSaved(true);
+    }
+  }
 
   const toggleIsPlaying = async () => {
     if (!isPlaybackContext) {
