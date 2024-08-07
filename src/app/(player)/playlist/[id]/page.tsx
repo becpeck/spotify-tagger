@@ -5,10 +5,18 @@ import PlaylistControls from "@/app/(player)/playlist/PlaylistControls";
 import PlaylistTable from "@/app/(player)/playlist/PlaylistTable";
 
 export default async function Playlist({ params }: { params: { id: string } }) {
-  const playlist = await trpc.playlist.getPlaylist.query(params.id);
+  const playlist = await trpc.playlist.getPlaylistData.query(params.id);
 
-  const { images, description, followers, name, owner, type, tracks } =
-    playlist;
+  const {
+    images,
+    description,
+    followers,
+    name,
+    owner,
+    type,
+    tracks,
+    isFollowing,
+  } = playlist;
   const { total } = tracks;
   const duration_ms = tracks.items.reduce(
     (acc, track) => acc + track.track.duration_ms,
@@ -60,7 +68,13 @@ export default async function Playlist({ params }: { params: { id: string } }) {
         total={total}
         duration_ms={duration_ms}
       />
-      <PlaylistControls playlist={playlist} />
+      <PlaylistControls
+        name={name}
+        type={type}
+        id={playlist.id}
+        uri={playlist.uri}
+        isFollowing={isFollowing}
+      />
       <PlaylistTable data={data} meta={meta} />
     </main>
   );

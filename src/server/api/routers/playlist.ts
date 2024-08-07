@@ -4,12 +4,19 @@ import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
 import { PlaylistIdSchema } from "@/server/spotifyWebApi/utils/schemas";
 
 const playlistRouter = createTRPCRouter({
-  getPlaylist: protectedProcedure
+  getPlaylistData: protectedProcedure
     .input(PlaylistIdSchema)
-    .query(({ input, ctx }) => {
-      return ctx.spotify.getPlaylist({
+    .query(async ({ input, ctx }) => {
+      const isFollowing = await ctx.spotify.isFollowingPlaylist({
         params: { playlist_id: input },
       });
+      const res = await ctx.spotify.getPlaylist({
+        params: { playlist_id: input },
+      });
+      return {
+        ...res,
+        isFollowing,
+      };
     }),
   followPlaylist: protectedProcedure
     .input(PlaylistIdSchema)
