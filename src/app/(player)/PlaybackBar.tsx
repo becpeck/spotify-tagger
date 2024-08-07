@@ -1,7 +1,6 @@
 "use client";
 
-import { useAtomValue } from "jotai";
-import { playerAtom, playerStateAtom } from "@/app/(player)/playback/playbackAtoms";
+import { usePlaybackStore } from "@/stores/PlaybackStoreProvider";
 
 import CurrentlyPlaying from "@/components/PlaybackBar/CurrentlyPlaying";
 import PlaybackControls from "@/components/PlaybackBar/PlaybackControls";
@@ -10,17 +9,16 @@ import DeviceButton from "@/components/PlaybackBar/DeviceButton";
 import VolumeControls from "@/components/PlaybackBar/VolumeControls";
 
 export default function PlaybackBar() {
-  const player = useAtomValue(playerAtom);
-  const playerState = useAtomValue(playerStateAtom);
+  const { player, playbackState } = usePlaybackStore((state) => state);
 
-  if (!player || !playerState) {
+  if (!player || !playbackState) {
     return;
   } else {
     return (
       <footer className="flex justify-between items-center w-full p-4 border gap-8">
         <CurrentlyPlaying
           className="grow max-w-[30%]"
-          currentTrack={playerState.track_window.current_track}
+          currentTrack={playbackState.track_window.current_track}
         />
         <PlaybackControls
           className="grow max-w-[40%]"
@@ -30,7 +28,7 @@ export default function PlaybackBar() {
             previousTrack: player.previousTrack.bind(player),
             seek: player.seek.bind(player),
           }}
-          playerState={playerState}
+          playerState={playbackState}
         />
         <div className="grow max-w-[30%] flex justify-end items-center">
           <QueueButton />

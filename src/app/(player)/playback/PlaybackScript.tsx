@@ -2,9 +2,9 @@
 
 import Script from "next/script";
 import { useEffect } from "react";
-import { useSetAtom } from "jotai";
-
-import { playerAtom, playerStateAtom } from "@/app/(player)/playback/playbackAtoms";
+import { useRouter } from "next/navigation";
+import { usePlaybackStore } from "@/stores/PlaybackStoreProvider";
+import { trpc } from "@/trpc/client";
 
 declare global {
   interface Window {
@@ -20,8 +20,10 @@ interface PlaybackScriptProps {
 };
 
 export default function PlaybackScript({ token }: PlaybackScriptProps) {
-  const setPlayer = useSetAtom(playerAtom);
-  const setPlayerState = useSetAtom(playerStateAtom);
+  const router = useRouter();
+  const { setPlayer, setPlaybackState } = usePlaybackStore((state) => state);
+
+  const playbackDevice = trpc.playback.transferToDevice.useMutation();
 
   useEffect(() => {
     window.onSpotifyWebPlaybackSDKReady = async () => {
@@ -33,6 +35,7 @@ export default function PlaybackScript({ token }: PlaybackScriptProps) {
 
       player.addListener("ready", ({ device_id }) => {
         console.log("ready: Device ID", device_id);
+        playbackDevice.mutate({ device_id });
       });
 
       player.addListener("not_ready", ({ device_id }) => {
@@ -42,8 +45,11 @@ export default function PlaybackScript({ token }: PlaybackScriptProps) {
       player.addListener("player_state_changed", (state) => {
         console.log("player_state_changed");
         console.log(state);
+        if (state === null) {
+          throw new Error("===== PLAYER STATE IS NULL =====");
+        }
 
-        setPlayerState(state ? state : undefined);
+        setPlaybackState(state);
       });
 
       player.addListener("autoplay_failed", () => {
@@ -54,8 +60,10 @@ export default function PlaybackScript({ token }: PlaybackScriptProps) {
         console.log("initialization_error", message);
       });
 
-      player.addListener("authentication_error", ({ message }) => {
+      player.addListener("authentication_error", async ({ message }) => {
         console.log("authentication_error", message);
+        // This should prevent errors on player functions after idle on page for 1hr+
+        router.refresh();
       });
 
       player.addListener("account_error", ({ message }) => {

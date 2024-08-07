@@ -23,21 +23,21 @@ type SeekSliderProps = {
 
 export default function SeekSlider(props: SeekSliderProps) {
   const { disabled, duration_ms, paused, position_ms, seek } = props;
-
   const [ position, setPosition ] = useState(position_ms);
+  
+  useEffect(()=> {
+    setPosition(position_ms);
+  }, [position_ms]);
 
   useEffect(() => {
-    let interval: NodeJS.Timer | undefined;
+    let interval: NodeJS.Timer;
     if (!paused) {
       interval = setInterval(() => {
         setPosition(p => p + 1000);
       }, 1000);
-    } else {
-      clearInterval(interval);
-      setPosition(position_ms);
     }
     return () => clearInterval(interval);
-  }, [paused, position_ms]);
+  }, [paused]);
 
   const duration = toDuration(duration_ms);
   

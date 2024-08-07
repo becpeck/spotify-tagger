@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+
 import {
   CheckIcon,
   CirclePlusIcon,
@@ -31,24 +32,77 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 
+import { usePlaybackStore } from "@/stores/PlaybackStoreProvider";
+import { trpc } from "@/trpc/client";
 import { cn } from "@/lib/utils";
 
 type PlaylistControlsProps = {
-  playlist: {
-    name: string,
-    type: string,
-    id: string,
-  },
+  name: string,
+  type: "playlist",
+  id: string,
+  uri: `spotify:playlist:${string}`,
+  isFollowing: boolean,
 };
 
-export default function PlaylistControls({ playlist }: PlaylistControlsProps) {
-  const [isPlaying, setIsPlaying] = useState(false);
+export default function PlaylistControls({ name, type, id, uri, isFollowing }: PlaylistControlsProps) {
+  const { player, playbackState } = usePlaybackStore((state) => state);
   const [shuffleOn, setShuffleOn] = useState(false);
-  const [isSaved, setIsSaved] = useState(false);
+  const [isSaved, setIsSaved] = useState(isFollowing);
 
-  const toggleIsPlaying = () => setIsPlaying(!isPlaying);
-  const toggleShuffleOn = () => setShuffleOn(!shuffleOn);
-  const toggleIsSaved = () => setIsSaved(!isSaved);
+  const playMutation = trpc.playback.playWithContext.useMutation();
+  const shuffleMutation = trpc.playback.toggleShuffle.useMutation();
+  const followPlaylistMutation = trpc.playlist.followPlaylist.useMutation({
+    onMutate: (() => setIsSaved(true)),
+    onError: (() => setIsSaved(false)),
+  });
+  const unfollowPlaylistMutation = trpc.playlist.unfollowPlaylist.useMutation({
+    onMutate: (() => setIsSaved(false)),
+    onError: (() => setIsSaved(true)),
+  });
+
+  if (!player || !playbackState) {
+    return;
+  }
+
+  const isPlaybackContext = playbackState.context.uri === uri;
+  const isPlaying = isPlaybackContext && !playbackState.paused;
+
+  // Reconcile shuffle state
+  if (isPlaybackContext && shuffleOn !== playbackState.shuffle) {
+    setShuffleOn(playbackState.shuffle);
+  }
+
+  const toggleIsSaved = () => {
+    // UI: Add toasts for failed requests
+    if (isSaved) {
+      unfollowPlaylistMutation.mutate(id);
+    } else {
+      followPlaylistMutation.mutate(id);
+    }
+  }
+
+  const toggleIsPlaying = async () => {
+    if (!isPlaybackContext) {
+      if (shuffleOn !== playbackState.shuffle) {
+        shuffleMutation.mutate({ state: shuffleOn });
+      }
+      playMutation.mutate({ context: { uri } });
+    } else {
+      if (isPlaying) {
+        await player.pause.bind(player)();
+      } else {
+        await player.resume.bind(player)();
+      }
+    }
+  }
+
+  const toggleShuffleOn = () => {
+    if (isPlaybackContext) {
+      shuffleMutation.mutate({ state: !shuffleOn });
+    } else {
+      setShuffleOn(!shuffleOn);
+    }
+  }
 
   return (
     <div className="flex items-center gap-4 m-4">
@@ -82,7 +136,7 @@ export default function PlaylistControls({ playlist }: PlaylistControlsProps) {
             : "[--shuffle-color:--muted-foreground] hover:[--shuffle-color:--primary]"
         )}
         onClick={toggleShuffleOn}
-        aria-label={`${shuffleOn ? "Disable" : "Enable"} shuffle for ${playlist.name}`}
+        aria-label={`${shuffleOn ? "Disable" : "Enable"} shuffle for ${name}`}
       >
         <ShuffleIcon className="h-6 w-6" stroke="hsl(var(--shuffle-color))" />
       </Button>
@@ -122,7 +176,7 @@ export default function PlaylistControls({ playlist }: PlaylistControlsProps) {
             variant="ghost"
             size="icon"
             className="rounded-full hover:transform hover:scale-105 active:transform-none active:brightness-75 hover:bg-transparent [--ellipsis-color:--muted-foreground] hover:[--ellipsis-color:--primary]"
-            aria-label={`More options for ${playlist.name}`}
+            aria-label={`More options for ${name}`}
           >
             <EllipsisIcon
               className="h-6 w-6"
@@ -150,7 +204,7 @@ export default function PlaylistControls({ playlist }: PlaylistControlsProps) {
                   </>
               }
             </DropdownMenuItem>
-            <DropdownMenuItem className="flex gap-2">
+            <DropdownMenuItem className="flex gap-2" disabled>
               <ListMusicIcon size={18} />
               Add to Queue
             </DropdownMenuItem>
@@ -161,7 +215,7 @@ export default function PlaylistControls({ playlist }: PlaylistControlsProps) {
               className="flex gap-2"
               onClick={async () => {
                 await navigator.clipboard.writeText(
-                  `https://open.spotify.com/${playlist.type}/${playlist.id}`
+                  `https://open.spotify.com/${type}/${id}`
                 );
               }}
             >
@@ -180,7 +234,7 @@ export default function PlaylistControls({ playlist }: PlaylistControlsProps) {
                 <DropdownMenuSubContent>
                   <DropdownMenuItem className="flex gap-2" asChild>
                     <a
-                      href={`https://open.spotify.com/${playlist.type}/${playlist.id}`}
+                      href={`https://open.spotify.com/${type}/${id}`}
                       target="_blank"
                     >
                       <ExternalLinkIcon size={18} />
@@ -189,7 +243,7 @@ export default function PlaylistControls({ playlist }: PlaylistControlsProps) {
                   </DropdownMenuItem>
                   <DropdownMenuItem className="flex gap-2" asChild>
                     <a
-                      href={`spotify:${playlist.type}:${playlist.id}`}
+                      href={`spotify:${type}:${id}`}
                       target="_blank"
                     >
                       <MonitorIcon size={18} />

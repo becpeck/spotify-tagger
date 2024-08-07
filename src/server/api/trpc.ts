@@ -14,6 +14,9 @@ import { ZodError } from "zod";
 import { auth } from "@/server/auth/auth";
 import { db } from "@/server/db";
 
+import spotifyApiClient from "@/server/spotifyWebApi/spotifyApiClient";
+import { pluginToken } from "@zodios/plugins";
+
 /**
  * 1. CONTEXT
  *
@@ -92,14 +95,21 @@ export const publicProcedure = t.procedure;
  */
 export const protectedProcedure = t.procedure.use(
   t.middleware(({ ctx, next }) => {
-    if (!ctx.session || !ctx.session.user) {
+    const { session } = ctx;
+    if (!session || !session.user) {
       throw new TRPCError({ code: "UNAUTHORIZED" });
     }
+    spotifyApiClient.use(
+      pluginToken({
+        getToken: async () => session.access_token,
+      })
+    );
     return next({
       ctx: {
         ...ctx,
         // infers the `session` as non-nullable
-        session: { ...ctx.session, user: ctx.session.user },
+        session: { ...session, user: session.user },
+        spotify: spotifyApiClient,
       },
     });
   })

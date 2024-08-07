@@ -1,8 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { DotsHorizontalIcon } from "@radix-ui/react-icons";
 import { 
+  EllipsisIcon,
   DiscIcon,
   ListMusicIcon,
   PlusIcon,
@@ -48,9 +48,9 @@ export default function ActionsMenu({
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" className="h-8 w-8 p-0">
+        <Button variant="ghost" className="h-8 w-8 p-0 [--ellipsis-color:--background] group-hover/row:[--ellipsis-color:--primary]">
           <span className="sr-only">Open menu</span>
-          <DotsHorizontalIcon className="text-[hsl(var(--primary))] hidden group-hover/row:block" />
+          <EllipsisIcon className="h-4 w-4" stroke="hsl(var(--ellipsis-color))" />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
