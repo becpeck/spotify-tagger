@@ -12,17 +12,16 @@ const playlistRouter = createTRPCRouter({
       });
     }),
   followPlaylist: protectedProcedure
-    .input(
-      z.object({
-        id: PlaylistIdSchema,
-        public: z.boolean().optional(),
-      })
-    )
-    .mutation(({ input, ctx }) => {
-      return ctx.spotify.followPlaylist(
-        { ...(input.public !== undefined ? { public: input.public } : {}) },
-        { params: { playlist_id: input.id } }
-      );
+    .input(PlaylistIdSchema)
+    .mutation(async ({ input, ctx }) => {
+      await ctx.spotify.followPlaylist({}, { params: { playlist_id: input } });
+    }),
+  unfollowPlaylist: protectedProcedure
+    .input(PlaylistIdSchema)
+    .mutation(async ({ input, ctx }) => {
+      await ctx.spotify.unfollowPlaylist(undefined, {
+        params: { playlist_id: input },
+      });
     }),
 });
 
