@@ -2,10 +2,10 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import Link from "next/link";
+import Link from "@/components/Link";
 import { CheckIcon, PlusIcon } from "lucide-react";
 
-import { Button, buttonVariants } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 export default function CurrentlyPlaying({
@@ -28,34 +28,26 @@ export default function CurrentlyPlaying({
 
   return (
     <div className={cn("flex items-center gap-4", className)}>
-      {image 
-        ? <Image
-            src={image.url}
-            alt={`${album.name} cover`}
-            width={50}
-            height={50}
-          />
-        : null
-      }
+      {image ? (
+        <Image
+          src={image.url}
+          alt={`${album.name} cover`}
+          width={100}
+          height={100}
+        />
+      ) : null}
       <div className="flex flex-col gap-1 shrink min-w-0">
-        <Link
-          href={`/${type}/${id}`}
-          className={cn(
-            buttonVariants({ variant: "link" }),
-            "p-0 justify-start h-auto truncate block"
-          )}
-        >
+        <Link href={`/${type}/${id}`} color="primary">
           {name}
         </Link>
-        <div className="text-muted-foreground text-xs">
+        <div className="text-muted-foreground text-xs truncate line-clamp-1 whitespace-normal break-all">
           {artists.map(({ id, name, type }, i) => (
             <span key={id}>
               <Link
                 href={`/${type}/${id}`}
-                className={cn(
-                  buttonVariants({ variant: "link" }),
-                  "p-0 justify-start h-auto text-muted-foreground text-xs hover:text-primary"
-                )}
+                number="list"
+                size="xs"
+                className="hover:text-primary"
               >
                 {name}
               </Link>
@@ -76,18 +68,19 @@ export default function CurrentlyPlaying({
         onClick={toggleIsSaved}
         aria-label={isSaved ? "Remove from Library" : "Save to Library"}
       >
-        {isSaved
-          ? <CheckIcon
-              className="h-[66%] w-[66%] pt-[7%]"
-              strokeWidth={3}
-              stroke="hsl(var(--background))"
-            />
-          : <PlusIcon
-              className="h-[66%] w-[66%]"
-              strokeWidth={3}
-              stroke="hsl(var(--plus-color))"
-            />
-        }
+        {isSaved ? (
+          <CheckIcon
+            className="h-[66%] w-[66%] pt-[7%]"
+            strokeWidth={3}
+            stroke="hsl(var(--background))"
+          />
+        ) : (
+          <PlusIcon
+            className="h-[66%] w-[66%]"
+            strokeWidth={3}
+            stroke="hsl(var(--plus-color))"
+          />
+        )}
       </Button>
     </div>
   );
