@@ -1,29 +1,33 @@
 "use client";
 
-import { type ColumnDef, type RowData, type TableMeta } from "@tanstack/react-table";
+import {
+  type ColumnDef,
+  type RowData,
+  type TableMeta,
+} from "@tanstack/react-table";
 import { PlayIcon, HashIcon, ClockIcon } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import TableLink from "@/components/TableLink";
+import Link from "@/components/Link";
 import ActionsMenu from "@/app/(player)/playlist/ActionsMenu";
 import { toDurationString, toDuration } from "@/utils/timeUtils";
 import DataTable from "@/components/ui/data-table";
 
-export type Data = { id: string, type: string, name: string };
+export type Data = { id: string; type: string; name: string };
 
 export type Track = {
-  number: number,
-  track: Data,
-  artists: Array<Data>,
-  album: Data,
-  added_at: string,
-  duration_ms: number,
+  number: number;
+  track: Data;
+  artists: Array<Data>;
+  album: Data;
+  added_at: string;
+  duration_ms: number;
 };
 
-declare module '@tanstack/table-core' {
+declare module "@tanstack/table-core" {
   interface TableMeta<TData extends RowData> {
-    playlist?: Data,
-    userPlaylists: Array<Omit<Data, "type">>,
+    playlist?: Data;
+    userPlaylists: Array<Omit<Data, "type">>;
   }
 }
 
@@ -31,17 +35,23 @@ const columns: ColumnDef<Track>[] = [
   {
     accessorKey: "number",
     header: () => (
-      <div className="flex justify-center align-center">
+      <div className="w-full flex justify-center align-center">
         <span className="sr-only">Track Number</span>
         <HashIcon size={15} />
       </div>
     ),
     cell: ({ row }) => (
       <Button variant="ghost" className="h-8 w-8 p-0 text-muted-foreground">
-        <div className="group-hover/row:hidden">{row.getValue("number")}</div>
+        <div className="group-hover/row:hidden tabular-nums">
+          {row.getValue("number")}
+        </div>
         <div className="hidden group-hover/row:block">
           <span className="sr-only">Play</span>
-          <PlayIcon size={15} fill="hsl(var(--primary))" stroke="hsl(var(--primary))" />
+          <PlayIcon
+            size={15}
+            fill="hsl(var(--primary))"
+            stroke="hsl(var(--primary))"
+          />
         </div>
       </Button>
     ),
@@ -52,7 +62,9 @@ const columns: ColumnDef<Track>[] = [
     cell: ({ row }) => {
       const { id, name, type } = row.getValue("track") satisfies Data;
       return (
-        <TableLink href={`/${type}/${id}`}>{name}</TableLink>
+        <Link color="primary" size="base" href={`/${type}/${id}`}>
+          {name}
+        </Link>
       );
     },
   },
@@ -62,21 +74,23 @@ const columns: ColumnDef<Track>[] = [
     cell: ({ row }) => {
       const artists = row.getValue("artists") satisfies Data[];
       return (
-        <div className="text-muted-foreground group-hover/row:text-primary">
+        <div className="text-muted-foreground truncate line-clamp-1 whitespace-normal break-all">
           {artists.map(({ id, name, type }, i) => (
-            <span key={id}>
-              <TableLink
+            <>
+              <Link
+                key={id}
                 href={`/${type}/${id}`}
-                className="text-muted-foreground group-hover/row:text-primary"
+                number="list"
+                className="group-hover/row:text-primary"
               >
                 {name}
-              </TableLink>
+              </Link>
               {i < artists.length - 1 ? ", " : null}
-            </span>
+            </>
           ))}
         </div>
       );
-    }
+    },
   },
   {
     accessorKey: "album",
@@ -84,43 +98,44 @@ const columns: ColumnDef<Track>[] = [
     cell: ({ row }) => {
       const { id, name, type } = row.getValue("album") satisfies Data;
       return (
-        <TableLink
-          href={`/${type}/${id}`}
-          className="text-muted-foreground group-hover/row:text-primary"
-        >{name}</TableLink>
+        <Link href={`/${type}/${id}`} className="group-hover/row:text-primary">
+          {name}
+        </Link>
       );
-    }
+    },
   },
   {
     accessorKey: "added_at",
     header: "Date Added",
     cell: ({ row }) => (
       <div className="text-muted-foreground">
-        {(new Date(String(row.getValue("added_at")))).toLocaleDateString("en-US", {
+        {new Date(String(row.getValue("added_at"))).toLocaleDateString(
+          "en-US",
+          {
             month: "short",
             day: "numeric",
             year: "numeric",
-        })}
+          }
+        )}
       </div>
     ),
   },
   {
     accessorKey: "duration_ms",
     header: () => (
-      <div className="flex justify-center align-center">
+      <div className="w-full flex justify-end align-center">
         <span className="sr-only">Duration</span>
         <ClockIcon size={15} />
       </div>
-      ),
+    ),
     cell: ({ row }) => {
       const duration = toDuration(parseInt(row.getValue("duration_ms")));
       return (
-        <div className="text-right text-muted-foreground">
+        <div className="w-full text-right text-muted-foreground tabular-nums">
           {toDurationString(duration, {
             ...(duration.hours > 0
               ? { hours: "numeric", minutes: "2-digit" }
-              : { minutes: "numeric" }
-            ),
+              : { minutes: "numeric" }),
             seconds: "2-digit",
             separator: ":",
           })}
@@ -135,7 +150,7 @@ const columns: ColumnDef<Track>[] = [
       const playlist = table.options.meta!.playlist!;
       const userPlaylists = table.options.meta!.userPlaylists;
       return (
-        <ActionsMenu 
+        <ActionsMenu
           artists={artists}
           album={album}
           track={track}
@@ -144,16 +159,14 @@ const columns: ColumnDef<Track>[] = [
         />
       );
     },
-  }
+  },
 ];
 
 type PlaylistTableProps = {
-  data: Track[],
-  meta: TableMeta<Track>,
-}
+  data: Track[];
+  meta: TableMeta<Track>;
+};
 
 export default function PlaylistTable({ data, meta }: PlaylistTableProps) {
-  return (
-    <DataTable data={data} meta={meta} columns={columns}/>
-  );
+  return <DataTable data={data} meta={meta} columns={columns} />;
 }
