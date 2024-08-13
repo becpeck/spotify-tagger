@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button";
 import DataTable from "@/components/ui/data-table";
 import Link from "@/components/Link";
 import ActionsMenu from "@/app/(player)/playlist/ActionsMenu";
+import PlaylistControls from "@/app/(player)/playlist/PlaylistControls";
 
 import { usePlaybackStore } from "@/stores/PlaybackStoreProvider";
 import { toDurationString, toDuration } from "@/utils/timeUtils";
@@ -38,24 +39,26 @@ export interface TrackData {
   };
   added_at: string;
   duration_ms: number;
-};
+}
 
 export interface Track extends TrackData {
   isSaved: boolean;
   isPlaybackContext: boolean;
   isPlaying: boolean;
   addToQueue: () => Promise<undefined>;
-  saveToLikedSongs: () => Promise<undefined>;
+  toggleIsSaved: () => Promise<undefined>;
   toggleIsPlaying: () => Promise<void>;
 }
 
 declare module "@tanstack/table-core" {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   interface TableMeta<TData extends RowData> {
     playlist?: {
       id: string;
       name: string;
       type: "playlist";
-      uri: `spotify:playlist:${string}`
+      uri: `spotify:playlist:${string}`;
+      isFollowing: boolean;
     };
     userPlaylists: Array<{
       id: string;
@@ -78,10 +81,12 @@ const columns: ColumnDef<Track>[] = [
       const Icon = isPlaying ? PauseIcon : PlayIcon;
       return (
         <Button variant="ghost" className="h-8 w-8 p-0 text-muted-foreground">
-          <div className={cn(
-            "group-hover/row:hidden tabular-nums text-base",
-            isPlaybackContext && "text-green-500",
-          )}>
+          <div
+            className={cn(
+              "group-hover/row:hidden tabular-nums text-base",
+              isPlaybackContext && "text-green-500"
+            )}
+          >
             {row.getValue("number")}
           </div>
           <div className="hidden group-hover/row:block">
@@ -102,7 +107,11 @@ const columns: ColumnDef<Track>[] = [
     cell: ({ row }) => {
       const { id, name, type } = row.getValue("track") satisfies Track["track"];
       return (
-        <Link color={row.original.isPlaybackContext ? "green" : "primary"} size="base" href={`/${type}/${id}`}>
+        <Link
+          color={row.original.isPlaybackContext ? "green" : "primary"}
+          size="base"
+          href={`/${type}/${id}`}
+        >
           {name}
         </Link>
       );
@@ -203,29 +212,32 @@ const columns: ColumnDef<Track>[] = [
 ];
 
 type PlaylistTableProps = {
-  data: TrackData[];
-  meta: TableMeta<Track>;
+  trackDataArr: TrackData[];
+  playlist: TableMeta<Track>["playlist"];
 };
 
-export default function PlaylistTable({ data, meta }: PlaylistTableProps) {
+export default function PlaylistTable({
+  trackDataArr,
+  playlist,
+}: PlaylistTableProps) {
   const { playbackState, player } = usePlaybackStore((state) => state);
-  
+
   const playMutation = trpc.playback.playWithContext.useMutation();
-  
+
   if (!playbackState || !player) {
     return;
   }
-  
-  const { context } = playbackState;
-  const { name, artists, album, uri } = playbackState.track_window.current_track;
 
-  const tracks: Track[] = data.map(trackData => {
+  const { context } = playbackState;
+  const { name, album, uri } = playbackState.track_window.current_track;
+
+  const tracks: Track[] = trackDataArr.map((trackData) => {
     const isSaved = false;
-    const isPlaybackContext = context.uri === meta.playlist!.uri 
-      && (uri === trackData.track.uri
-        || (name === trackData.track.name && album.name === trackData.album.name 
-          // && artists.every(artist => artists)
-      ));
+    const isPlaybackContext =
+      context.uri === playlist!.uri &&
+      (uri === trackData.track.uri ||
+        (name === trackData.track.name && album.name === trackData.album.name));
+    // && artists.every(artist => artists)
     const isPlaying = isPlaybackContext && !playbackState.paused;
 
     // console.log(`trackName: ${trackData.track.name}`)
@@ -234,13 +246,13 @@ export default function PlaylistTable({ data, meta }: PlaylistTableProps) {
     // console.log(`isPlaybackContext: ${isPlaybackContext}`)
     // console.log(`isPlaying: ${isPlaying}`)
 
-    const addToQueue = async () => { return undefined };
-    const saveToLikedSongs = async () => { return undefined };
+    const addToQueue = async () => undefined;
+    const toggleIsSaved = async () => undefined;
 
     const toggleIsPlaying = async () => {
       if (!isPlaybackContext) {
-        playMutation.mutate({ 
-          context: { uri: meta.playlist!.uri },
+        playMutation.mutate({
+          context: { uri: playlist!.uri },
           offset: { uri: trackData.track.uri },
         });
       } else {
@@ -250,7 +262,7 @@ export default function PlaylistTable({ data, meta }: PlaylistTableProps) {
           await player.resume.bind(player)();
         }
       }
-    }
+    };
 
     return {
       ...trackData,
@@ -258,18 +270,33 @@ export default function PlaylistTable({ data, meta }: PlaylistTableProps) {
       isPlaybackContext,
       isPlaying,
       addToQueue,
-      saveToLikedSongs,
+      toggleIsSaved,
       toggleIsPlaying,
-    }
+    };
   });
 
   return (
-    <DataTable
-      data={tracks}
-      meta={meta}
-      columns={columns}
-      gridTemplateCols="grid-cols-[auto_2fr_1.5fr_1.5fr_auto_auto_auto]"
-      colSpan="col-span-7"
-    />
+    <>
+      <PlaylistControls
+        name={playlist!.name}
+        type={playlist!.type}
+        id={playlist!.id}
+        uri={playlist!.uri}
+        isFollowing={playlist!.isFollowing} // PLACEHOLDER for saved playlists store
+      />
+      <DataTable
+        data={tracks}
+        meta={{
+          playlist,
+          userPlaylists: Array.from({ length: 10 }, (_, i) => ({
+            id: `${i + 1}`,
+            name: `Playlist ${i + 1}`, // PLACRHOLDER for saved playlists store
+          })),
+        }}
+        columns={columns}
+        gridTemplateCols="grid-cols-[auto_2fr_1.5fr_1.5fr_auto_auto_auto]"
+        colSpan="col-span-7"
+      />
+    </>
   );
 }
