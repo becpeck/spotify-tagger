@@ -20,12 +20,16 @@ interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[],
   data: TData[],
   meta?: TableMeta<TData>,
+  gridTemplateCols: string,
+  colSpan: string,
 }
 
 export default function DataTable<TData, TValue>({
   columns,
   data,
   meta,
+  gridTemplateCols,
+  colSpan,
 }: DataTableProps<TData, TValue>) {
   const table = useReactTable({
     data,
@@ -36,10 +40,10 @@ export default function DataTable<TData, TValue>({
 
   // TODO: move this to individual PlaylistTable etc components
   return (
-    <Table className="border" gridTemplateCols="grid-cols-[auto_2fr_1.5fr_1.5fr_auto_auto_auto]">
-      <TableHeader colSpan="col-span-7">
+    <Table className="border" gridTemplateCols={gridTemplateCols}>
+      <TableHeader colSpan={colSpan}>
         {table.getHeaderGroups().map(headerGroup => (
-          <TableRow key={headerGroup.id} colSpan="col-span-7" className="hover:bg-inherit">
+          <TableRow key={headerGroup.id} colSpan={colSpan} className="hover:bg-inherit">
             {headerGroup.headers.map((header) => (
                 <TableHead key={header.id}>
                   {header.isPlaceholder
@@ -53,12 +57,12 @@ export default function DataTable<TData, TValue>({
           </TableRow>
         ))}
       </TableHeader>
-      <TableBody colSpan="col-span-7">
+      <TableBody colSpan={colSpan}>
         {table.getRowModel().rows?.length ? (
           table.getRowModel().rows.map((row) => (
             <TableRow
               key={row.id}
-              colSpan="col-span-7"
+              colSpan={colSpan}
               data-state={row.getIsSelected() && "selected"}
               className="group/row"
             >
@@ -70,7 +74,7 @@ export default function DataTable<TData, TValue>({
             </TableRow>
           ))
         ) : (
-          <TableRow colSpan="col-span-7" className="block">
+          <TableRow colSpan={colSpan} className="block">
             <TableCell className="h-24 justify-center">
               No results.
             </TableCell>

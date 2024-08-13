@@ -29,10 +29,10 @@ export default async function Playlist({ params }: { params: { id: string } }) {
   })();
 
   const data = tracks.items.map(({ added_at, track }, i) => {
-    const { id, artists, album, name, duration_ms, type } = track;
+    const { id, artists, album, name, duration_ms, type, uri } = track;
     return {
       number: i + 1,
-      track: { id, name, type },
+      track: { id, name, type, uri },
       artists: artists.map(({ id, name, type }) => ({ id, name, type })),
       album: {
         id: album.id,

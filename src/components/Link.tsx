@@ -18,6 +18,7 @@ const linkVariants = cva(
       color: {
         primary: "text-primary",
         muted: "text-muted-foreground",
+        green: "text-green-500",
       },
     },
     defaultVariants: {

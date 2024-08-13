@@ -16,7 +16,7 @@ export default function CurrentlyPlaying({
   currentTrack: WebPlaybackState["track_window"]["current_track"];
 }) {
   const { name, id, type, album } = currentTrack;
-  const [image] = album.images.sort((a, b) => a.height - b.height);
+  const [ image ] = album.images.sort((a, b) => a.height - b.height);
   const artists = currentTrack.artists.map(({ name, uri }) => {
     const [_, type, id] = uri.split(":");
     return { id: id!, name, type: type! };
@@ -32,8 +32,8 @@ export default function CurrentlyPlaying({
         <Image
           src={image.url}
           alt={`${album.name} cover`}
-          width={100}
-          height={100}
+          width={64}
+          height={64}
         />
       ) : null}
       <div className="flex flex-col gap-1 shrink min-w-0">
