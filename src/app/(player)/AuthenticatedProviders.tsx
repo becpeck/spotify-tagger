@@ -1,5 +1,5 @@
 import TRPCReactProvider from "@/trpc/TRPCReactProvider";
-import { PlaybackStoreProvider } from "@/stores/PlaybackStoreProvider";
+import { AppStoreProvider } from "@/stores/AppStoreProvider";
 
 export default function AuthenticatedProviders({
   children,
@@ -10,7 +10,7 @@ export default function AuthenticatedProviders({
 }) {
   return (
     <TRPCReactProvider cookies={cookies}>
-      <PlaybackStoreProvider>{children}</PlaybackStoreProvider>
+      <AppStoreProvider>{children}</AppStoreProvider>
     </TRPCReactProvider>
   );
 }

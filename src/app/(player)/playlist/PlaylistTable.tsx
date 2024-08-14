@@ -15,7 +15,7 @@ import Link from "@/components/Link";
 import ActionsMenu from "@/app/(player)/playlist/ActionsMenu";
 import PlaylistControls from "@/app/(player)/playlist/PlaylistControls";
 
-import { usePlaybackStore } from "@/stores/PlaybackStoreProvider";
+import { useAppStore } from "@/stores/AppStoreProvider";
 import { toDurationString, toDuration } from "@/utils/timeUtils";
 import { cn } from "@/lib/utils";
 
@@ -220,7 +220,9 @@ export default function PlaylistTable({
   trackDataArr,
   playlist,
 }: PlaylistTableProps) {
-  const { playbackState, player } = usePlaybackStore((state) => state);
+  const { player, playbackState } = useAppStore(
+    ({ player, playbackState }) => ({ player, playbackState })
+  );
 
   const playMutation = trpc.playback.playWithContext.useMutation();
 

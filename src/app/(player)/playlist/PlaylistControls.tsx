@@ -32,32 +32,40 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 
-import { usePlaybackStore } from "@/stores/PlaybackStoreProvider";
+import { useAppStore } from "@/stores/AppStoreProvider";
 import { trpc } from "@/trpc/client";
 import { cn } from "@/lib/utils";
 
 type PlaylistControlsProps = {
-  name: string,
-  type: "playlist",
-  id: string,
-  uri: `spotify:playlist:${string}`,
-  isFollowing: boolean,
+  name: string;
+  type: "playlist";
+  id: string;
+  uri: `spotify:playlist:${string}`;
+  isFollowing: boolean;
 };
 
-export default function PlaylistControls({ name, type, id, uri, isFollowing }: PlaylistControlsProps) {
-  const { player, playbackState } = usePlaybackStore((state) => state);
+export default function PlaylistControls({
+  name,
+  type,
+  id,
+  uri,
+  isFollowing,
+}: PlaylistControlsProps) {
+  const { player, playbackState } = useAppStore(
+    ({ player, playbackState }) => ({ player, playbackState })
+  );
   const [shuffleOn, setShuffleOn] = useState(false);
   const [isSaved, setIsSaved] = useState(isFollowing);
 
   const playMutation = trpc.playback.playWithContext.useMutation();
   const shuffleMutation = trpc.playback.toggleShuffle.useMutation();
   const followPlaylistMutation = trpc.playlist.followPlaylist.useMutation({
-    onMutate: (() => setIsSaved(true)),
-    onError: (() => setIsSaved(false)),
+    onMutate: () => setIsSaved(true),
+    onError: () => setIsSaved(false),
   });
   const unfollowPlaylistMutation = trpc.playlist.unfollowPlaylist.useMutation({
-    onMutate: (() => setIsSaved(false)),
-    onError: (() => setIsSaved(true)),
+    onMutate: () => setIsSaved(false),
+    onError: () => setIsSaved(true),
   });
 
   if (!player || !playbackState) {
@@ -79,7 +87,7 @@ export default function PlaylistControls({ name, type, id, uri, isFollowing }: P
     } else {
       followPlaylistMutation.mutate(id);
     }
-  }
+  };
 
   const toggleIsPlaying = async () => {
     if (!isPlaybackContext) {
@@ -94,7 +102,7 @@ export default function PlaylistControls({ name, type, id, uri, isFollowing }: P
         await player.resume.bind(player)();
       }
     }
-  }
+  };
 
   const toggleShuffleOn = () => {
     if (isPlaybackContext) {
@@ -102,7 +110,7 @@ export default function PlaylistControls({ name, type, id, uri, isFollowing }: P
     } else {
       setShuffleOn(!shuffleOn);
     }
-  }
+  };
 
   return (
     <div className="flex items-center gap-4 m-4">
@@ -113,18 +121,19 @@ export default function PlaylistControls({ name, type, id, uri, isFollowing }: P
         onClick={toggleIsPlaying}
         aria-label={isPlaying ? `Pause ${""}` : `Play ${""}`}
       >
-        {isPlaying
-          ? <PauseIcon
-              className="h-5 w-5"
-              stroke="hsl(var(--background))"
-              fill="hsl(var(--background))"
-            />
-          : <PlayIcon
-              className="h-5 w-5"
-              stroke="hsl(var(--background))"
-              fill="hsl(var(--background))"
-            />
-        }
+        {isPlaying ? (
+          <PauseIcon
+            className="h-5 w-5"
+            stroke="hsl(var(--background))"
+            fill="hsl(var(--background))"
+          />
+        ) : (
+          <PlayIcon
+            className="h-5 w-5"
+            stroke="hsl(var(--background))"
+            fill="hsl(var(--background))"
+          />
+        )}
       </Button>
       <Button
         variant="ghost"
@@ -158,16 +167,17 @@ export default function PlaylistControls({ name, type, id, uri, isFollowing }: P
               : "border-2 border-[hsl(var(--plus-color))]"
           )}
         >
-          {isSaved
-            ? <CheckIcon
-                className="h-4 w-4 stroke-[12%]"
-                stroke="hsl(var(--background))"
-              />
-            : <PlusIcon
-                className="h-4 w-4 stroke-[12%]"
-                stroke="hsl(var(--plus-color))"
-              />
-          }
+          {isSaved ? (
+            <CheckIcon
+              className="h-4 w-4 stroke-[12%]"
+              stroke="hsl(var(--background))"
+            />
+          ) : (
+            <PlusIcon
+              className="h-4 w-4 stroke-[12%]"
+              stroke="hsl(var(--plus-color))"
+            />
+          )}
         </div>
       </Button>
       <DropdownMenu>
@@ -187,22 +197,23 @@ export default function PlaylistControls({ name, type, id, uri, isFollowing }: P
         <DropdownMenuContent align="start">
           <DropdownMenuGroup>
             <DropdownMenuItem className="flex gap-2" onClick={toggleIsSaved}>
-            {isSaved
-                ? <>
-                    <div className="flex justify-center items-center rounded-full h-[18px] w-[18px] bg-green-500">
-                      <CheckIcon
-                        size={12}
-                        strokeWidth={3}
-                        stroke="hsl(var(--background))"
-                      />
-                    </div>
-                    Remove from Your Library
-                  </>
-                : <>
-                    <CirclePlusIcon size={18} />
-                    Save to Your Library
-                  </>
-              }
+              {isSaved ? (
+                <>
+                  <div className="flex justify-center items-center rounded-full h-[18px] w-[18px] bg-green-500">
+                    <CheckIcon
+                      size={12}
+                      strokeWidth={3}
+                      stroke="hsl(var(--background))"
+                    />
+                  </div>
+                  Remove from Your Library
+                </>
+              ) : (
+                <>
+                  <CirclePlusIcon size={18} />
+                  Save to Your Library
+                </>
+              )}
             </DropdownMenuItem>
             <DropdownMenuItem className="flex gap-2" disabled>
               <ListMusicIcon size={18} />
@@ -242,10 +253,7 @@ export default function PlaylistControls({ name, type, id, uri, isFollowing }: P
                     </a>
                   </DropdownMenuItem>
                   <DropdownMenuItem className="flex gap-2" asChild>
-                    <a
-                      href={`spotify:${type}:${id}`}
-                      target="_blank"
-                    >
+                    <a href={`spotify:${type}:${id}`} target="_blank">
                       <MonitorIcon size={18} />
                       Desktop App
                     </a>

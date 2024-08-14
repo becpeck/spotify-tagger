@@ -1,6 +1,6 @@
 "use client";
 
-import { usePlaybackStore } from "@/stores/PlaybackStoreProvider";
+import { useAppStore } from "@/stores/AppStoreProvider";
 
 import CurrentlyPlaying from "@/components/PlaybackBar/CurrentlyPlaying";
 import PlaybackControls from "@/components/PlaybackBar/PlaybackControls";
@@ -9,7 +9,12 @@ import DeviceButton from "@/components/PlaybackBar/DeviceButton";
 import VolumeControls from "@/components/PlaybackBar/VolumeControls";
 
 export default function PlaybackBar() {
-  const { player, playbackState } = usePlaybackStore((state) => state);
+  const { player, playbackState } = useAppStore(
+    ({ player, playbackState }) => ({
+      player,
+      playbackState,
+    })
+  );
 
   if (!player || !playbackState) {
     return;
