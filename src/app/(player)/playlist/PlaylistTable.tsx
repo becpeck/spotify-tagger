@@ -53,8 +53,8 @@ export interface TrackData {
 export interface Track extends TrackData {
   isPlaybackContext: boolean;
   isPlaying: boolean;
-  addToQueue: () => Promise<void>;
-  toggleIsSaved: () => Promise<void>;
+  addToQueue: () => void;
+  toggleIsSaved: () => void;
   toggleIsPlaying: () => Promise<void>;
 }
 
@@ -317,10 +317,9 @@ export default function PlaylistTable({
     // && artists.every(artist => artists)
     const isPlaying = isPlaybackContext && !playbackState.paused;
 
-    const addToQueue = async () =>
-      addToQueueMutation.mutate(trackData.track.uri);
+    const addToQueue = () => addToQueueMutation.mutate(trackData.track.uri);
 
-    const toggleIsSaved = async () => {
+    const toggleIsSaved = () => {
       if (savedTrackIds.has(trackData.track.id)) {
         unsaveTracksMutation.mutate([trackData.track.id]);
       } else {

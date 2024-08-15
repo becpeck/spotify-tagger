@@ -6,7 +6,7 @@ import {
   ErrorResponse403,
   ErrorResponse429,
 } from "@/server/spotifyWebApi/utils/errors";
-import { TrackURISchema } from "../../utils/schemas";
+import { TrackURISchema } from "@/server/spotifyWebApi/utils/schemas";
 
 const addToQueue = makeEndpoint({
   method: "post",

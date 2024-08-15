@@ -54,8 +54,8 @@ type ActionsMenuProps = {
     isSaved: boolean;
   };
   userPlaylists: Array<{ id: string; name: string }>;
-  addToQueue: () => Promise<void>;
-  toggleIsSaved: () => Promise<void>;
+  addToQueue: () => void;
+  toggleIsSaved: () => void;
 };
 
 export default function ActionsMenu({
