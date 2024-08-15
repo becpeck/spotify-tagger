@@ -1,4 +1,4 @@
-import { Zodios, apiBuilder, mergeApis } from "@zodios/core";
+import { Zodios, mergeApis } from "@zodios/core";
 import meApi from "@/server/spotifyWebApi/me/meApi";
 import playlistsApi from "@/server/spotifyWebApi/playlists/playlistsApi";
 import usersApi from "@/server/spotifyWebApi/users/usersApi";
@@ -28,5 +28,7 @@ const spotifyApi = mergeApis({
 });
 
 const spotifyApiClient = new Zodios(SPOTIFY_BASE_URL, spotifyApi);
+
+export type SpotifyApiClient = typeof spotifyApiClient;
 
 export default spotifyApiClient;

@@ -1,5 +1,6 @@
 import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
 import { PlaylistIdSchema } from "@/server/spotifyWebApi/utils/schemas";
+import { checkSavedTracks } from "@/server/api/routers/tracks";
 
 const playlistRouter = createTRPCRouter({
   getPlaylistData: protectedProcedure
@@ -11,9 +12,10 @@ const playlistRouter = createTRPCRouter({
       const playlist = await ctx.spotify.getPlaylist({
         params: { playlist_id: input },
       });
-      const isSaved = await ctx.spotify.checkSavedTracks({
-        queries: { ids: playlist.tracks.items.map((track) => track.track.id) },
-      });
+      const isSaved = await checkSavedTracks(
+        ctx.spotify,
+        playlist.tracks.items.map((track) => track.track.id)
+      );
       return {
         ...playlist,
         tracks: {
