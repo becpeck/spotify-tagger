@@ -288,11 +288,11 @@ export default function PlaylistTable({
     };
 
   const playMutation = trpc.playback.playWithContext.useMutation();
-  const saveTracksMutation = trpc.me.saveTracks.useMutation({
+  const saveTracksMutation = trpc.tracks.saveTracks.useMutation({
     onMutate: (trackIds) => addOrDeleteTrackIds("add")(trackIds),
     onError: (error, trackIds) => addOrDeleteTrackIds("delete")(trackIds),
   });
-  const unsaveTracksMutation = trpc.me.unsaveTracks.useMutation({
+  const unsaveTracksMutation = trpc.tracks.unsaveTracks.useMutation({
     onMutate: (trackIds) => addOrDeleteTrackIds("delete")(trackIds),
     onError: (error, trackIds) => addOrDeleteTrackIds("add")(trackIds),
   });
