@@ -30,7 +30,7 @@ const TableBody = React.forwardRef<
 >(({ className, colSpan, ...props }, ref) => (
   <div
     ref={ref}
-    className={cn("[&_div:last-child]:border-0 grid grid-cols-subgrid", colSpan, className)}
+    className={cn("[&_>_div:last-child]:border-0 grid grid-cols-subgrid", colSpan, className)}
     {...props}
   />
 ))

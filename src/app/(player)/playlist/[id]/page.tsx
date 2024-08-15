@@ -19,7 +19,7 @@ export default async function Playlist({ params }: { params: { id: string } }) {
     return image?.url ?? "";
   })();
 
-  const data = tracks.items.map(({ added_at, track }, i) => {
+  const data = tracks.items.map(({ added_at, track, isSaved }, i) => {
     const { id, artists, album, name, duration_ms, type, uri } = track;
     return {
       number: i + 1,
@@ -30,6 +30,7 @@ export default async function Playlist({ params }: { params: { id: string } }) {
         name: album.name,
         type: album.type,
       },
+      isSaved,
       added_at,
       duration_ms,
     };

@@ -1,11 +1,19 @@
 "use client";
 
+import { useState } from "react";
 import {
   type ColumnDef,
   type RowData,
   type TableMeta,
 } from "@tanstack/react-table";
-import { PlayIcon, HashIcon, ClockIcon, PauseIcon, CheckIcon, PlusIcon } from "lucide-react";
+import {
+  PlayIcon,
+  HashIcon,
+  ClockIcon,
+  PauseIcon,
+  CheckIcon,
+  PlusIcon,
+} from "lucide-react";
 
 import { trpc } from "@/trpc/client";
 
@@ -39,14 +47,14 @@ export interface TrackData {
   };
   added_at: string;
   duration_ms: number;
+  isSaved: boolean;
 }
 
 export interface Track extends TrackData {
-  isSaved: boolean;
   isPlaybackContext: boolean;
   isPlaying: boolean;
   addToQueue: () => Promise<undefined>;
-  toggleIsSaved: () => Promise<undefined>;
+  toggleIsSaved: () => Promise<void>;
   toggleIsPlaying: () => Promise<void>;
 }
 
@@ -171,7 +179,7 @@ const columns: ColumnDef<Track>[] = [
   },
   {
     id: "isSaved",
-    header: () => (<div></div>),
+    header: () => <div></div>,
     cell: ({ row }) => {
       const { isSaved, toggleIsSaved } = row.original;
       return (
@@ -193,20 +201,21 @@ const columns: ColumnDef<Track>[] = [
                 : "border border-[hsl(var(--plus-color))]"
             )}
           >
-            {isSaved
-              ? <CheckIcon
-                  className="h-[66%] w-[66%] stroke-[14%]"
-                  stroke="hsl(var(--background))"
-                />
-              : <PlusIcon
-                  className="h-[66%] w-[66%] stroke-[14%]"
-                  stroke="hsl(var(--plus-color))"
-                />
-            }
+            {isSaved ? (
+              <CheckIcon
+                className="h-[66%] w-[66%] stroke-[14%]"
+                stroke="hsl(var(--background))"
+              />
+            ) : (
+              <PlusIcon
+                className="h-[66%] w-[66%] stroke-[14%]"
+                stroke="hsl(var(--plus-color))"
+              />
+            )}
           </div>
         </Button>
       );
-    }
+    },
   },
   {
     accessorKey: "duration_ms",
@@ -262,8 +271,30 @@ export default function PlaylistTable({
   const { player, playbackState } = useAppStore(
     ({ player, playbackState }) => ({ player, playbackState })
   );
+  const [savedTrackIds, setSavedTrackIds] = useState(
+    new Set(
+      trackDataArr
+        .filter((trackData) => trackData.isSaved)
+        .map((trackData) => trackData.track.id)
+    )
+  );
+
+  const addOrDeleteTrackIds =
+    (addOrDelete: "add" | "delete") => (trackIds: string[]) => {
+      const ids = new Set(savedTrackIds);
+      trackIds.forEach((id) => ids[addOrDelete](id));
+      setSavedTrackIds(ids);
+    };
 
   const playMutation = trpc.playback.playWithContext.useMutation();
+  const saveTracksMutation = trpc.me.saveTracks.useMutation({
+    onMutate: (trackIds) => addOrDeleteTrackIds("add")(trackIds),
+    onError: (error, trackIds) => addOrDeleteTrackIds("delete")(trackIds),
+  });
+  const unsaveTracksMutation = trpc.me.unsaveTracks.useMutation({
+    onMutate: (trackIds) => addOrDeleteTrackIds("delete")(trackIds),
+    onError: (error, trackIds) => addOrDeleteTrackIds("add")(trackIds),
+  });
 
   if (!playbackState || !player) {
     return;
@@ -273,7 +304,6 @@ export default function PlaylistTable({
   const { name, album, uri } = playbackState.track_window.current_track;
 
   const tracks: Track[] = trackDataArr.map((trackData) => {
-    const isSaved = false;
     const isPlaybackContext =
       context.uri === playlist!.uri &&
       (uri === trackData.track.uri ||
@@ -282,7 +312,14 @@ export default function PlaylistTable({
     const isPlaying = isPlaybackContext && !playbackState.paused;
 
     const addToQueue = async () => undefined;
-    const toggleIsSaved = async () => undefined;
+
+    const toggleIsSaved = async () => {
+      if (savedTrackIds.has(trackData.track.id)) {
+        unsaveTracksMutation.mutate([trackData.track.id]);
+      } else {
+        saveTracksMutation.mutate([trackData.track.id]);
+      }
+    };
 
     const toggleIsPlaying = async () => {
       if (!isPlaybackContext) {
@@ -301,7 +338,7 @@ export default function PlaylistTable({
 
     return {
       ...trackData,
-      isSaved,
+      isSaved: savedTrackIds.has(trackData.track.id),
       isPlaybackContext,
       isPlaying,
       addToQueue,
