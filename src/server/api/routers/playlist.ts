@@ -1,5 +1,3 @@
-import { z } from "zod";
-
 import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
 import { PlaylistIdSchema } from "@/server/spotifyWebApi/utils/schemas";
 
@@ -10,11 +8,21 @@ const playlistRouter = createTRPCRouter({
       const isFollowing = await ctx.spotify.isFollowingPlaylist({
         params: { playlist_id: input },
       });
-      const res = await ctx.spotify.getPlaylist({
+      const playlist = await ctx.spotify.getPlaylist({
         params: { playlist_id: input },
       });
+      const isSaved = await ctx.spotify.checkSavedTracks({
+        queries: { ids: playlist.tracks.items.map((track) => track.track.id) },
+      });
       return {
-        ...res,
+        ...playlist,
+        tracks: {
+          ...playlist.tracks,
+          items: playlist.tracks.items.map((track, i) => ({
+            ...track,
+            isSaved: isSaved[i]!,
+          })),
+        },
         isFollowing,
       };
     }),
