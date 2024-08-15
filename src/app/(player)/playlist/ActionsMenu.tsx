@@ -54,6 +54,7 @@ type ActionsMenuProps = {
     isSaved: boolean;
   };
   userPlaylists: Array<{ id: string; name: string }>;
+  addToQueue: () => Promise<void>;
   toggleIsSaved: () => Promise<void>;
 };
 
@@ -63,6 +64,7 @@ export default function ActionsMenu({
   playlist,
   track,
   userPlaylists,
+  addToQueue,
   toggleIsSaved,
 }: ActionsMenuProps) {
   return (
@@ -116,7 +118,7 @@ export default function ActionsMenu({
             </div>
             {track.isSaved ? "Remove From Liked Songs" : "Save to Liked Songs"}
           </DropdownMenuItem>
-          <DropdownMenuItem className="flex gap-2">
+          <DropdownMenuItem className="flex gap-2" onClick={addToQueue}>
             <ListMusicIcon size={18} />
             Add to Queue
           </DropdownMenuItem>

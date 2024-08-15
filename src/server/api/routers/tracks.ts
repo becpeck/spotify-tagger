@@ -2,7 +2,10 @@ import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
 import { z } from "zod";
 
 import { type SpotifyApiClient } from "@/server/spotifyWebApi/spotifyApiClient";
-import { TrackIdSchema } from "@/server/spotifyWebApi/utils/schemas";
+import {
+  TrackIdSchema,
+  TrackURISchema,
+} from "@/server/spotifyWebApi/utils/schemas";
 
 export const checkSavedTracks = async (
   spotify: SpotifyApiClient,
@@ -35,6 +38,11 @@ const tracksRouter = createTRPCRouter({
     .input(z.array(TrackIdSchema))
     .query(async ({ ctx, input }) => {
       return checkSavedTracks(ctx.spotify, input);
+    }),
+  addToQueue: protectedProcedure
+    .input(TrackURISchema)
+    .mutation(({ input, ctx }) => {
+      return ctx.spotify.addToQueue(undefined, { queries: { uri: input } });
     }),
 });
 

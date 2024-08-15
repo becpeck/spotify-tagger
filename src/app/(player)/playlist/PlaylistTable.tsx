@@ -53,7 +53,7 @@ export interface TrackData {
 export interface Track extends TrackData {
   isPlaybackContext: boolean;
   isPlaying: boolean;
-  addToQueue: () => Promise<undefined>;
+  addToQueue: () => Promise<void>;
   toggleIsSaved: () => Promise<void>;
   toggleIsPlaying: () => Promise<void>;
 }
@@ -243,7 +243,8 @@ const columns: ColumnDef<Track>[] = [
   {
     id: "actions",
     cell: ({ row, table }) => {
-      const { album, artists, track, isSaved, toggleIsSaved } = row.original;
+      const { album, artists, track, isSaved, addToQueue, toggleIsSaved } =
+        row.original;
       const playlist = table.options.meta!.playlist!;
       const userPlaylists = table.options.meta!.userPlaylists;
       return (
@@ -253,6 +254,7 @@ const columns: ColumnDef<Track>[] = [
           track={{ ...track, isSaved }}
           playlist={playlist}
           userPlaylists={userPlaylists}
+          addToQueue={addToQueue}
           toggleIsSaved={toggleIsSaved}
         />
       );
@@ -296,6 +298,9 @@ export default function PlaylistTable({
     onMutate: (trackIds) => addOrDeleteTrackIds("delete")(trackIds),
     onError: (error, trackIds) => addOrDeleteTrackIds("add")(trackIds),
   });
+  const addToQueueMutation = trpc.tracks.addToQueue.useMutation({
+    onError: (error) => console.error(error),
+  });
 
   if (!playbackState || !player) {
     return;
@@ -312,7 +317,8 @@ export default function PlaylistTable({
     // && artists.every(artist => artists)
     const isPlaying = isPlaybackContext && !playbackState.paused;
 
-    const addToQueue = async () => undefined;
+    const addToQueue = async () =>
+      addToQueueMutation.mutate(trackData.track.uri);
 
     const toggleIsSaved = async () => {
       if (savedTrackIds.has(trackData.track.id)) {
