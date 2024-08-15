@@ -23,7 +23,7 @@ import Link from "@/components/Link";
 import ActionsMenu from "@/app/(player)/playlist/ActionsMenu";
 import PlaylistControls from "@/app/(player)/playlist/PlaylistControls";
 
-import { useAppStore } from "@/stores/AppStoreProvider";
+import { useAppStore } from "@/lib/stores/AppStoreProvider";
 import { toDurationString, toDuration } from "@/utils/timeUtils";
 import { cn } from "@/lib/utils";
 
@@ -250,7 +250,7 @@ const columns: ColumnDef<Track>[] = [
         <ActionsMenu
           artists={artists}
           album={album}
-          track={{...track, isSaved}}
+          track={{ ...track, isSaved }}
           playlist={playlist}
           userPlaylists={userPlaylists}
           toggleIsSaved={toggleIsSaved}

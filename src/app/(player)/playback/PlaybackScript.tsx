@@ -3,7 +3,7 @@
 import Script from "next/script";
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { useAppStore } from "@/stores/AppStoreProvider";
+import { useAppStore } from "@/lib/stores/AppStoreProvider";
 import { trpc } from "@/trpc/client";
 
 declare global {

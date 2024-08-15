@@ -1,6 +1,6 @@
 "use client";
 
-import { useAppStore } from "@/stores/AppStoreProvider";
+import { useAppStore } from "@/lib/stores/AppStoreProvider";
 
 import CurrentlyPlaying from "@/components/PlaybackBar/CurrentlyPlaying";
 import PlaybackControls from "@/components/PlaybackBar/PlaybackControls";

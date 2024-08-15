@@ -32,7 +32,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 
-import { useAppStore } from "@/stores/AppStoreProvider";
+import { useAppStore } from "@/lib/stores/AppStoreProvider";
 import { trpc } from "@/trpc/client";
 import { cn } from "@/lib/utils";
 

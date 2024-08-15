@@ -1,5 +1,5 @@
 import { type StateCreator } from "zustand";
-import { type AppStore } from "@/stores/appStore";
+import { type AppStore } from "@/lib/stores/appStore";
 
 export interface PlayerSlice {
   player: SpotifyPlayer | null;

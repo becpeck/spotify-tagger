@@ -3,7 +3,7 @@ import "client-only";
 import { createContext, useRef, useContext } from "react";
 import { useStore } from "zustand";
 
-import { type AppStore, createAppStore } from "@/stores/appStore";
+import { type AppStore, createAppStore } from "@/lib/stores/appStore";
 
 export type AppStoreApi = ReturnType<typeof createAppStore>;
 

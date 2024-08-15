@@ -1,9 +1,12 @@
 import { createStore } from "zustand";
-import { type PlayerSlice, createPlayerSlice } from "@/stores/playerSlice";
+import {
+  type PlayerSlice,
+  createPlayerSlice,
+} from "@/lib/stores/slices/playerSlice";
 import {
   type PlaybackStateSlice,
   createPlaybackStateSlice,
-} from "@/stores/playbackStateSlice";
+} from "@/lib/stores/slices/playbackStateSlice";
 
 export type AppStore = PlayerSlice & PlaybackStateSlice;
 
