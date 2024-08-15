@@ -15,7 +15,7 @@ import {
   PlusIcon,
 } from "lucide-react";
 
-import { trpc } from "@/trpc/client";
+import { trpc } from "@/lib/trpc/client";
 
 import { Button } from "@/components/ui/button";
 import DataTable from "@/components/ui/data-table";

@@ -5,8 +5,8 @@ import { loggerLink, unstable_httpBatchStreamLink } from "@trpc/client";
 import { useState } from "react";
 import SuperJSON from "superjson";
 
-import { trpc } from "@/trpc/client";
-import { getBaseUrl } from "@/trpc/utils";
+import { trpc } from "@/lib/trpc/client";
+import { getBaseUrl } from "@/lib/trpc/utils";
 
 export default function TRPCReactProvider({
   children,

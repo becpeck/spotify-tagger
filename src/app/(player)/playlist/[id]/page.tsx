@@ -1,4 +1,4 @@
-import { trpc } from "@/trpc/server";
+import { trpc } from "@/lib/trpc/server";
 
 import PlaylistInfo from "@/app/(player)/playlist/PlaylistInfo";
 import PlaylistTable from "@/app/(player)/playlist/PlaylistTable";

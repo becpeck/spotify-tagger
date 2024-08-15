@@ -4,7 +4,7 @@ import Script from "next/script";
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAppStore } from "@/lib/stores/AppStoreProvider";
-import { trpc } from "@/trpc/client";
+import { trpc } from "@/lib/trpc/client";
 
 declare global {
   interface Window {

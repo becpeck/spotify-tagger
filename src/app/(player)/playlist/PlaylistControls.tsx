@@ -33,7 +33,7 @@ import {
 import { Button } from "@/components/ui/button";
 
 import { useAppStore } from "@/lib/stores/AppStoreProvider";
-import { trpc } from "@/trpc/client";
+import { trpc } from "@/lib/trpc/client";
 import { cn } from "@/lib/utils";
 
 type PlaylistControlsProps = {

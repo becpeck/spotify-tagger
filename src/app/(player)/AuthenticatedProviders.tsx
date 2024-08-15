@@ -1,4 +1,4 @@
-import TRPCReactProvider from "@/trpc/TRPCReactProvider";
+import TRPCReactProvider from "@/lib/trpc/TRPCReactProvider";
 import { AppStoreProvider } from "@/lib/stores/AppStoreProvider";
 
 export default function AuthenticatedProviders({
