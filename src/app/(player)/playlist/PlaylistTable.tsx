@@ -243,16 +243,17 @@ const columns: ColumnDef<Track>[] = [
   {
     id: "actions",
     cell: ({ row, table }) => {
-      const { album, artists, track } = row.original;
+      const { album, artists, track, isSaved, toggleIsSaved } = row.original;
       const playlist = table.options.meta!.playlist!;
       const userPlaylists = table.options.meta!.userPlaylists;
       return (
         <ActionsMenu
           artists={artists}
           album={album}
-          track={track}
+          track={{...track, isSaved}}
           playlist={playlist}
           userPlaylists={userPlaylists}
+          toggleIsSaved={toggleIsSaved}
         />
       );
     },
