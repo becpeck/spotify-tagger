@@ -5,7 +5,7 @@ import {
   type RowData,
   type TableMeta,
 } from "@tanstack/react-table";
-import { PlayIcon, HashIcon, ClockIcon, PauseIcon } from "lucide-react";
+import { PlayIcon, HashIcon, ClockIcon, PauseIcon, CheckIcon, PlusIcon } from "lucide-react";
 
 import { trpc } from "@/trpc/client";
 
@@ -170,6 +170,45 @@ const columns: ColumnDef<Track>[] = [
     ),
   },
   {
+    id: "isSaved",
+    header: () => (<div></div>),
+    cell: ({ row }) => {
+      const { isSaved, toggleIsSaved } = row.original;
+      return (
+        <Button
+          variant="ghost"
+          size="icon"
+          className={cn(
+            "rounded-full hover:transform hover:scale-105 active:transform-none active:brightness-75 hover:bg-transparent",
+            "[--plus-color:--background] group-hover/row:[--plus-color:--muted-foreground] group-hover/row:hover:[--plus-color:--primary]"
+          )}
+          onClick={toggleIsSaved}
+          aria-label={isSaved ? "Remove from Library" : "Save to Library"}
+        >
+          <div
+            className={cn(
+              "flex justify-center items-center rounded-full h-4 w-4",
+              isSaved
+                ? "bg-green-500"
+                : "border border-[hsl(var(--plus-color))]"
+            )}
+          >
+            {isSaved
+              ? <CheckIcon
+                  className="h-[66%] w-[66%] stroke-[14%]"
+                  stroke="hsl(var(--background))"
+                />
+              : <PlusIcon
+                  className="h-[66%] w-[66%] stroke-[14%]"
+                  stroke="hsl(var(--plus-color))"
+                />
+            }
+          </div>
+        </Button>
+      );
+    }
+  },
+  {
     accessorKey: "duration_ms",
     header: () => (
       <div className="w-full flex justify-end align-center">
@@ -242,12 +281,6 @@ export default function PlaylistTable({
     // && artists.every(artist => artists)
     const isPlaying = isPlaybackContext && !playbackState.paused;
 
-    // console.log(`trackName: ${trackData.track.name}`)
-    // console.log(`playlistUri: ${meta.playlist!.uri}`)
-    // console.log(`trackUri: ${trackData.track.uri}`)
-    // console.log(`isPlaybackContext: ${isPlaybackContext}`)
-    // console.log(`isPlaying: ${isPlaying}`)
-
     const addToQueue = async () => undefined;
     const toggleIsSaved = async () => undefined;
 
@@ -296,8 +329,8 @@ export default function PlaylistTable({
           })),
         }}
         columns={columns}
-        gridTemplateCols="grid-cols-[auto_2fr_1.5fr_1.5fr_auto_auto_auto]"
-        colSpan="col-span-7"
+        gridTemplateCols="grid-cols-[auto_2fr_1.5fr_1.5fr_auto_auto_auto_auto]"
+        colSpan="col-span-8"
       />
     </>
   );
