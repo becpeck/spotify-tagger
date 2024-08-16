@@ -2,8 +2,11 @@
 
 import {
   type ColumnDef,
+  type SortingState,
+  type OnChangeFn,
   flexRender,
   getCoreRowModel,
+  getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
 import {
@@ -20,6 +23,8 @@ interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[],
   data: TData[],
   meta?: TableMeta<TData>,
+  sorting: SortingState,
+  setSorting: OnChangeFn<SortingState>,
   gridTemplateCols: string,
   colSpan: string,
 }
@@ -28,6 +33,8 @@ export default function DataTable<TData, TValue>({
   columns,
   data,
   meta,
+  sorting, 
+  setSorting,
   gridTemplateCols,
   colSpan,
 }: DataTableProps<TData, TValue>) {
@@ -36,6 +43,11 @@ export default function DataTable<TData, TValue>({
     columns,
     meta,
     getCoreRowModel: getCoreRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+    onSortingChange: setSorting,
+    state: {
+      sorting,
+    },
   });
 
   // TODO: move this to individual PlaylistTable etc components

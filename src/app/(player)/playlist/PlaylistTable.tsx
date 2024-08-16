@@ -5,6 +5,7 @@ import {
   type ColumnDef,
   type RowData,
   type TableMeta,
+  type SortingState,
 } from "@tanstack/react-table";
 import {
   PlayIcon,
@@ -281,6 +282,7 @@ export default function PlaylistTable({
         .map((trackData) => trackData.track.id)
     )
   );
+  const [sorting, setSorting] = useState<SortingState>([]);
 
   const addOrDeleteTrackIds =
     (addOrDelete: "add" | "delete") => (trackIds: string[]) => {
@@ -374,6 +376,8 @@ export default function PlaylistTable({
         columns={columns}
         gridTemplateCols="grid-cols-[auto_2fr_1.5fr_1.5fr_auto_auto_auto_auto]"
         colSpan="col-span-8"
+        sorting={sorting}
+        setSorting={setSorting}
       />
     </>
   );
