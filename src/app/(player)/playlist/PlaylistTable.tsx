@@ -348,6 +348,13 @@ export default function PlaylistTable({
   );
   const [sorting, setSorting] = useState<SortingState>([]);
 
+  const toggleSort = (label?: string) => () =>
+    setSorting(
+      label
+        ? [{ id: label, desc: !(sorting[0]?.id !== label || sorting[0]?.desc) }]
+        : []
+    );
+
   const addOrDeleteTrackIds =
     (addOrDelete: "add" | "delete") => (trackIds: string[]) => {
       const ids = new Set(savedTrackIds);
@@ -427,6 +434,8 @@ export default function PlaylistTable({
         id={playlist!.id}
         uri={playlist!.uri}
         isFollowing={playlist!.isFollowing} // PLACEHOLDER for saved playlists store
+        sorting={sorting}
+        toggleSort={toggleSort}
       />
       <DataTable
         data={tracks}

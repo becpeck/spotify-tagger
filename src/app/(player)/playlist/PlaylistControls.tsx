@@ -1,13 +1,18 @@
 "use client";
 
 import { useState } from "react";
+import { type SortingState } from "@tanstack/react-table";
 
 import {
+  AlignJustifyIcon,
+  ArrowDownIcon,
+  ArrowUpIcon,
   CheckIcon,
   CirclePlusIcon,
   CopyIcon,
   EllipsisIcon,
   ExternalLinkIcon,
+  LayoutListIcon,
   ListMusicIcon,
   MonitorIcon,
   PauseIcon,
@@ -23,6 +28,7 @@ import {
   DropdownMenuContent,
   DropdownMenuGroup,
   DropdownMenuItem,
+  DropdownMenuLabel,
   DropdownMenuPortal,
   DropdownMenuSeparator,
   DropdownMenuSub,
@@ -42,6 +48,8 @@ type PlaylistControlsProps = {
   id: string;
   uri: `spotify:playlist:${string}`;
   isFollowing: boolean;
+  sorting: SortingState;
+  toggleSort: (label?: string) => () => void;
 };
 
 export default function PlaylistControls({
@@ -50,6 +58,8 @@ export default function PlaylistControls({
   id,
   uri,
   isFollowing,
+  sorting,
+  toggleSort,
 }: PlaylistControlsProps) {
   const { player, playbackState } = useAppStore(
     ({ player, playbackState }) => ({ player, playbackState })
@@ -112,155 +122,304 @@ export default function PlaylistControls({
     }
   };
 
+  const sortingLabel = ((sorting: SortingState) => {
+    if (sorting.length === 0 || !sorting[0]) {
+      return "Custom Order";
+    } else {
+      switch (sorting[0].id) {
+        case "title":
+          return "Title";
+        case "artists":
+          return "Artists";
+        case "album":
+          return "Album";
+        case "added_at":
+          return "Date Added";
+        case "duration_ms":
+          return "Duration";
+      }
+    }
+  })(sorting);
+
   return (
-    <div className="flex items-center gap-4 m-4">
-      <Button
-        variant="default"
-        size="icon"
-        className="rounded-full bg-green-500 hover:bg-green-500 h-10 w-10 hover:transform hover:scale-105 active:transform-none active:brightness-75"
-        onClick={toggleIsPlaying}
-        aria-label={isPlaying ? `Pause ${""}` : `Play ${""}`}
-      >
-        {isPlaying ? (
-          <PauseIcon
-            className="h-5 w-5"
-            stroke="hsl(var(--background))"
-            fill="hsl(var(--background))"
-          />
-        ) : (
-          <PlayIcon
-            className="h-5 w-5"
-            stroke="hsl(var(--background))"
-            fill="hsl(var(--background))"
-          />
-        )}
-      </Button>
-      <Button
-        variant="ghost"
-        size="icon"
-        className={cn(
-          "rounded-full hover:transform hover:scale-105 active:transform-none active:brightness-75 hover:bg-transparent",
-          shuffleOn
-            ? "[--shuffle-color:--green]"
-            : "[--shuffle-color:--muted-foreground] hover:[--shuffle-color:--primary]"
-        )}
-        onClick={toggleShuffleOn}
-        aria-label={`${shuffleOn ? "Disable" : "Enable"} shuffle for ${name}`}
-      >
-        <ShuffleIcon className="h-6 w-6" stroke="hsl(var(--shuffle-color))" />
-      </Button>
-      <Button
-        variant="ghost"
-        size="icon"
-        className={cn(
-          "rounded-full hover:transform hover:scale-105 active:transform-none active:brightness-75 hover:bg-transparent",
-          "[--plus-color:--muted-foreground] hover:[--plus-color:--primary]"
-        )}
-        onClick={toggleIsSaved}
-        aria-label={isSaved ? "Remove from Library" : "Save to Library"}
-      >
-        <div
-          className={cn(
-            "flex justify-center items-center rounded-full h-6 w-6",
-            isSaved
-              ? "bg-green-500"
-              : "border-2 border-[hsl(var(--plus-color))]"
-          )}
+    <div className="flex justify-between m-4">
+      <div className="flex items-center gap-4">
+        <Button
+          variant="default"
+          size="icon"
+          className="rounded-full bg-green-500 hover:bg-green-500 h-10 w-10 hover:transform hover:scale-105 active:transform-none active:brightness-75"
+          onClick={toggleIsPlaying}
+          aria-label={isPlaying ? `Pause ${""}` : `Play ${""}`}
         >
-          {isSaved ? (
-            <CheckIcon
-              className="h-4 w-4 stroke-[12%]"
+          {isPlaying ? (
+            <PauseIcon
+              className="h-5 w-5"
               stroke="hsl(var(--background))"
+              fill="hsl(var(--background))"
             />
           ) : (
-            <PlusIcon
-              className="h-4 w-4 stroke-[12%]"
-              stroke="hsl(var(--plus-color))"
+            <PlayIcon
+              className="h-5 w-5"
+              stroke="hsl(var(--background))"
+              fill="hsl(var(--background))"
             />
           )}
-        </div>
-      </Button>
+        </Button>
+        <Button
+          variant="ghost"
+          size="icon"
+          className={cn(
+            "rounded-full hover:transform hover:scale-105 active:transform-none active:brightness-75 hover:bg-transparent",
+            shuffleOn
+              ? "[--shuffle-color:--green]"
+              : "[--shuffle-color:--muted-foreground] hover:[--shuffle-color:--primary]"
+          )}
+          onClick={toggleShuffleOn}
+          aria-label={`${shuffleOn ? "Disable" : "Enable"} shuffle for ${name}`}
+        >
+          <ShuffleIcon className="h-6 w-6" stroke="hsl(var(--shuffle-color))" />
+        </Button>
+        <Button
+          variant="ghost"
+          size="icon"
+          className={cn(
+            "rounded-full hover:transform hover:scale-105 active:transform-none active:brightness-75 hover:bg-transparent",
+            "[--plus-color:--muted-foreground] hover:[--plus-color:--primary]"
+          )}
+          onClick={toggleIsSaved}
+          aria-label={isSaved ? "Remove from Library" : "Save to Library"}
+        >
+          <div
+            className={cn(
+              "flex justify-center items-center rounded-full h-6 w-6",
+              isSaved
+                ? "bg-green-500"
+                : "border-2 border-[hsl(var(--plus-color))]"
+            )}
+          >
+            {isSaved ? (
+              <CheckIcon
+                className="h-4 w-4 stroke-[12%]"
+                stroke="hsl(var(--background))"
+              />
+            ) : (
+              <PlusIcon
+                className="h-4 w-4 stroke-[12%]"
+                stroke="hsl(var(--plus-color))"
+              />
+            )}
+          </div>
+        </Button>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="rounded-full hover:transform hover:scale-105 active:transform-none active:brightness-75 hover:bg-transparent [--ellipsis-color:--muted-foreground] hover:[--ellipsis-color:--primary]"
+              aria-label={`More options for ${name}`}
+            >
+              <EllipsisIcon
+                className="h-6 w-6"
+                stroke="hsl(var(--ellipsis-color))"
+              />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="start">
+            <DropdownMenuGroup>
+              <DropdownMenuItem className="flex gap-2" onClick={toggleIsSaved}>
+                {isSaved ? (
+                  <>
+                    <div className="flex justify-center items-center rounded-full h-[18px] w-[18px] bg-green-500">
+                      <CheckIcon
+                        size={12}
+                        strokeWidth={3}
+                        stroke="hsl(var(--background))"
+                      />
+                    </div>
+                    Remove from Your Library
+                  </>
+                ) : (
+                  <>
+                    <CirclePlusIcon size={18} />
+                    Save to Your Library
+                  </>
+                )}
+              </DropdownMenuItem>
+              <DropdownMenuItem className="flex gap-2" disabled>
+                <ListMusicIcon size={18} />
+                Add to Queue
+              </DropdownMenuItem>
+            </DropdownMenuGroup>
+            <DropdownMenuSeparator />
+            <DropdownMenuGroup>
+              <DropdownMenuItem
+                className="flex gap-2"
+                onClick={async () => {
+                  await navigator.clipboard.writeText(
+                    `https://open.spotify.com/${type}/${id}`
+                  );
+                }}
+              >
+                <CopyIcon size={18} />
+                Copy Playlist Link
+              </DropdownMenuItem>
+            </DropdownMenuGroup>
+            <DropdownMenuSeparator />
+            <DropdownMenuGroup>
+              <DropdownMenuSub>
+                <DropdownMenuSubTrigger className="flex gap-2">
+                  <FontAwesomeIcon icon={faSpotify} size={"lg"} />
+                  Open in Spotify
+                </DropdownMenuSubTrigger>
+                <DropdownMenuPortal>
+                  <DropdownMenuSubContent>
+                    <DropdownMenuItem className="flex gap-2" asChild>
+                      <a
+                        href={`https://open.spotify.com/${type}/${id}`}
+                        target="_blank"
+                      >
+                        <ExternalLinkIcon size={18} />
+                        Spotify Web
+                      </a>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem className="flex gap-2" asChild>
+                      <a href={`spotify:${type}:${id}`} target="_blank">
+                        <MonitorIcon size={18} />
+                        Desktop App
+                      </a>
+                    </DropdownMenuItem>
+                  </DropdownMenuSubContent>
+                </DropdownMenuPortal>
+              </DropdownMenuSub>
+            </DropdownMenuGroup>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button
-            variant="ghost"
-            size="icon"
-            className="rounded-full hover:transform hover:scale-105 active:transform-none active:brightness-75 hover:bg-transparent [--ellipsis-color:--muted-foreground] hover:[--ellipsis-color:--primary]"
-            aria-label={`More options for ${name}`}
-          >
-            <EllipsisIcon
-              className="h-6 w-6"
-              stroke="hsl(var(--ellipsis-color))"
-            />
-          </Button>
+          <Button variant="outline">{sortingLabel}</Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent align="start">
-          <DropdownMenuGroup>
-            <DropdownMenuItem className="flex gap-2" onClick={toggleIsSaved}>
-              {isSaved ? (
-                <>
-                  <div className="flex justify-center items-center rounded-full h-[18px] w-[18px] bg-green-500">
-                    <CheckIcon
-                      size={12}
-                      strokeWidth={3}
-                      stroke="hsl(var(--background))"
-                    />
-                  </div>
-                  Remove from Your Library
-                </>
-              ) : (
-                <>
-                  <CirclePlusIcon size={18} />
-                  Save to Your Library
-                </>
-              )}
-            </DropdownMenuItem>
-            <DropdownMenuItem className="flex gap-2" disabled>
-              <ListMusicIcon size={18} />
-              Add to Queue
-            </DropdownMenuItem>
-          </DropdownMenuGroup>
-          <DropdownMenuSeparator />
+        <DropdownMenuContent align="end">
+          <DropdownMenuLabel className="text-xs text-muted-foreground">
+            Sort by
+          </DropdownMenuLabel>
           <DropdownMenuGroup>
             <DropdownMenuItem
-              className="flex gap-2"
-              onClick={async () => {
-                await navigator.clipboard.writeText(
-                  `https://open.spotify.com/${type}/${id}`
-                );
-              }}
+              className={cn(
+                "flex justify-between gap-4 [--icon-color:--background] focus:[--icon-color:--muted-background]",
+                sorting.length === 0 &&
+                  "text-green-500 focus:text-green-500 [--icon-color:--green] focus:[--icon-color:--green]"
+              )}
+              onClick={toggleSort()}
             >
-              <CopyIcon size={18} />
-              Copy Playlist Link
+              Custom Order
+              <CheckIcon size={18} stroke="hsl(var(--icon-color))" />
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              className={cn(
+                "flex justify-between gap-4",
+                sorting[0]?.id === "title" &&
+                  "text-green-500 focus:text-green-500"
+              )}
+              onClick={toggleSort("title")}
+            >
+              Title
+              {sorting[0]?.id === "title" ? (
+                sorting[0]?.desc ? (
+                  <ArrowDownIcon size={18} />
+                ) : (
+                  <ArrowUpIcon size={18} />
+                )
+              ) : null}
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              className={cn(
+                "flex justify-between gap-4",
+                sorting[0]?.id === "artists" &&
+                  "text-green-500 focus:text-green-500"
+              )}
+              onClick={toggleSort("artists")}
+            >
+              Artist
+              {sorting[0]?.id === "artists" ? (
+                sorting[0]?.desc ? (
+                  <ArrowDownIcon size={18} />
+                ) : (
+                  <ArrowUpIcon size={18} />
+                )
+              ) : null}
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              className={cn(
+                "flex justify-between gap-4",
+                sorting[0]?.id === "album" &&
+                  "text-green-500 focus:text-green-500"
+              )}
+              onClick={toggleSort("album")}
+            >
+              Album
+              {sorting[0]?.id === "album" ? (
+                sorting[0]?.desc ? (
+                  <ArrowDownIcon size={18} />
+                ) : (
+                  <ArrowUpIcon size={18} />
+                )
+              ) : null}
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              className={cn(
+                "flex justify-between gap-4",
+                sorting[0]?.id === "added_at" &&
+                  "text-green-500 focus:text-green-500"
+              )}
+              onClick={toggleSort("added_at")}
+            >
+              Date Added
+              {sorting[0]?.id === "added_at" ? (
+                sorting[0]?.desc ? (
+                  <ArrowDownIcon size={18} />
+                ) : (
+                  <ArrowUpIcon size={18} />
+                )
+              ) : null}
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              className={cn(
+                "flex justify-between gap-4",
+                sorting[0]?.id === "duration_ms" &&
+                  "text-green-500 focus:text-green-500"
+              )}
+              onClick={toggleSort("duration_ms")}
+            >
+              Duration
+              {sorting[0]?.id === "duration_ms" ? (
+                sorting[0]?.desc ? (
+                  <ArrowDownIcon size={18} />
+                ) : (
+                  <ArrowUpIcon size={18} />
+                )
+              ) : null}
             </DropdownMenuItem>
           </DropdownMenuGroup>
           <DropdownMenuSeparator />
+          <DropdownMenuLabel className="text-xs text-muted-foreground">
+            View as
+          </DropdownMenuLabel>
           <DropdownMenuGroup>
-            <DropdownMenuSub>
-              <DropdownMenuSubTrigger className="flex gap-2">
-                <FontAwesomeIcon icon={faSpotify} size={"lg"} />
-                Open in Spotify
-              </DropdownMenuSubTrigger>
-              <DropdownMenuPortal>
-                <DropdownMenuSubContent>
-                  <DropdownMenuItem className="flex gap-2" asChild>
-                    <a
-                      href={`https://open.spotify.com/${type}/${id}`}
-                      target="_blank"
-                    >
-                      <ExternalLinkIcon size={18} />
-                      Spotify Web
-                    </a>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem className="flex gap-2" asChild>
-                    <a href={`spotify:${type}:${id}`} target="_blank">
-                      <MonitorIcon size={18} />
-                      Desktop App
-                    </a>
-                  </DropdownMenuItem>
-                </DropdownMenuSubContent>
-              </DropdownMenuPortal>
-            </DropdownMenuSub>
+            <DropdownMenuItem className="flex justify-between gap-4">
+              <div className="flex gap-2">
+                <AlignJustifyIcon size={18} />
+                Compact
+              </div>
+              <CheckIcon size={18} />
+            </DropdownMenuItem>
+            <DropdownMenuItem className="flex justify-between gap-4">
+              <div className="flex gap-2">
+                <LayoutListIcon size={18} />
+                List
+              </div>
+              <CheckIcon size={18} />
+            </DropdownMenuItem>
           </DropdownMenuGroup>
         </DropdownMenuContent>
       </DropdownMenu>
