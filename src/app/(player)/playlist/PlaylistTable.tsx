@@ -1,11 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import {
-  type ColumnDef,
-  type RowData,
-  type TableMeta,
-  type SortingState,
+import type {
+  ColumnDef,
+  RowData,
+  TableMeta,
+  SortingState,
+  SortDirection,
 } from "@tanstack/react-table";
 import {
   PlayIcon,
@@ -46,7 +47,7 @@ export interface TrackData {
     type: string;
     name: string;
   };
-  added_at: string;
+  added_at: Date;
   duration_ms: number;
   isSaved: boolean;
 }
@@ -75,6 +76,17 @@ declare module "@tanstack/table-core" {
     }>;
   }
 }
+
+const ColumnSortIcon = ({ sorting }: { sorting: false | SortDirection }) => (
+  <PlayIcon
+    className={cn(
+      "h-3 w-3 scale-x-75",
+      sorting === "asc" ? "-rotate-90" : "rotate-90"
+    )}
+    stroke={sorting ? "hsl(var(--green))" : "hsl(var(--background))"}
+    fill={sorting ? "hsl(var(--green))" : "hsl(var(--background))"}
+  />
+);
 
 const columns: ColumnDef<Track>[] = [
   {
@@ -111,13 +123,27 @@ const columns: ColumnDef<Track>[] = [
     },
   },
   {
-    accessorKey: "track",
-    header: "Title",
+    id: "title",
+    sortingFn: "text",
+    accessorFn: (row) => row.track.name,
+    header: ({ column }) => (
+      <Button
+        variant="ghost"
+        className="pl-0 gap-2 justify-start hover:bg-inherit"
+        onClick={() => column.toggleSorting()}
+      >
+        Title
+        <ColumnSortIcon sorting={column.getIsSorted()} />
+      </Button>
+    ),
     cell: ({ row }) => {
-      const { id, name, type } = row.getValue("track") satisfies Track["track"];
+      const {
+        isPlaybackContext,
+        track: { id, name, type },
+      } = row.original;
       return (
         <Link
-          color={row.original.isPlaybackContext ? "green" : "primary"}
+          color={isPlaybackContext ? "green" : "primary"}
           size="base"
           href={`/${type}/${id}`}
         >
@@ -127,10 +153,21 @@ const columns: ColumnDef<Track>[] = [
     },
   },
   {
-    accessorKey: "artists",
-    header: "Artist",
+    id: "artists",
+    sortingFn: "text",
+    accessorFn: (row) => row.artists.map((artist) => artist.name).join(", "),
+    header: ({ column }) => (
+      <Button
+        variant="ghost"
+        className="pl-0 gap-2 justify-start hover:bg-inherit"
+        onClick={() => column.toggleSorting()}
+      >
+        Artist
+        <ColumnSortIcon sorting={column.getIsSorted()} />
+      </Button>
+    ),
     cell: ({ row }) => {
-      const artists = row.getValue("artists") satisfies Track["artists"];
+      const artists = row.original.artists satisfies Track["artists"];
       return (
         <div className="text-muted-foreground truncate line-clamp-1 whitespace-normal break-all">
           {artists.map(({ id, name, type }, i) => (
@@ -151,10 +188,21 @@ const columns: ColumnDef<Track>[] = [
     },
   },
   {
-    accessorKey: "album",
-    header: "Album",
+    id: "album",
+    sortingFn: "text",
+    accessorFn: (row) => row.album.name,
+    header: ({ column }) => (
+      <Button
+        variant="ghost"
+        className="pl-0 gap-2 justify-start hover:bg-inherit"
+        onClick={() => column.toggleSorting()}
+      >
+        Album
+        <ColumnSortIcon sorting={column.getIsSorted()} />
+      </Button>
+    ),
     cell: ({ row }) => {
-      const { id, name, type } = row.getValue("album") satisfies Track["album"];
+      const { id, name, type } = row.original.album;
       return (
         <Link href={`/${type}/${id}`} className="group-hover/row:text-primary">
           {name}
@@ -164,23 +212,31 @@ const columns: ColumnDef<Track>[] = [
   },
   {
     accessorKey: "added_at",
-    header: "Date Added",
+    sortingFn: "datetime",
+    sortDescFirst: false,
+    header: ({ column }) => (
+      <Button
+        variant="ghost"
+        className="p-0 gap-2 justify-start hover:bg-inherit"
+        onClick={() => column.toggleSorting()}
+      >
+        Date Added
+        <ColumnSortIcon sorting={column.getIsSorted()} />
+      </Button>
+    ),
     cell: ({ row }) => (
       <div className="text-muted-foreground">
-        {new Date(String(row.getValue("added_at"))).toLocaleDateString(
-          "en-US",
-          {
-            month: "short",
-            day: "numeric",
-            year: "numeric",
-          }
-        )}
+        {(row.getValue("added_at") satisfies Date).toLocaleDateString("en-US", {
+          month: "short",
+          day: "numeric",
+          year: "numeric",
+        })}
       </div>
     ),
   },
   {
     id: "isSaved",
-    header: () => <div></div>,
+    header: () => null,
     cell: ({ row }) => {
       const { isSaved, toggleIsSaved } = row.original;
       return (
@@ -220,14 +276,22 @@ const columns: ColumnDef<Track>[] = [
   },
   {
     accessorKey: "duration_ms",
-    header: () => (
-      <div className="w-full flex justify-end align-center">
-        <span className="sr-only">Duration</span>
-        <ClockIcon size={15} />
-      </div>
-    ),
+    sortDescFirst: false,
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          className="px-0 gap-2 w-full justify-end hover:bg-inherit"
+          onClick={() => column.toggleSorting()}
+        >
+          <ColumnSortIcon sorting={column.getIsSorted()} />
+          <span className="sr-only">Duration</span>
+          <ClockIcon size={15} />
+        </Button>
+      );
+    },
     cell: ({ row }) => {
-      const duration = toDuration(parseInt(row.getValue("duration_ms")));
+      const duration = toDuration(row.getValue("duration_ms") satisfies number);
       return (
         <div className="w-full text-right text-muted-foreground tabular-nums">
           {toDurationString(duration, {

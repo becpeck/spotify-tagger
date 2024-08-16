@@ -71,7 +71,7 @@ const getPlaylist = makeEndpoint({
       total: z.number().int(),
       items: z.array(
         z.object({
-          added_at: z.string(),
+          added_at: z.string().transform((datetime) => new Date(datetime)),
           added_by: z.object({
             external_urls: ExternalUrlsSchema,
             // followers: FollowersSchema.optional(),
