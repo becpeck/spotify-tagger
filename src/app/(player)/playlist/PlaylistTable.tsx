@@ -16,6 +16,7 @@ import {
   CheckIcon,
   PlusIcon,
 } from "lucide-react";
+import Highlighter from "react-highlight-words";
 
 import { trpc } from "@/lib/trpc/client";
 
@@ -88,6 +89,26 @@ const ColumnSortIcon = ({ sorting }: { sorting: false | SortDirection }) => (
   />
 );
 
+const FilterHighlight = ({
+  text,
+  globalFilter,
+}: {
+  text: string;
+  globalFilter: string;
+}) => (
+  <>
+    {globalFilter ? (
+      <Highlighter
+        searchWords={[globalFilter]}
+        textToHighlight={text}
+        highlightClassName="bg-green-500/60 text-primary rounded-sm"
+      />
+    ) : (
+      text
+    )}
+  </>
+);
+
 const columns: ColumnDef<Track>[] = [
   {
     accessorKey: "number",
@@ -138,7 +159,7 @@ const columns: ColumnDef<Track>[] = [
         <ColumnSortIcon sorting={column.getIsSorted()} />
       </Button>
     ),
-    cell: ({ row }) => {
+    cell: ({ row, table }) => {
       const {
         isPlaybackContext,
         track: { id, name, type },
@@ -149,7 +170,10 @@ const columns: ColumnDef<Track>[] = [
           size="base"
           href={`/${type}/${id}`}
         >
-          {name}
+          <FilterHighlight
+            text={name}
+            globalFilter={table.getState().globalFilter as string}
+          />
         </Link>
       );
     },
@@ -169,7 +193,7 @@ const columns: ColumnDef<Track>[] = [
         <ColumnSortIcon sorting={column.getIsSorted()} />
       </Button>
     ),
-    cell: ({ row }) => {
+    cell: ({ row, table }) => {
       const artists = row.original.artists satisfies Track["artists"];
       return (
         <div className="text-muted-foreground truncate line-clamp-1 whitespace-normal break-all">
@@ -181,7 +205,10 @@ const columns: ColumnDef<Track>[] = [
                 number="list"
                 className="group-hover/row:text-primary"
               >
-                {name}
+                <FilterHighlight
+                  text={name}
+                  globalFilter={table.getState().globalFilter as string}
+                />
               </Link>
               {i < artists.length - 1 ? ", " : null}
             </>
@@ -205,11 +232,14 @@ const columns: ColumnDef<Track>[] = [
         <ColumnSortIcon sorting={column.getIsSorted()} />
       </Button>
     ),
-    cell: ({ row }) => {
+    cell: ({ row, table }) => {
       const { id, name, type } = row.original.album;
       return (
         <Link href={`/${type}/${id}`} className="group-hover/row:text-primary">
-          {name}
+          <FilterHighlight
+            text={name}
+            globalFilter={table.getState().globalFilter as string}
+          />
         </Link>
       );
     },
