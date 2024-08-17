@@ -16,7 +16,6 @@ import {
   CheckIcon,
   PlusIcon,
 } from "lucide-react";
-import Highlighter from "react-highlight-words";
 
 import { trpc } from "@/lib/trpc/client";
 
@@ -25,6 +24,7 @@ import DataTable from "@/components/ui/data-table";
 import Link from "@/components/Link";
 import ActionsMenu from "@/app/(player)/playlist/ActionsMenu";
 import PlaylistControls from "@/app/(player)/playlist/PlaylistControls";
+import SearchHighlight from "@/components/SearchHighlight";
 
 import { useAppStore } from "@/lib/stores/AppStoreProvider";
 import { toDurationString, toDuration } from "@/utils/timeUtils";
@@ -89,26 +89,6 @@ const ColumnSortIcon = ({ sorting }: { sorting: false | SortDirection }) => (
   />
 );
 
-const FilterHighlight = ({
-  text,
-  globalFilter,
-}: {
-  text: string;
-  globalFilter: string;
-}) => (
-  <>
-    {globalFilter ? (
-      <Highlighter
-        searchWords={[globalFilter]}
-        textToHighlight={text}
-        highlightClassName="bg-green-500/60 text-primary rounded-sm"
-      />
-    ) : (
-      text
-    )}
-  </>
-);
-
 const columns: ColumnDef<Track>[] = [
   {
     accessorKey: "number",
@@ -170,9 +150,9 @@ const columns: ColumnDef<Track>[] = [
           size="base"
           href={`/${type}/${id}`}
         >
-          <FilterHighlight
+          <SearchHighlight
             text={name}
-            globalFilter={table.getState().globalFilter as string}
+            search={[table.getState().globalFilter as string]}
           />
         </Link>
       );
@@ -205,9 +185,9 @@ const columns: ColumnDef<Track>[] = [
                 number="list"
                 className="group-hover/row:text-primary"
               >
-                <FilterHighlight
+                <SearchHighlight
                   text={name}
-                  globalFilter={table.getState().globalFilter as string}
+                  search={[table.getState().globalFilter as string]}
                 />
               </Link>
               {i < artists.length - 1 ? ", " : null}
@@ -236,9 +216,9 @@ const columns: ColumnDef<Track>[] = [
       const { id, name, type } = row.original.album;
       return (
         <Link href={`/${type}/${id}`} className="group-hover/row:text-primary">
-          <FilterHighlight
+          <SearchHighlight
             text={name}
-            globalFilter={table.getState().globalFilter as string}
+            search={[table.getState().globalFilter as string]}
           />
         </Link>
       );
