@@ -1,34 +1,24 @@
 "use client";
 
 import { useState } from "react";
-import type {
-  ColumnDef,
-  RowData,
-  TableMeta,
-  SortingState,
-} from "@tanstack/react-table";
+import type { RowData, TableMeta, SortingState } from "@tanstack/react-table";
+
 import {
-  PlayIcon,
-  HashIcon,
-  ClockIcon,
-  PauseIcon,
-  CheckIcon,
-  PlusIcon,
-} from "lucide-react";
+  numberColumn,
+  titleColumn,
+  artistColumn,
+  albumColumn,
+  dateAddedColumn,
+  isSavedColumn,
+  durationColumn,
+  actionsColumn,
+} from "@/app/(player)/playlist/TrackTable/columns";
 
 import { trpc } from "@/lib/trpc/client";
-
-import { Button } from "@/components/ui/button";
-import DataTable from "@/components/ui/data-table";
-import Link from "@/components/Link";
-import ActionsMenu from "@/app/(player)/playlist/TrackTable/ActionsMenu";
-import PlaylistControls from "@/app/(player)/playlist/TrackTable/PlaylistControls";
-import SearchHighlight from "@/components/SearchHighlight";
-import ColumnSortIcon from "@/components/icons/ColumnSortIcon";
-
 import { useAppStore } from "@/lib/stores/AppStoreProvider";
-import { toDurationString, toDuration } from "@/utils/timeUtils";
-import { cn } from "@/lib/utils";
+
+import DataTable from "@/components/ui/data-table";
+import PlaylistControls from "@/app/(player)/playlist/TrackTable/PlaylistControls";
 
 export interface TrackData {
   number: number;
@@ -78,260 +68,15 @@ declare module "@tanstack/table-core" {
   }
 }
 
-const columns: ColumnDef<Track>[] = [
-  {
-    accessorKey: "number",
-    enableGlobalFilter: false,
-    header: () => (
-      <div className="w-full flex justify-center align-center">
-        <span className="sr-only">Track Number</span>
-        <HashIcon size={15} />
-      </div>
-    ),
-    cell: ({ row }) => {
-      const { isPlaybackContext, isPlaying } = row.original;
-      const Icon = isPlaying ? PauseIcon : PlayIcon;
-      return (
-        <Button variant="ghost" className="h-8 w-8 p-0 text-muted-foreground">
-          <div
-            className={cn(
-              "group-hover/row:hidden tabular-nums text-base",
-              isPlaybackContext && "text-green-500"
-            )}
-          >
-            {row.getValue("number")}
-          </div>
-          <div className="hidden group-hover/row:block">
-            <span className="sr-only">{isPlaying ? "Pause" : "Play"}</span>
-            <Icon
-              size={15}
-              fill="hsl(var(--primary))"
-              stroke="hsl(var(--primary))"
-            />
-          </div>
-        </Button>
-      );
-    },
-  },
-  {
-    id: "title",
-    sortingFn: "text",
-    filterFn: "includesString",
-    accessorFn: (row) => row.track.name,
-    header: ({ column }) => (
-      <Button
-        variant="ghost"
-        className="pl-0 gap-2 justify-start hover:bg-inherit"
-        onClick={() => column.toggleSorting()}
-      >
-        Title
-        <ColumnSortIcon sorting={column.getIsSorted()} />
-      </Button>
-    ),
-    cell: ({ row, table }) => {
-      const {
-        isPlaybackContext,
-        track: { id, name, type },
-      } = row.original;
-      return (
-        <Link
-          color={isPlaybackContext ? "green" : "primary"}
-          size="base"
-          href={`/${type}/${id}`}
-        >
-          <SearchHighlight
-            text={name}
-            search={[table.getState().globalFilter as string]}
-          />
-        </Link>
-      );
-    },
-  },
-  {
-    id: "artists",
-    sortingFn: "text",
-    filterFn: "includesString",
-    accessorFn: (row) => row.artists.map((artist) => artist.name).join(", "),
-    header: ({ column }) => (
-      <Button
-        variant="ghost"
-        className="pl-0 gap-2 justify-start hover:bg-inherit"
-        onClick={() => column.toggleSorting()}
-      >
-        Artist
-        <ColumnSortIcon sorting={column.getIsSorted()} />
-      </Button>
-    ),
-    cell: ({ row, table }) => {
-      const artists = row.original.artists satisfies Track["artists"];
-      return (
-        <div className="text-muted-foreground truncate line-clamp-1 whitespace-normal break-all">
-          {artists.map(({ id, name, type }, i) => (
-            <>
-              <Link
-                key={id}
-                href={`/${type}/${id}`}
-                number="list"
-                className="group-hover/row:text-primary"
-              >
-                <SearchHighlight
-                  text={name}
-                  search={[table.getState().globalFilter as string]}
-                />
-              </Link>
-              {i < artists.length - 1 ? ", " : null}
-            </>
-          ))}
-        </div>
-      );
-    },
-  },
-  {
-    id: "album",
-    sortingFn: "text",
-    filterFn: "includesString",
-    accessorFn: (row) => row.album.name,
-    header: ({ column }) => (
-      <Button
-        variant="ghost"
-        className="pl-0 gap-2 justify-start hover:bg-inherit"
-        onClick={() => column.toggleSorting()}
-      >
-        Album
-        <ColumnSortIcon sorting={column.getIsSorted()} />
-      </Button>
-    ),
-    cell: ({ row, table }) => {
-      const { id, name, type } = row.original.album;
-      return (
-        <Link href={`/${type}/${id}`} className="group-hover/row:text-primary">
-          <SearchHighlight
-            text={name}
-            search={[table.getState().globalFilter as string]}
-          />
-        </Link>
-      );
-    },
-  },
-  {
-    accessorKey: "added_at",
-    sortingFn: "datetime",
-    sortDescFirst: false,
-    enableGlobalFilter: false,
-    header: ({ column }) => (
-      <Button
-        variant="ghost"
-        className="p-0 gap-2 justify-start hover:bg-inherit"
-        onClick={() => column.toggleSorting()}
-      >
-        Date Added
-        <ColumnSortIcon sorting={column.getIsSorted()} />
-      </Button>
-    ),
-    cell: ({ row }) => (
-      <div className="text-muted-foreground">
-        {(row.getValue("added_at") satisfies Date).toLocaleDateString("en-US", {
-          month: "short",
-          day: "numeric",
-          year: "numeric",
-        })}
-      </div>
-    ),
-  },
-  {
-    id: "isSaved",
-    enableGlobalFilter: false,
-    header: () => null,
-    cell: ({ row }) => {
-      const { isSaved, toggleIsSaved } = row.original;
-      return (
-        <Button
-          variant="ghost"
-          size="icon"
-          className={cn(
-            "rounded-full hover:transform hover:scale-105 active:transform-none active:brightness-75 hover:bg-transparent",
-            "[--plus-color:--background] group-hover/row:[--plus-color:--muted-foreground] group-hover/row:hover:[--plus-color:--primary]"
-          )}
-          onClick={toggleIsSaved}
-          aria-label={isSaved ? "Remove from Library" : "Save to Library"}
-        >
-          <div
-            className={cn(
-              "flex justify-center items-center rounded-full h-4 w-4",
-              isSaved
-                ? "bg-green-500"
-                : "border border-[hsl(var(--plus-color))]"
-            )}
-          >
-            {isSaved ? (
-              <CheckIcon
-                className="h-[66%] w-[66%] stroke-[14%]"
-                stroke="hsl(var(--background))"
-              />
-            ) : (
-              <PlusIcon
-                className="h-[66%] w-[66%] stroke-[14%]"
-                stroke="hsl(var(--plus-color))"
-              />
-            )}
-          </div>
-        </Button>
-      );
-    },
-  },
-  {
-    accessorKey: "duration_ms",
-    enableGlobalFilter: false,
-    sortDescFirst: false,
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          className="px-0 gap-2 w-full justify-end hover:bg-inherit"
-          onClick={() => column.toggleSorting()}
-        >
-          <ColumnSortIcon sorting={column.getIsSorted()} />
-          <span className="sr-only">Duration</span>
-          <ClockIcon size={15} />
-        </Button>
-      );
-    },
-    cell: ({ row }) => {
-      const duration = toDuration(row.getValue("duration_ms") satisfies number);
-      return (
-        <div className="w-full text-right text-muted-foreground tabular-nums">
-          {toDurationString(duration, {
-            ...(duration.hours > 0
-              ? { hours: "numeric", minutes: "2-digit" }
-              : { minutes: "numeric" }),
-            seconds: "2-digit",
-            separator: ":",
-          })}
-        </div>
-      );
-    },
-  },
-  {
-    id: "actions",
-    enableGlobalFilter: false,
-    cell: ({ row, table }) => {
-      const { album, artists, track, isSaved, addToQueue, toggleIsSaved } =
-        row.original;
-      const playlist = table.options.meta!.playlist!;
-      const userPlaylists = table.options.meta!.userPlaylists;
-      return (
-        <ActionsMenu
-          artists={artists}
-          album={album}
-          track={{ ...track, isSaved }}
-          playlist={playlist}
-          userPlaylists={userPlaylists}
-          addToQueue={addToQueue}
-          toggleIsSaved={toggleIsSaved}
-        />
-      );
-    },
-  },
+const columns = [
+  numberColumn,
+  titleColumn,
+  artistColumn,
+  albumColumn,
+  dateAddedColumn,
+  isSavedColumn,
+  durationColumn,
+  actionsColumn,
 ];
 
 type TrackTableProps = {
