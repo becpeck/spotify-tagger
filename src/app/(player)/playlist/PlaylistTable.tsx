@@ -91,6 +91,7 @@ const ColumnSortIcon = ({ sorting }: { sorting: false | SortDirection }) => (
 const columns: ColumnDef<Track>[] = [
   {
     accessorKey: "number",
+    enableGlobalFilter: false,
     header: () => (
       <div className="w-full flex justify-center align-center">
         <span className="sr-only">Track Number</span>
@@ -125,6 +126,7 @@ const columns: ColumnDef<Track>[] = [
   {
     id: "title",
     sortingFn: "text",
+    filterFn: "includesString",
     accessorFn: (row) => row.track.name,
     header: ({ column }) => (
       <Button
@@ -155,6 +157,7 @@ const columns: ColumnDef<Track>[] = [
   {
     id: "artists",
     sortingFn: "text",
+    filterFn: "includesString",
     accessorFn: (row) => row.artists.map((artist) => artist.name).join(", "),
     header: ({ column }) => (
       <Button
@@ -190,6 +193,7 @@ const columns: ColumnDef<Track>[] = [
   {
     id: "album",
     sortingFn: "text",
+    filterFn: "includesString",
     accessorFn: (row) => row.album.name,
     header: ({ column }) => (
       <Button
@@ -214,6 +218,7 @@ const columns: ColumnDef<Track>[] = [
     accessorKey: "added_at",
     sortingFn: "datetime",
     sortDescFirst: false,
+    enableGlobalFilter: false,
     header: ({ column }) => (
       <Button
         variant="ghost"
@@ -236,6 +241,7 @@ const columns: ColumnDef<Track>[] = [
   },
   {
     id: "isSaved",
+    enableGlobalFilter: false,
     header: () => null,
     cell: ({ row }) => {
       const { isSaved, toggleIsSaved } = row.original;
@@ -276,6 +282,7 @@ const columns: ColumnDef<Track>[] = [
   },
   {
     accessorKey: "duration_ms",
+    enableGlobalFilter: false,
     sortDescFirst: false,
     header: ({ column }) => {
       return (
@@ -307,6 +314,7 @@ const columns: ColumnDef<Track>[] = [
   },
   {
     id: "actions",
+    enableGlobalFilter: false,
     cell: ({ row, table }) => {
       const { album, artists, track, isSaved, addToQueue, toggleIsSaved } =
         row.original;
@@ -347,6 +355,7 @@ export default function PlaylistTable({
     )
   );
   const [sorting, setSorting] = useState<SortingState>([]);
+  const [globalFilter, setGlobalFilter] = useState<string>("");
 
   const toggleSort = (label?: string) => () =>
     setSorting(
@@ -436,6 +445,8 @@ export default function PlaylistTable({
         isFollowing={playlist!.isFollowing} // PLACEHOLDER for saved playlists store
         sorting={sorting}
         toggleSort={toggleSort}
+        globalFilter={globalFilter}
+        setGlobalFilter={setGlobalFilter}
       />
       <DataTable
         data={tracks}
@@ -451,6 +462,8 @@ export default function PlaylistTable({
         colSpan="col-span-8"
         sorting={sorting}
         setSorting={setSorting}
+        globalFilter={globalFilter}
+        setGlobalFilter={setGlobalFilter}
       />
     </>
   );

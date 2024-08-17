@@ -41,6 +41,7 @@ import { Button } from "@/components/ui/button";
 import { useAppStore } from "@/lib/stores/AppStoreProvider";
 import { trpc } from "@/lib/trpc/client";
 import { cn } from "@/lib/utils";
+import { Input } from "@/components/ui/input";
 
 type PlaylistControlsProps = {
   name: string;
@@ -50,6 +51,8 @@ type PlaylistControlsProps = {
   isFollowing: boolean;
   sorting: SortingState;
   toggleSort: (label?: string) => () => void;
+  globalFilter: string;
+  setGlobalFilter: (value: string) => void;
 };
 
 export default function PlaylistControls({
@@ -60,6 +63,8 @@ export default function PlaylistControls({
   isFollowing,
   sorting,
   toggleSort,
+  globalFilter,
+  setGlobalFilter,
 }: PlaylistControlsProps) {
   const { player, playbackState } = useAppStore(
     ({ player, playbackState }) => ({ player, playbackState })
@@ -295,134 +300,143 @@ export default function PlaylistControls({
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button variant="outline">{sortingLabel}</Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end">
-          <DropdownMenuLabel className="text-xs text-muted-foreground">
-            Sort by
-          </DropdownMenuLabel>
-          <DropdownMenuGroup>
-            <DropdownMenuItem
-              className={cn(
-                "flex justify-between gap-4 [--icon-color:--background] focus:[--icon-color:--muted-background]",
-                sorting.length === 0 &&
-                  "text-green-500 focus:text-green-500 [--icon-color:--green] focus:[--icon-color:--green]"
-              )}
-              onClick={toggleSort()}
-            >
-              Custom Order
-              <CheckIcon size={18} stroke="hsl(var(--icon-color))" />
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              className={cn(
-                "flex justify-between gap-4",
-                sorting[0]?.id === "title" &&
-                  "text-green-500 focus:text-green-500"
-              )}
-              onClick={toggleSort("title")}
-            >
-              Title
-              {sorting[0]?.id === "title" ? (
-                sorting[0]?.desc ? (
-                  <ArrowDownIcon size={18} />
-                ) : (
-                  <ArrowUpIcon size={18} />
-                )
-              ) : null}
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              className={cn(
-                "flex justify-between gap-4",
-                sorting[0]?.id === "artists" &&
-                  "text-green-500 focus:text-green-500"
-              )}
-              onClick={toggleSort("artists")}
-            >
-              Artist
-              {sorting[0]?.id === "artists" ? (
-                sorting[0]?.desc ? (
-                  <ArrowDownIcon size={18} />
-                ) : (
-                  <ArrowUpIcon size={18} />
-                )
-              ) : null}
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              className={cn(
-                "flex justify-between gap-4",
-                sorting[0]?.id === "album" &&
-                  "text-green-500 focus:text-green-500"
-              )}
-              onClick={toggleSort("album")}
-            >
-              Album
-              {sorting[0]?.id === "album" ? (
-                sorting[0]?.desc ? (
-                  <ArrowDownIcon size={18} />
-                ) : (
-                  <ArrowUpIcon size={18} />
-                )
-              ) : null}
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              className={cn(
-                "flex justify-between gap-4",
-                sorting[0]?.id === "added_at" &&
-                  "text-green-500 focus:text-green-500"
-              )}
-              onClick={toggleSort("added_at")}
-            >
-              Date Added
-              {sorting[0]?.id === "added_at" ? (
-                sorting[0]?.desc ? (
-                  <ArrowDownIcon size={18} />
-                ) : (
-                  <ArrowUpIcon size={18} />
-                )
-              ) : null}
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              className={cn(
-                "flex justify-between gap-4",
-                sorting[0]?.id === "duration_ms" &&
-                  "text-green-500 focus:text-green-500"
-              )}
-              onClick={toggleSort("duration_ms")}
-            >
-              Duration
-              {sorting[0]?.id === "duration_ms" ? (
-                sorting[0]?.desc ? (
-                  <ArrowDownIcon size={18} />
-                ) : (
-                  <ArrowUpIcon size={18} />
-                )
-              ) : null}
-            </DropdownMenuItem>
-          </DropdownMenuGroup>
-          <DropdownMenuSeparator />
-          <DropdownMenuLabel className="text-xs text-muted-foreground">
-            View as
-          </DropdownMenuLabel>
-          <DropdownMenuGroup>
-            <DropdownMenuItem className="flex justify-between gap-4">
-              <div className="flex gap-2">
-                <AlignJustifyIcon size={18} />
-                Compact
-              </div>
-              <CheckIcon size={18} />
-            </DropdownMenuItem>
-            <DropdownMenuItem className="flex justify-between gap-4">
-              <div className="flex gap-2">
-                <LayoutListIcon size={18} />
-                List
-              </div>
-              <CheckIcon size={18} />
-            </DropdownMenuItem>
-          </DropdownMenuGroup>
-        </DropdownMenuContent>
-      </DropdownMenu>
+      <div className="flex items-center gap-4">
+        <Input
+          type="text"
+          placeholder="Search"
+          className="max-w-40"
+          value={globalFilter}
+          onChange={(evt) => setGlobalFilter(evt.target.value)}
+        />
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="outline">{sortingLabel}</Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuLabel className="text-xs text-muted-foreground">
+              Sort by
+            </DropdownMenuLabel>
+            <DropdownMenuGroup>
+              <DropdownMenuItem
+                className={cn(
+                  "flex justify-between gap-4 [--icon-color:--background] focus:[--icon-color:--muted-background]",
+                  sorting.length === 0 &&
+                    "text-green-500 focus:text-green-500 [--icon-color:--green] focus:[--icon-color:--green]"
+                )}
+                onClick={toggleSort()}
+              >
+                Custom Order
+                <CheckIcon size={18} stroke="hsl(var(--icon-color))" />
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                className={cn(
+                  "flex justify-between gap-4",
+                  sorting[0]?.id === "title" &&
+                    "text-green-500 focus:text-green-500"
+                )}
+                onClick={toggleSort("title")}
+              >
+                Title
+                {sorting[0]?.id === "title" ? (
+                  sorting[0]?.desc ? (
+                    <ArrowDownIcon size={18} />
+                  ) : (
+                    <ArrowUpIcon size={18} />
+                  )
+                ) : null}
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                className={cn(
+                  "flex justify-between gap-4",
+                  sorting[0]?.id === "artists" &&
+                    "text-green-500 focus:text-green-500"
+                )}
+                onClick={toggleSort("artists")}
+              >
+                Artist
+                {sorting[0]?.id === "artists" ? (
+                  sorting[0]?.desc ? (
+                    <ArrowDownIcon size={18} />
+                  ) : (
+                    <ArrowUpIcon size={18} />
+                  )
+                ) : null}
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                className={cn(
+                  "flex justify-between gap-4",
+                  sorting[0]?.id === "album" &&
+                    "text-green-500 focus:text-green-500"
+                )}
+                onClick={toggleSort("album")}
+              >
+                Album
+                {sorting[0]?.id === "album" ? (
+                  sorting[0]?.desc ? (
+                    <ArrowDownIcon size={18} />
+                  ) : (
+                    <ArrowUpIcon size={18} />
+                  )
+                ) : null}
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                className={cn(
+                  "flex justify-between gap-4",
+                  sorting[0]?.id === "added_at" &&
+                    "text-green-500 focus:text-green-500"
+                )}
+                onClick={toggleSort("added_at")}
+              >
+                Date Added
+                {sorting[0]?.id === "added_at" ? (
+                  sorting[0]?.desc ? (
+                    <ArrowDownIcon size={18} />
+                  ) : (
+                    <ArrowUpIcon size={18} />
+                  )
+                ) : null}
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                className={cn(
+                  "flex justify-between gap-4",
+                  sorting[0]?.id === "duration_ms" &&
+                    "text-green-500 focus:text-green-500"
+                )}
+                onClick={toggleSort("duration_ms")}
+              >
+                Duration
+                {sorting[0]?.id === "duration_ms" ? (
+                  sorting[0]?.desc ? (
+                    <ArrowDownIcon size={18} />
+                  ) : (
+                    <ArrowUpIcon size={18} />
+                  )
+                ) : null}
+              </DropdownMenuItem>
+            </DropdownMenuGroup>
+            <DropdownMenuSeparator />
+            <DropdownMenuLabel className="text-xs text-muted-foreground">
+              View as
+            </DropdownMenuLabel>
+            <DropdownMenuGroup>
+              <DropdownMenuItem className="flex justify-between gap-4">
+                <div className="flex gap-2">
+                  <AlignJustifyIcon size={18} />
+                  Compact
+                </div>
+                <CheckIcon size={18} />
+              </DropdownMenuItem>
+              <DropdownMenuItem className="flex justify-between gap-4">
+                <div className="flex gap-2">
+                  <LayoutListIcon size={18} />
+                  List
+                </div>
+                <CheckIcon size={18} />
+              </DropdownMenuItem>
+            </DropdownMenuGroup>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
     </div>
   );
 }
