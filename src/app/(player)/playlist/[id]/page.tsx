@@ -1,7 +1,7 @@
 import { trpc } from "@/lib/trpc/server";
 
 import PlaylistInfo from "@/app/(player)/playlist/PlaylistInfo";
-import PlaylistTable from "@/app/(player)/playlist/PlaylistTable";
+import TrackTable from "@/app/(player)/playlist/TrackTable";
 
 export default async function Playlist({ params }: { params: { id: string } }) {
   const playlist = await trpc.playlist.getPlaylistData.query(params.id);
@@ -48,7 +48,7 @@ export default async function Playlist({ params }: { params: { id: string } }) {
         total={total}
         duration_ms={duration_ms}
       />
-      <PlaylistTable trackDataArr={data} playlist={playlist} />
+      <TrackTable trackDataArr={data} playlist={playlist} />
     </main>
   );
 }

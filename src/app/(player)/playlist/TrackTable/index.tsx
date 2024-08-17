@@ -21,8 +21,8 @@ import { trpc } from "@/lib/trpc/client";
 import { Button } from "@/components/ui/button";
 import DataTable from "@/components/ui/data-table";
 import Link from "@/components/Link";
-import ActionsMenu from "@/app/(player)/playlist/ActionsMenu";
-import PlaylistControls from "@/app/(player)/playlist/PlaylistControls";
+import ActionsMenu from "@/app/(player)/playlist/TrackTable/ActionsMenu";
+import PlaylistControls from "@/app/(player)/playlist/TrackTable/PlaylistControls";
 import SearchHighlight from "@/components/SearchHighlight";
 import ColumnSortIcon from "@/components/icons/ColumnSortIcon";
 
@@ -334,15 +334,15 @@ const columns: ColumnDef<Track>[] = [
   },
 ];
 
-type PlaylistTableProps = {
+type TrackTableProps = {
   trackDataArr: TrackData[];
   playlist: TableMeta<Track>["playlist"];
 };
 
-export default function PlaylistTable({
+export default function TrackTable({
   trackDataArr,
   playlist,
-}: PlaylistTableProps) {
+}: TrackTableProps) {
   const { player, playbackState } = useAppStore(
     ({ player, playbackState }) => ({ player, playbackState })
   );
