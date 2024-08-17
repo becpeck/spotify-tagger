@@ -6,7 +6,6 @@ import type {
   RowData,
   TableMeta,
   SortingState,
-  SortDirection,
 } from "@tanstack/react-table";
 import {
   PlayIcon,
@@ -25,6 +24,7 @@ import Link from "@/components/Link";
 import ActionsMenu from "@/app/(player)/playlist/ActionsMenu";
 import PlaylistControls from "@/app/(player)/playlist/PlaylistControls";
 import SearchHighlight from "@/components/SearchHighlight";
+import ColumnSortIcon from "@/components/icons/ColumnSortIcon";
 
 import { useAppStore } from "@/lib/stores/AppStoreProvider";
 import { toDurationString, toDuration } from "@/utils/timeUtils";
@@ -77,17 +77,6 @@ declare module "@tanstack/table-core" {
     }>;
   }
 }
-
-const ColumnSortIcon = ({ sorting }: { sorting: false | SortDirection }) => (
-  <PlayIcon
-    className={cn(
-      "h-3 w-3 scale-x-75",
-      sorting === "asc" ? "-rotate-90" : "rotate-90"
-    )}
-    stroke={sorting ? "hsl(var(--green))" : "hsl(var(--background))"}
-    fill={sorting ? "hsl(var(--green))" : "hsl(var(--background))"}
-  />
-);
 
 const columns: ColumnDef<Track>[] = [
   {
