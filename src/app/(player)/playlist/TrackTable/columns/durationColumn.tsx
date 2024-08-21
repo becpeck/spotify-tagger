@@ -13,7 +13,7 @@ const durationColumn: ColumnDef<TrackData, number> = {
     return (
       <Button
         variant="ghost"
-        className="px-0 gap-2 w-full justify-end hover:bg-inherit hidden md:block"
+        className="px-0 gap-2 w-full justify-end hover:bg-inherit"
         onClick={() => column.toggleSorting()}
       >
         <ColumnSortIcon sorting={column.getIsSorted()} />
@@ -25,7 +25,7 @@ const durationColumn: ColumnDef<TrackData, number> = {
   cell: ({ row }) => {
     const duration = toDuration(row.getValue("duration_ms") satisfies number);
     return (
-      <div className="w-full text-right text-muted-foreground tabular-nums hidden md:block">
+      <div className="w-full text-right text-muted-foreground tabular-nums">
         {toDurationString(duration, {
           ...(duration.hours > 0
             ? { hours: "numeric", minutes: "2-digit" }

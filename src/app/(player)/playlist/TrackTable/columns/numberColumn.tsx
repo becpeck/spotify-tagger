@@ -32,6 +32,7 @@ function NumberCell(props: CellContext<TrackData, number>) {
       const tableState = table.getState();
       const sorting = tableState.sorting;
       const globalFilter = tableState.globalFilter as string;
+      // TODO: change this to a function that determines whether view is different from original
       if (globalFilter.length === 0 && sorting.length === 0) {
         playContextMutation.mutate({
           context: { uri: table.options.meta!.playlist!.uri },
