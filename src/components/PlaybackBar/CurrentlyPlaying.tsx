@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { Fragment, useState } from "react";
 import Image from "next/image";
 import Link from "@/components/Link";
 import { CheckIcon, PlusIcon } from "lucide-react";
@@ -51,7 +51,7 @@ export default function CurrentlyPlaying({
               >
                 {name}
               </Link>
-              {i < artists.length - 1 ? ", " : null}
+              {i < artists.length - 1 ? <Fragment key={i}>, </Fragment> : null}
             </span>
           ))}
         </div>

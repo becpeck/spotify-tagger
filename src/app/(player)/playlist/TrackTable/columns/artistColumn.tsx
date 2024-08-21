@@ -1,4 +1,5 @@
 import { type ColumnDef } from "@tanstack/react-table";
+import { Fragment } from "react";
 import { type Track } from "@/app/(player)/playlist/TrackTable";
 import { Button } from "@/components/ui/button";
 import ColumnSortIcon from "@/components/icons/ColumnSortIcon";
@@ -37,7 +38,7 @@ const artistColumn: ColumnDef<Track, string> = {
                 search={[table.getState().globalFilter as string]}
               />
             </Link>
-            {i < artists.length - 1 ? ", " : null}
+            {i < artists.length - 1 ? <Fragment key={i}>, </Fragment> : null}
           </>
         ))}
       </div>
