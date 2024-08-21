@@ -1,11 +1,11 @@
 import { type ColumnDef } from "@tanstack/react-table";
-import { type Track } from "@/app/(player)/playlist/TrackTable";
+import { type TrackData } from "@/app/(player)/playlist/TrackTable";
 import { Button } from "@/components/ui/button";
 import ColumnSortIcon from "@/components/icons/ColumnSortIcon";
 import Link from "@/components/Link";
 import SearchHighlight from "@/components/SearchHighlight";
 
-const albumColumn: ColumnDef<Track, string> = {
+const albumColumn: ColumnDef<TrackData, string> = {
   id: "album",
   sortingFn: "text",
   filterFn: "includesString",

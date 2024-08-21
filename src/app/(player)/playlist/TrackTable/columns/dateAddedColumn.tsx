@@ -1,9 +1,9 @@
 import { type ColumnDef } from "@tanstack/react-table";
-import { type Track } from "@/app/(player)/playlist/TrackTable";
+import { type TrackData } from "@/app/(player)/playlist/TrackTable";
 import { Button } from "@/components/ui/button";
 import ColumnSortIcon from "@/components/icons/ColumnSortIcon";
 
-const dateAddedColumn: ColumnDef<Track, Date> = {
+const dateAddedColumn: ColumnDef<TrackData, Date> = {
   accessorKey: "added_at",
   sortingFn: "datetime",
   sortDescFirst: false,

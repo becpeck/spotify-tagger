@@ -1,15 +1,19 @@
 import { type ColumnDef } from "@tanstack/react-table";
 import { CheckIcon, PlusIcon } from "lucide-react";
-import { type Track } from "@/app/(player)/playlist/TrackTable";
+import { type TrackData } from "@/app/(player)/playlist/TrackTable";
+import { type ExtendedCellContext } from "@/app/(player)/playlist/TrackTable/TrackTableRow";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
-const isSavedColumn: ColumnDef<Track, boolean> = {
+const isSavedColumn: ColumnDef<TrackData, boolean> = {
   id: "isSaved",
   enableGlobalFilter: false,
   header: () => null,
-  cell: ({ row }) => {
-    const { isSaved, toggleIsSaved } = row.original;
+  cell: (context) => {
+    const { isSaved, toggleIsSaved } = context as ExtendedCellContext<
+      TrackData,
+      boolean
+    >;
     return (
       <Button
         variant="ghost"

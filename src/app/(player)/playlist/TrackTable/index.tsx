@@ -1,7 +1,24 @@
 "use client";
 
 import { useState } from "react";
-import type { RowData, TableMeta, SortingState } from "@tanstack/react-table";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table-grid";
+import {
+  type RowData,
+  type TableMeta,
+  type SortingState,
+  flexRender,
+  getCoreRowModel,
+  getFilteredRowModel,
+  getSortedRowModel,
+  useReactTable,
+} from "@tanstack/react-table";
 
 import {
   numberColumn,
@@ -14,11 +31,8 @@ import {
   actionsColumn,
 } from "@/app/(player)/playlist/TrackTable/columns";
 
-import { trpc } from "@/lib/trpc/client";
-import { useAppStore } from "@/lib/stores/AppStoreProvider";
-
-import DataTable from "@/components/ui/data-table";
 import PlaylistControls from "@/app/(player)/playlist/TrackTable/PlaylistControls";
+import TrackTableRow from "@/app/(player)/playlist/TrackTable/TrackTableRow";
 
 export interface TrackData {
   number: number;
@@ -41,14 +55,6 @@ export interface TrackData {
   added_at: Date;
   duration_ms: number;
   isSaved: boolean;
-}
-
-export interface Track extends TrackData {
-  isPlaybackContext: boolean;
-  isPlaying: boolean;
-  addToQueue: () => void;
-  toggleIsSaved: () => void;
-  toggleIsPlaying: () => Promise<void>;
 }
 
 declare module "@tanstack/table-core" {
@@ -81,23 +87,13 @@ const columns = [
 
 type TrackTableProps = {
   trackDataArr: TrackData[];
-  playlist: TableMeta<Track>["playlist"];
+  playlist: TableMeta<TrackData>["playlist"];
 };
 
 export default function TrackTable({
   trackDataArr,
   playlist,
 }: TrackTableProps) {
-  const { player, playbackState } = useAppStore(
-    ({ player, playbackState }) => ({ player, playbackState })
-  );
-  const [savedTrackIds, setSavedTrackIds] = useState(
-    new Set(
-      trackDataArr
-        .filter((trackData) => trackData.isSaved)
-        .map((trackData) => trackData.track.id)
-    )
-  );
   const [sorting, setSorting] = useState<SortingState>([]);
   const [globalFilter, setGlobalFilter] = useState<string>("");
 
@@ -108,76 +104,30 @@ export default function TrackTable({
         : []
     );
 
-  const addOrDeleteTrackIds =
-    (addOrDelete: "add" | "delete") => (trackIds: string[]) => {
-      const ids = new Set(savedTrackIds);
-      trackIds.forEach((id) => ids[addOrDelete](id));
-      setSavedTrackIds(ids);
-    };
-
-  const playMutation = trpc.playback.playWithContext.useMutation();
-  const saveTracksMutation = trpc.tracks.saveTracks.useMutation({
-    onMutate: (trackIds) => addOrDeleteTrackIds("add")(trackIds),
-    onError: (error, trackIds) => addOrDeleteTrackIds("delete")(trackIds),
+  const table = useReactTable({
+    data: trackDataArr,
+    columns,
+    meta: {
+      playlist,
+      userPlaylists: Array.from({ length: 10 }, (_, i) => ({
+        id: `${i + 1}`,
+        name: `Playlist ${i + 1}`, // PLACRHOLDER for saved playlists store
+      })),
+    },
+    globalFilterFn: "includesString",
+    getCoreRowModel: getCoreRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
+    onGlobalFilterChange: setGlobalFilter,
+    getSortedRowModel: getSortedRowModel(),
+    onSortingChange: setSorting,
+    state: {
+      globalFilter,
+      sorting,
+    },
   });
-  const unsaveTracksMutation = trpc.tracks.unsaveTracks.useMutation({
-    onMutate: (trackIds) => addOrDeleteTrackIds("delete")(trackIds),
-    onError: (error, trackIds) => addOrDeleteTrackIds("add")(trackIds),
-  });
-  const addToQueueMutation = trpc.tracks.addToQueue.useMutation({
-    onError: (error) => console.error(error),
-  });
 
-  if (!playbackState || !player) {
-    return;
-  }
-
-  const { context } = playbackState;
-  const { name, album, uri } = playbackState.track_window.current_track;
-
-  const tracks: Track[] = trackDataArr.map((trackData) => {
-    const isPlaybackContext =
-      context.uri === playlist!.uri &&
-      (uri === trackData.track.uri ||
-        (name === trackData.track.name && album.name === trackData.album.name));
-    // && artists.every(artist => artists)
-    const isPlaying = isPlaybackContext && !playbackState.paused;
-
-    const addToQueue = () => addToQueueMutation.mutate(trackData.track.uri);
-
-    const toggleIsSaved = () => {
-      if (savedTrackIds.has(trackData.track.id)) {
-        unsaveTracksMutation.mutate([trackData.track.id]);
-      } else {
-        saveTracksMutation.mutate([trackData.track.id]);
-      }
-    };
-
-    const toggleIsPlaying = async () => {
-      if (!isPlaybackContext) {
-        playMutation.mutate({
-          context: { uri: playlist!.uri },
-          offset: { uri: trackData.track.uri },
-        });
-      } else {
-        if (isPlaying) {
-          await player.pause.bind(player)();
-        } else {
-          await player.resume.bind(player)();
-        }
-      }
-    };
-
-    return {
-      ...trackData,
-      isSaved: savedTrackIds.has(trackData.track.id),
-      isPlaybackContext,
-      isPlaying,
-      addToQueue,
-      toggleIsSaved,
-      toggleIsPlaying,
-    };
-  });
+  const gridTemplateCols = "grid-cols-[auto_2fr_1.5fr_1.5fr_auto_auto_auto_auto]";
+  const colSpan = "col-span-8";
 
   return (
     <>
@@ -192,23 +142,45 @@ export default function TrackTable({
         globalFilter={globalFilter}
         setGlobalFilter={setGlobalFilter}
       />
-      <DataTable
-        data={tracks}
-        meta={{
-          playlist,
-          userPlaylists: Array.from({ length: 10 }, (_, i) => ({
-            id: `${i + 1}`,
-            name: `Playlist ${i + 1}`, // PLACRHOLDER for saved playlists store
-          })),
-        }}
-        columns={columns}
-        gridTemplateCols="grid-cols-[auto_2fr_1.5fr_1.5fr_auto_auto_auto_auto]"
-        colSpan="col-span-8"
-        sorting={sorting}
-        setSorting={setSorting}
-        globalFilter={globalFilter}
-        setGlobalFilter={setGlobalFilter}
-      />
+      <Table className="border" gridTemplateCols={gridTemplateCols}>
+        <TableHeader colSpan={colSpan}>
+          {table.getHeaderGroups().map((headerGroup) => (
+            <TableRow
+              key={headerGroup.id}
+              colSpan={colSpan}
+              className="hover:bg-inherit"
+            >
+              {headerGroup.headers.map((header) => (
+                <TableHead key={header.id}>
+                  {header.isPlaceholder
+                    ? null
+                    : flexRender(
+                        header.column.columnDef.header,
+                        header.getContext()
+                      )}
+                </TableHead>
+              ))}
+            </TableRow>
+          ))}
+        </TableHeader>
+        <TableBody colSpan={colSpan}>
+          {table.getRowModel().rows?.length ? (
+            table.getRowModel().rows.map((row) => (
+              <TrackTableRow
+                key={row.id}
+                row={row}
+                colSpan={colSpan}
+                trackData={row.original}
+                playlistUri={playlist!.uri}
+              />
+            ))
+          ) : (
+            <TableRow colSpan={colSpan} className="block">
+              <TableCell className="h-24 justify-center">No results.</TableCell>
+            </TableRow>
+          )}
+        </TableBody>
+      </Table>
     </>
   );
 }

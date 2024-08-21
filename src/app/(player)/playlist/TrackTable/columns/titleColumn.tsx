@@ -1,11 +1,12 @@
 import { type ColumnDef } from "@tanstack/react-table";
-import { type Track } from "@/app/(player)/playlist/TrackTable";
+import { type TrackData } from "@/app/(player)/playlist/TrackTable";
+import { type ExtendedCellContext } from "@/app/(player)/playlist/TrackTable/TrackTableRow";
 import { Button } from "@/components/ui/button";
 import ColumnSortIcon from "@/components/icons/ColumnSortIcon";
 import Link from "@/components/Link";
 import SearchHighlight from "@/components/SearchHighlight";
 
-const titleColumn: ColumnDef<Track, string> = {
+const titleColumn: ColumnDef<TrackData, string> = {
   id: "title",
   sortingFn: "text",
   filterFn: "includesString",
@@ -20,11 +21,12 @@ const titleColumn: ColumnDef<Track, string> = {
       <ColumnSortIcon sorting={column.getIsSorted()} />
     </Button>
   ),
-  cell: ({ row, table }) => {
-    const {
-      isPlaybackContext,
-      track: { id, name, type },
-    } = row.original;
+  cell: (context) => {
+    const { row, table, isPlaybackContext } = context as ExtendedCellContext<
+      TrackData,
+      string
+    >;
+    const { id, name, type } = row.original.track;
     return (
       <Link
         color={isPlaybackContext ? "green" : "primary"}

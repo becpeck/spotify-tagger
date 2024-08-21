@@ -1,11 +1,11 @@
 import { type ColumnDef } from "@tanstack/react-table";
 import { ClockIcon } from "lucide-react";
-import { type Track } from "@/app/(player)/playlist/TrackTable";
+import { type TrackData } from "@/app/(player)/playlist/TrackTable";
 import { Button } from "@/components/ui/button";
 import ColumnSortIcon from "@/components/icons/ColumnSortIcon";
 import { toDuration, toDurationString } from "@/utils/timeUtils";
 
-const durationColumn: ColumnDef<Track, number> = {
+const durationColumn: ColumnDef<TrackData, number> = {
   accessorKey: "duration_ms",
   enableGlobalFilter: false,
   sortDescFirst: false,

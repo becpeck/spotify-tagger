@@ -1,12 +1,12 @@
 import { type ColumnDef } from "@tanstack/react-table";
 import { Fragment } from "react";
-import { type Track } from "@/app/(player)/playlist/TrackTable";
+import { type TrackData } from "@/app/(player)/playlist/TrackTable";
 import { Button } from "@/components/ui/button";
 import ColumnSortIcon from "@/components/icons/ColumnSortIcon";
 import Link from "@/components/Link";
 import SearchHighlight from "@/components/SearchHighlight";
 
-const artistColumn: ColumnDef<Track, string> = {
+const artistColumn: ColumnDef<TrackData, string> = {
   id: "artists",
   sortingFn: "text",
   filterFn: "includesString",
@@ -22,7 +22,7 @@ const artistColumn: ColumnDef<Track, string> = {
     </Button>
   ),
   cell: ({ row, table }) => {
-    const artists = row.original.artists satisfies Track["artists"];
+    const artists = row.original.artists satisfies TrackData["artists"];
     return (
       <div className="text-muted-foreground truncate line-clamp-1 whitespace-normal break-all">
         {artists.map(({ id, name, type }, i) => (
