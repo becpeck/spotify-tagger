@@ -26,9 +26,8 @@ const artistColumn: ColumnDef<Track, string> = {
     return (
       <div className="text-muted-foreground truncate line-clamp-1 whitespace-normal break-all">
         {artists.map(({ id, name, type }, i) => (
-          <>
+          <Fragment key={id}>
             <Link
-              key={id}
               href={`/${type}/${id}`}
               number="list"
               className="group-hover/row:text-primary"
@@ -38,8 +37,8 @@ const artistColumn: ColumnDef<Track, string> = {
                 search={[table.getState().globalFilter as string]}
               />
             </Link>
-            {i < artists.length - 1 ? <Fragment key={i}>, </Fragment> : null}
-          </>
+            {i < artists.length - 1 ? ", " : null}
+          </Fragment>
         ))}
       </div>
     );
