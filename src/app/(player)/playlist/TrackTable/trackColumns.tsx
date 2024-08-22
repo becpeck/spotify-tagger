@@ -1,13 +1,31 @@
 import { createColumnHelper } from "@tanstack/react-table";
 import { type TrackData } from "@/app/(player)/playlist/TrackTable";
-import { NumberHeader, NumberCell } from "@/app/(player)/playlist/TrackTable/columns/numberColumn";
-import { TitleHeader, TitleCell } from "@/app/(player)/playlist/TrackTable/columns/titleColumn";
-import { ArtistHeader, ArtistCell } from "@/app/(player)/playlist/TrackTable/columns/artistColumn";
-import { AlbumHeader, AlbumCell } from "@/app/(player)/playlist/TrackTable/columns/albumColumn";
-import { DateHeader, DateCell } from "@/app/(player)/playlist/TrackTable/columns/dateAddedColumn";
-import { IsSavedCell } from "@/app/(player)/playlist/TrackTable/columns/isSavedColumn";
-import { DurationHeader, DurationCell } from "@/app/(player)/playlist/TrackTable/columns/durationColumn";
-import { ActionsCell } from "@/app/(player)/playlist/TrackTable/columns/actionsColumn";
+import {
+  NumberHeader,
+  NumberCell,
+} from "@/app/(player)/playlist/TrackTable/cells/Number";
+import {
+  TitleHeader,
+  TitleCell,
+} from "@/app/(player)/playlist/TrackTable/cells/Title";
+import {
+  ArtistHeader,
+  ArtistCell,
+} from "@/app/(player)/playlist/TrackTable/cells/Artist";
+import {
+  AlbumHeader,
+  AlbumCell,
+} from "@/app/(player)/playlist/TrackTable/cells/Album";
+import {
+  DateHeader,
+  DateCell,
+} from "@/app/(player)/playlist/TrackTable/cells/Date";
+import { IsSavedCell } from "@/app/(player)/playlist/TrackTable/cells/IsSaved";
+import {
+  DurationHeader,
+  DurationCell,
+} from "@/app/(player)/playlist/TrackTable/cells/Duration";
+import { ActionsCell } from "@/app/(player)/playlist/TrackTable/cells/Actions";
 
 const columnHelper = createColumnHelper<TrackData>();
 
@@ -24,13 +42,16 @@ export const compactColumns = [
     header: TitleHeader,
     cell: TitleCell,
   }),
-  columnHelper.accessor(row => row.artists.map((artist) => artist.name).join(", "), {
-    id: "artist",
-    sortingFn: "text",
-    filterFn: "includesString",
-    header: ArtistHeader,
-    cell: ArtistCell,
-  }),
+  columnHelper.accessor(
+    (row) => row.artists.map((artist) => artist.name).join(", "),
+    {
+      id: "artist",
+      sortingFn: "text",
+      filterFn: "includesString",
+      header: ArtistHeader,
+      cell: ArtistCell,
+    }
+  ),
   columnHelper.accessor("album.name", {
     id: "album",
     sortingFn: "text",
