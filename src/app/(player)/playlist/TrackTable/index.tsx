@@ -20,16 +20,7 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 
-import {
-  numberColumn,
-  titleColumn,
-  artistColumn,
-  albumColumn,
-  dateAddedColumn,
-  isSavedColumn,
-  durationColumn,
-  actionsColumn,
-} from "@/app/(player)/playlist/TrackTable/columns";
+import { compactColumns } from "@/app/(player)/playlist/TrackTable/trackColumns";
 
 import PlaylistControls from "@/app/(player)/playlist/TrackTable/PlaylistControls";
 import TrackTableRow from "@/app/(player)/playlist/TrackTable/TrackTableRow";
@@ -74,17 +65,6 @@ declare module "@tanstack/table-core" {
   }
 }
 
-const columns = [
-  numberColumn,
-  titleColumn,
-  artistColumn,
-  albumColumn,
-  dateAddedColumn,
-  isSavedColumn,
-  durationColumn,
-  actionsColumn,
-];
-
 type TrackTableProps = {
   trackDataArr: TrackData[];
   playlist: TableMeta<TrackData>["playlist"];
@@ -106,7 +86,7 @@ export default function TrackTable({
 
   const table = useReactTable({
     data: trackDataArr,
-    columns,
+    columns: compactColumns,
     meta: {
       playlist,
       userPlaylists: Array.from({ length: 10 }, (_, i) => ({

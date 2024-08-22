@@ -1,14 +1,10 @@
-import { type ColumnDef } from "@tanstack/react-table";
+import { type HeaderContext, type CellContext } from "@tanstack/react-table";
 import { type TrackData } from "@/app/(player)/playlist/TrackTable";
 import { Button } from "@/components/ui/button";
 import ColumnSortIcon from "@/components/icons/ColumnSortIcon";
 
-const dateAddedColumn: ColumnDef<TrackData, Date> = {
-  accessorKey: "added_at",
-  sortingFn: "datetime",
-  sortDescFirst: false,
-  enableGlobalFilter: false,
-  header: ({ column }) => (
+export function DateHeader({ column }: HeaderContext<TrackData, Date>) {
+  return (
     <Button
       variant="ghost"
       className="p-0 gap-2 justify-start hover:bg-inherit"
@@ -17,8 +13,11 @@ const dateAddedColumn: ColumnDef<TrackData, Date> = {
       Date Added
       <ColumnSortIcon sorting={column.getIsSorted()} />
     </Button>
-  ),
-  cell: ({ row }) => (
+  );
+}
+
+export function DateCell({ row }: CellContext<TrackData, Date>) {
+  return (
     <div className="text-muted-foreground">
       {(row.getValue("added_at") satisfies Date).toLocaleDateString("en-US", {
         month: "short",
@@ -26,7 +25,5 @@ const dateAddedColumn: ColumnDef<TrackData, Date> = {
         year: "numeric",
       })}
     </div>
-  ),
-};
-
-export default dateAddedColumn;
+  );
+}

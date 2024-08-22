@@ -1,4 +1,4 @@
-import { type ColumnDef, type CellContext } from "@tanstack/react-table";
+import { type CellContext } from "@tanstack/react-table";
 import { HashIcon, PlayIcon, PauseIcon } from "lucide-react";
 
 import { type TrackData } from "@/app/(player)/playlist/TrackTable";
@@ -9,7 +9,16 @@ import { useAppStore } from "@/lib/stores/AppStoreProvider";
 import { trpc } from "@/lib/trpc/client";
 import { cn } from "@/lib/utils";
 
-function NumberCell(props: CellContext<TrackData, number>) {
+export function NumberHeader() {
+  return (
+    <div className="w-full flex justify-center align-center">
+      <span className="sr-only">Track Number</span>
+      <HashIcon size={15} />
+    </div>
+  );
+}
+
+export function NumberCell(props: CellContext<TrackData, number>) {
   const { row, table, isPlaybackContext } = props as ExtendedCellContext<
     TrackData,
     number
@@ -83,17 +92,3 @@ function NumberCell(props: CellContext<TrackData, number>) {
     </Button>
   );
 }
-
-const numberColumn: ColumnDef<TrackData, number> = {
-  accessorKey: "number",
-  enableGlobalFilter: false,
-  header: () => (
-    <div className="w-full flex justify-center align-center">
-      <span className="sr-only">Track Number</span>
-      <HashIcon size={15} />
-    </div>
-  ),
-  cell: (context) => <NumberCell {...context} />,
-};
-
-export default numberColumn;
