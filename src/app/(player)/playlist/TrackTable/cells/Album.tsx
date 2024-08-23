@@ -9,7 +9,7 @@ export function AlbumHeader({ column }: HeaderContext<TrackData, string>) {
   return (
     <Button
       variant="ghost"
-      className="pl-0 gap-2 justify-start hover:bg-inherit"
+      className="pl-0 gap-2 justify-start hover:bg-inherit col-album hidden @3xl:inline-flex"
       onClick={() => column.toggleSorting()}
     >
       Album
@@ -21,7 +21,10 @@ export function AlbumHeader({ column }: HeaderContext<TrackData, string>) {
 export function AlbumCell({ row, table }: CellContext<TrackData, string>) {
   const { id, name, type } = row.original.album;
   return (
-    <Link href={`/${type}/${id}`} className="group-hover/row:text-primary">
+    <Link
+      href={`/${type}/${id}`}
+      className="group-hover/row:text-primary col-album hidden @3xl:line-clamp-1"
+    >
       <SearchHighlight
         text={name}
         search={[table.getState().globalFilter as string]}

@@ -72,7 +72,7 @@ export default function ActionsMenu({
       <DropdownMenuTrigger asChild>
         <Button
           variant="ghost"
-          className="h-8 w-8 p-0 [--ellipsis-color:--background] group-hover/row:[--ellipsis-color:--primary]"
+          className="h-8 w-8 p-0 [--ellipsis-color:--background] group-hover/row:[--ellipsis-color:--primary] col-actions"
         >
           <span className="sr-only">Open menu</span>
           <EllipsisIcon

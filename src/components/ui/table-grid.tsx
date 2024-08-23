@@ -1,40 +1,47 @@
-import * as React from "react"
+import * as React from "react";
 
-import { cn } from "@/lib/utils"
+import { cn } from "@/lib/utils";
 
 const Table = React.forwardRef<
   HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement> & { gridTemplateCols: string }
->(({ className, gridTemplateCols, ...props }, ref) => (
+  React.HTMLAttributes<HTMLDivElement>
+>(({ className, ...props }, ref) => (
   <div className="w-full">
     <div
       ref={ref}
-      className={cn("w-full caption-bottom text-sm grid gap-x-4", gridTemplateCols, className)}
+      className={cn("w-full caption-bottom text-sm grid", className)}
       {...props}
     />
   </div>
-))
-Table.displayName = "Table"
+));
+Table.displayName = "Table";
 
 const TableHeader = React.forwardRef<
   HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement> & { colSpan: string }
->(({ className, colSpan, ...props }, ref) => (
-  <div ref={ref} className={cn("border-b grid grid-cols-subgrid", colSpan, className)} {...props} />
-))
-TableHeader.displayName = "TableHeader"
+  React.HTMLAttributes<HTMLDivElement>
+>(({ className, ...props }, ref) => (
+  <div
+    ref={ref}
+    className={cn("border-b grid grid-cols-subgrid col-row", className)}
+    {...props}
+  />
+));
+TableHeader.displayName = "TableHeader";
 
 const TableBody = React.forwardRef<
   HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement> & { colSpan: string }
->(({ className, colSpan, ...props }, ref) => (
+  React.HTMLAttributes<HTMLDivElement>
+>(({ className, ...props }, ref) => (
   <div
     ref={ref}
-    className={cn("[&_>_div:last-child]:border-0 grid grid-cols-subgrid", colSpan, className)}
+    className={cn(
+      "[&_>_div:last-child]:border-0 grid grid-cols-subgrid col-row",
+      className
+    )}
     {...props}
   />
-))
-TableBody.displayName = "TableBody"
+));
+TableBody.displayName = "TableBody";
 
 // const TableFooter = React.forwardRef<
 //   HTMLTableSectionElement,
@@ -53,19 +60,18 @@ TableBody.displayName = "TableBody"
 
 const TableRow = React.forwardRef<
   HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement> & { colSpan: string }
->(({ className, colSpan, ...props }, ref) => (
+  React.HTMLAttributes<HTMLDivElement>
+>(({ className, ...props }, ref) => (
   <div
     ref={ref}
     className={cn(
-      "border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted px-2 py-0 grid grid-cols-subgrid",
-      colSpan,
+      "border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted px-2 py-0 grid grid-cols-subgrid col-row [&>*:not(:last-child)]:mr-4",
       className
     )}
     {...props}
   />
-))
-TableRow.displayName = "TableRow"
+));
+TableRow.displayName = "TableRow";
 
 const TableHead = React.forwardRef<
   HTMLDivElement,
@@ -75,12 +81,14 @@ const TableHead = React.forwardRef<
     ref={ref}
     className={cn(
       "flex items-center min-h-8 min-w-0 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]",
+      // TODO: find a way to remove this litter and make it shorter, maybe globals.css?
+      "[&:has(>_.hidden)]:hidden [&:has(>_[class*='@md:'])]:@md:flex [&:has(>_[class*='@lg:'])]:@lg:flex [&:has(>_[class*='@xl:'])]:@xl:flex [&:has(>_[class*='@2xl:'])]:@2xl:flex [&:has(>_[class*='@3xl:'])]:@3xl:flex [&:has(>_[class*='@4xl:'])]:@4xl:flex [&:has(>_[class*='@5xl:'])]:@5xl:flex",
       className
     )}
     {...props}
   />
-))
-TableHead.displayName = "TableHead"
+));
+TableHead.displayName = "TableHead";
 
 const TableCell = React.forwardRef<
   HTMLDivElement,
@@ -90,12 +98,14 @@ const TableCell = React.forwardRef<
     ref={ref}
     className={cn(
       "flex items-center min-w-0 align-middle [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]",
+      // TODO: find a way to remove this litter and make it shorter, maybe globals.css?
+      "[&:has(>_.hidden)]:hidden [&:has(>_[class*='@md:'])]:@md:flex [&:has(>_[class*='@lg:'])]:@lg:flex [&:has(>_[class*='@xl:'])]:@xl:flex [&:has(>_[class*='@2xl:'])]:@2xl:flex [&:has(>_[class*='@3xl:'])]:@3xl:flex [&:has(>_[class*='@4xl:'])]:@4xl:flex [&:has(>_[class*='@5xl:'])]:@5xl:flex",
       className
     )}
     {...props}
   />
-))
-TableCell.displayName = "TableCell"
+));
+TableCell.displayName = "TableCell";
 
 // const TableCaption = React.forwardRef<
 //   HTMLTableCaptionElement,
@@ -118,4 +128,4 @@ export {
   TableRow,
   TableCell,
   // TableCaption,
-}
+};

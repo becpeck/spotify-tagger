@@ -15,7 +15,6 @@ import { useAppStore } from "@/lib/stores/AppStoreProvider";
 
 interface TrackTableRowProps {
   row: Row<TrackData>;
-  colSpan: `col-span-${number}`;
   trackData: TrackData;
   playlistUri: `spotify:playlist:${string}`;
 }
@@ -31,7 +30,6 @@ export type ExtendedCellContext<TData extends RowData, TValue> = CellContext<
 
 export default function TrackTableRow({
   row,
-  colSpan,
   trackData,
   playlistUri,
 }: TrackTableRowProps) {
@@ -76,7 +74,6 @@ export default function TrackTableRow({
   return (
     <TableRow
       key={row.id}
-      colSpan={colSpan}
       data-state={row.getIsSelected() && "selected"}
       className="group/row"
     >

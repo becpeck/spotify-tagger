@@ -10,7 +10,7 @@ export function ArtistHeader({ column }: HeaderContext<TrackData, string>) {
   return (
     <Button
       variant="ghost"
-      className="pl-0 gap-2 justify-start hover:bg-inherit"
+      className="pl-0 gap-2 justify-start hover:bg-inherit col-artist hidden @xl:inline-flex"
       onClick={() => column.toggleSorting()}
     >
       Artist
@@ -20,10 +20,10 @@ export function ArtistHeader({ column }: HeaderContext<TrackData, string>) {
 }
 
 export function ArtistCell({ row, table }: CellContext<TrackData, string>) {
-  const artists = row.original.artists satisfies TrackData["artists"];
+  const { artists } = row.original;
   return (
-    <div className="text-muted-foreground truncate line-clamp-1 whitespace-normal break-all">
-      {artists.map(({ id, name, type }, i) => (
+    <div className="text-muted-foreground truncate whitespace-normal break-all col-artist hidden @xl:line-clamp-1">
+      {row.original.artists.map(({ id, name, type }, i) => (
         <Fragment key={id}>
           <Link
             href={`/${type}/${id}`}

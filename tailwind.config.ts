@@ -79,7 +79,30 @@ export default {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
       },
+
+      // grid layouts
+      gridTemplateColumns: {
+        "playlist-sm": "[first numStart] auto [numEnd titleStart] 2fr [titleEnd savedStart] auto [savedEnd durationStart] auto [durationEnd actionsStart] auto [actionsEnd last]",
+        "playlist-md": "[first numStart] auto [numEnd titleStart] 2fr [titleEnd artistStart] 1.5fr [artistEnd savedStart] auto [savedEnd durationStart] auto [durationEnd actionsStart] auto [actionsEnd last]",
+        "playlist-lg": "[first numStart] auto [numEnd titleStart] 2fr [titleEnd artistStart] 1.5fr [artistEnd albumStart] 1.5fr [albumEnd savedStart] auto [savedEnd durationStart] auto [durationEnd actionsStart] auto [actionsEnd last]",
+        "playlist-xl": "[first numStart] auto [numEnd titleStart] 2fr [titleEnd artistStart] 1.5fr [artistEnd albumStart] 1.5fr [albumEnd dateStart] auto [dateEnd savedStart] auto [savedEnd durationStart] auto [durationEnd actionsStart] auto [actionsEnd last]",
+      },
+      gridColumn: {
+        "row": "first / last",
+
+        "num": "numStart / numEnd",
+        "title": "titleStart / titleEnd",
+        "artist": "artistStart / artistEnd",
+        "album": "albumStart / albumEnd",
+        "date": "dateStart / dateEnd",
+        "saved": "savedStart / savedEnd",
+        "duration": "durationStart / durationEnd",
+        "actions": "actionsStart / actionsEnd",
+      }
     },
   },
-  plugins: [require("tailwindcss-animate")],
+  plugins: [
+    require("tailwindcss-animate"),
+    require("@tailwindcss/container-queries"),
+  ],
 } satisfies Config;

@@ -68,6 +68,7 @@ export const compactColumns = [
   }),
   columnHelper.accessor("isSaved", {
     enableGlobalFilter: false,
+    header: () => null,
     cell: IsSavedCell,
   }),
   columnHelper.accessor("duration_ms", {

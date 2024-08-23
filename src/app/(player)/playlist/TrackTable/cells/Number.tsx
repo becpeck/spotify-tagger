@@ -11,7 +11,7 @@ import { cn } from "@/lib/utils";
 
 export function NumberHeader() {
   return (
-    <div className="w-full flex justify-center align-center">
+    <div className="w-full flex justify-center align-center col-num">
       <span className="sr-only">Track Number</span>
       <HashIcon size={15} />
     </div>
@@ -69,7 +69,7 @@ export function NumberCell(props: CellContext<TrackData, number>) {
   return (
     <Button
       variant="ghost"
-      className="h-8 w-8 p-0 text-muted-foreground"
+      className="h-8 w-8 p-0 text-muted-foreground col-num"
       disabled={!player}
       onClick={toggleIsPlaying}
     >

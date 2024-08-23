@@ -106,9 +106,6 @@ export default function TrackTable({
     },
   });
 
-  const gridTemplateCols = "grid-cols-[auto_2fr_1.5fr_1.5fr_auto_auto_auto_auto]";
-  const colSpan = "col-span-8";
-
   return (
     <>
       <PlaylistControls
@@ -122,45 +119,46 @@ export default function TrackTable({
         globalFilter={globalFilter}
         setGlobalFilter={setGlobalFilter}
       />
-      <Table className="border" gridTemplateCols={gridTemplateCols}>
-        <TableHeader colSpan={colSpan}>
-          {table.getHeaderGroups().map((headerGroup) => (
-            <TableRow
-              key={headerGroup.id}
-              colSpan={colSpan}
-              className="hover:bg-inherit"
-            >
-              {headerGroup.headers.map((header) => (
-                <TableHead key={header.id}>
-                  {header.isPlaceholder
-                    ? null
-                    : flexRender(
-                        header.column.columnDef.header,
-                        header.getContext()
-                      )}
-                </TableHead>
-              ))}
-            </TableRow>
-          ))}
-        </TableHeader>
-        <TableBody colSpan={colSpan}>
-          {table.getRowModel().rows?.length ? (
-            table.getRowModel().rows.map((row) => (
-              <TrackTableRow
-                key={row.id}
-                row={row}
-                colSpan={colSpan}
-                trackData={row.original}
-                playlistUri={playlist!.uri}
-              />
-            ))
-          ) : (
-            <TableRow colSpan={colSpan} className="block">
-              <TableCell className="h-24 justify-center">No results.</TableCell>
-            </TableRow>
-          )}
-        </TableBody>
-      </Table>
+      <div className="border @container">
+        <Table className="grid-cols-playlist-sm @xl:grid-cols-playlist-md @3xl:grid-cols-playlist-lg @5xl:grid-cols-playlist-xl">
+          <TableHeader>
+            {table.getHeaderGroups().map((headerGroup) => (
+              <TableRow key={headerGroup.id} className="hover:bg-inherit">
+                {headerGroup.headers.map((header) => (
+                  <TableHead key={header.id}>
+                    {header.isPlaceholder
+                      ? null
+                      : flexRender(
+                          header.column.columnDef.header,
+                          header.getContext()
+                        )}
+                  </TableHead>
+                ))}
+              </TableRow>
+            ))}
+          </TableHeader>
+          <TableBody>
+            {table.getRowModel().rows?.length ? (
+              table
+                .getRowModel()
+                .rows.map((row) => (
+                  <TrackTableRow
+                    key={row.id}
+                    row={row}
+                    trackData={row.original}
+                    playlistUri={playlist!.uri}
+                  />
+                ))
+            ) : (
+              <TableRow className="block">
+                <TableCell className="h-24 justify-center">
+                  No results.
+                </TableCell>
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>
+      </div>
     </>
   );
 }
