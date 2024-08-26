@@ -424,24 +424,30 @@ export default function PlaylistControls({
             </DropdownMenuLabel>
             <DropdownMenuGroup>
               <DropdownMenuItem
-                className="flex justify-between gap-4"
+                className={cn(
+                  "flex justify-between gap-4",
+                  view === "compact" && "text-green-500 focus:text-green-500"
+                )}
                 onClick={() => updateView("compact")}
               >
                 <div className="flex gap-2">
                   <AlignJustifyIcon size={18} />
                   Compact
                 </div>
-                <CheckIcon size={18} />
+                {view === "compact" ? <CheckIcon size={18} /> : null}
               </DropdownMenuItem>
               <DropdownMenuItem
-                className="flex justify-between gap-4"
+                className={cn(
+                  "flex justify-between gap-4",
+                  view === "list" && "text-green-500 focus:text-green-500"
+                )}
                 onClick={() => updateView("list")}
               >
                 <div className="flex gap-2">
                   <LayoutListIcon size={18} />
                   List
                 </div>
-                <CheckIcon size={18} />
+                {view === "list" ? <CheckIcon size={18} /> : null}
               </DropdownMenuItem>
             </DropdownMenuGroup>
           </DropdownMenuContent>
