@@ -13,26 +13,18 @@ export function TitleArtistHeader({
 }: HeaderContext<TrackData, unknown>) {
   const toggleSorting = () => {
     const sorting = table.getState().sorting;
-    const titleColumn = table.getColumn("title");
-    const artistColumn = table.getColumn("artist");
     switch (true) {
-      case sorting[0]?.id === "title" && !sorting[0].desc:
-        titleColumn?.toggleSorting();
-        break;
       case sorting[0]?.id === "title" && sorting[0].desc:
-        artistColumn?.toggleSorting();
-        break;
       case sorting[0]?.id === "artist" && !sorting[0].desc:
-        artistColumn?.toggleSorting();
-        break;
       case sorting[0]?.id === "artist" && sorting[0].desc:
-        artistColumn?.toggleSorting();
+        table.getColumn("artist")?.toggleSorting();
         break;
+      case sorting[0]?.id === "title" && !sorting[0].desc:
       default:
-        titleColumn?.toggleSorting();
+        table.getColumn("title")?.toggleSorting();
     }
   };
-  // console.log(props);
+
   return (
     <Button
       variant="ghost"
