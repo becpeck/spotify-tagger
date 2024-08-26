@@ -4,21 +4,49 @@ import { Fragment } from "react";
 import { type TrackData } from "@/app/(player)/playlist/TrackTable";
 import { type ExtendedCellContext } from "@/app/(player)/playlist/TrackTable/TrackTableRow";
 import { Button } from "@/components/ui/button";
-// import ColumnSortIcon from "@/components/icons/ColumnSortIcon";
+import ColumnSortIcon from "@/components/icons/ColumnSortIcon";
 import Link from "@/components/Link";
 import SearchHighlight from "@/components/SearchHighlight";
 
-export function TitleArtistHeader(props: HeaderContext<TrackData, unknown>) {
-  // const { columns } = props.column;
-  console.log(props);
+export function TitleArtistHeader({
+  table,
+}: HeaderContext<TrackData, unknown>) {
+  const toggleSorting = () => {
+    const sorting = table.getState().sorting;
+    const titleColumn = table.getColumn("title");
+    const artistColumn = table.getColumn("artist");
+    switch (true) {
+      case sorting[0]?.id === "title" && !sorting[0].desc:
+        titleColumn?.toggleSorting();
+        break;
+      case sorting[0]?.id === "title" && sorting[0].desc:
+        artistColumn?.toggleSorting();
+        break;
+      case sorting[0]?.id === "artist" && !sorting[0].desc:
+        artistColumn?.toggleSorting();
+        break;
+      case sorting[0]?.id === "artist" && sorting[0].desc:
+        artistColumn?.toggleSorting();
+        break;
+      default:
+        titleColumn?.toggleSorting();
+    }
+  };
+  // console.log(props);
   return (
     <Button
       variant="ghost"
       className="pl-0 gap-2 justify-start hover:bg-inherit"
-      // onClick={() => column.toggleSorting()}
+      onClick={() => toggleSorting()}
     >
-      TitleArtist
-      {/* <ColumnSortIcon sorting={column.getIsSorted()} /> */}
+      {table.getState().sorting[0]?.id === "artist" ? "Artist" : "Title"}
+      <ColumnSortIcon
+        sorting={
+          // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
+          table.getColumn("title")?.getIsSorted() ||
+          table.getColumn("artist")!.getIsSorted()
+        }
+      />
     </Button>
   );
 }
