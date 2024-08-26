@@ -3,8 +3,8 @@
 import Script from "next/script";
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { usePlaybackStore } from "@/stores/PlaybackStoreProvider";
-import { trpc } from "@/trpc/client";
+import { useAppStore } from "@/lib/stores/AppStoreProvider";
+import { trpc } from "@/lib/trpc/client";
 
 declare global {
   interface Window {
@@ -17,11 +17,13 @@ declare global {
 
 interface PlaybackScriptProps {
   token: string;
-};
+}
 
 export default function PlaybackScript({ token }: PlaybackScriptProps) {
   const router = useRouter();
-  const { setPlayer, setPlaybackState } = usePlaybackStore((state) => state);
+  const { setPlayer, setPlaybackState } = useAppStore(
+    ({ setPlayer, setPlaybackState }) => ({ setPlayer, setPlaybackState })
+  );
 
   const playbackDevice = trpc.playback.transferToDevice.useMutation();
 
@@ -74,17 +76,19 @@ export default function PlaybackScript({ token }: PlaybackScriptProps) {
         console.log("playback_error", message);
       });
 
-      player.connect()
+      player
+        .connect()
         .then((success) => console.log("connect success", success))
-        .catch(err => console.error("connect failed", err));
+        .catch((err) => console.error("connect failed", err));
 
-      player.activateElement()
+      player
+        .activateElement()
         .then(() => console.log("activateElement"))
-        .catch(err => console.error(err));
+        .catch((err) => console.error(err));
 
       setPlayer(player);
     };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

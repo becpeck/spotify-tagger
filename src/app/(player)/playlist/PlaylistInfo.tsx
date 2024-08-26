@@ -38,9 +38,10 @@ export default function PlaylistInfo({
           width={250}
           alt={`${name} cover`}
           priority
+          className="h-[250px] w-[250px]"
         />
       ) : null}
-      <div>
+      <div className="shrink">
         <h4 className="capitalize">{type}</h4>
         <h1 className="text-4xl font-bold">{name}</h1>
         <div className="text-muted-foreground">{description}</div>

@@ -13,7 +13,7 @@ import {
 import { Button } from "@/components/ui/button";
 import SeekSlider from "@/components/PlaybackBar/SeekSlider";
 
-import { trpc } from "@/trpc/client";
+import { trpc } from "@/lib/trpc/client";
 import { cn } from "@/lib/utils";
 
 type PlaybackControlsProps = {
@@ -46,7 +46,9 @@ export default function PlaybackControls(props: PlaybackControlsProps) {
             "rounded-full hover:transform hover:scale-105 active:transform-none active:brightness-75 hover:bg-transparent"
           )}
           disabled={playerState.disallows.toggling_shuffle}
-          onClick={() => shuffleMutation.mutate({ state: !playerState.shuffle })}
+          onClick={() =>
+            shuffleMutation.mutate({ state: !playerState.shuffle })
+          }
           aria-label={`${playerState.shuffle ? "Disable" : "Enable"} shuffle`}
         >
           <ShuffleIcon className="h-5 w-5" stroke="hsl(var(--shuffle-color))" />
@@ -72,22 +74,27 @@ export default function PlaybackControls(props: PlaybackControlsProps) {
           variant="default"
           size="icon"
           className="rounded-full bg-green-500 hover:bg-green-500 h-10 w-10 hover:transform hover:scale-105 active:transform-none active:brightness-75"
-          disabled={playerState.paused ? playerState.disallows.resuming : playerState.disallows.pausing}
+          disabled={
+            playerState.paused
+              ? playerState.disallows.resuming
+              : playerState.disallows.pausing
+          }
           onClick={async () => await player.togglePlay()}
           aria-label={playerState.paused ? "Play" : "Pause"}
         >
-          {playerState.paused
-            ? <PlayIcon
-                className="h-5 w-5"
-                stroke="hsl(var(--background))"
-                fill="hsl(var(--background))"
-              />
-            : <PauseIcon
-                className="h-5 w-5"
-                stroke="hsl(var(--background))"
-                fill="hsl(var(--background))"
-              />
-          }
+          {playerState.paused ? (
+            <PlayIcon
+              className="h-5 w-5"
+              stroke="hsl(var(--background))"
+              fill="hsl(var(--background))"
+            />
+          ) : (
+            <PauseIcon
+              className="h-5 w-5"
+              stroke="hsl(var(--background))"
+              fill="hsl(var(--background))"
+            />
+          )}
         </Button>
         <Button
           variant="ghost"
@@ -116,17 +123,27 @@ export default function PlaybackControls(props: PlaybackControlsProps) {
             "rounded-full hover:transform hover:scale-105 active:transform-none active:brightness-75 hover:bg-transparent"
           )}
           // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
-          disabled={playerState.disallows.toggling_repeat_context || playerState.disallows.toggling_repeat_track}
+          disabled={
+            playerState.disallows.toggling_repeat_context ||
+            playerState.disallows.toggling_repeat_track
+          }
           onClick={() => repeatMutation.mutate(playerState.repeat_mode)}
-          aria-label={playerState.repeat_mode === 2
-            ? "Turn off repeat"
-            : `Set repeat to ${playerState.repeat_mode === 0 ? "context" : "track"}`
+          aria-label={
+            playerState.repeat_mode === 2
+              ? "Turn off repeat"
+              : `Set repeat to ${
+                  playerState.repeat_mode === 0 ? "context" : "track"
+                }`
           }
         >
-          {playerState.repeat_mode === 2
-            ? <Repeat1Icon className="h-5 w-5" stroke="hsl(var(--repeat-color))"/>
-            : <RepeatIcon className="h-5 w-5" stroke="hsl(var(--repeat-color))" />
-          }
+          {playerState.repeat_mode === 2 ? (
+            <Repeat1Icon
+              className="h-5 w-5"
+              stroke="hsl(var(--repeat-color))"
+            />
+          ) : (
+            <RepeatIcon className="h-5 w-5" stroke="hsl(var(--repeat-color))" />
+          )}
         </Button>
       </div>
       <SeekSlider

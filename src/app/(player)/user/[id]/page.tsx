@@ -1,4 +1,4 @@
-import { trpc } from "@/trpc/server";
+import { trpc } from "@/lib/trpc/server";
 
 import UserInfo from "@/app/(player)/user/UserInfo";
 
