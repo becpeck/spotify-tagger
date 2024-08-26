@@ -80,9 +80,7 @@ const TableHead = React.forwardRef<
   <div
     ref={ref}
     className={cn(
-      "flex items-center min-h-8 min-w-0 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]",
-      // TODO: find a way to remove this litter and make it shorter, maybe globals.css?
-      "[&:has(>_.hidden)]:hidden [&:has(>_[class*='@md:'])]:@md:flex [&:has(>_[class*='@lg:'])]:@lg:flex [&:has(>_[class*='@xl:'])]:@xl:flex [&:has(>_[class*='@2xl:'])]:@2xl:flex [&:has(>_[class*='@3xl:'])]:@3xl:flex [&:has(>_[class*='@4xl:'])]:@4xl:flex [&:has(>_[class*='@5xl:'])]:@5xl:flex",
+      "flex items-center min-h-8 min-w-0 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px] grid-table-cell",
       className
     )}
     {...props}
@@ -97,9 +95,7 @@ const TableCell = React.forwardRef<
   <div
     ref={ref}
     className={cn(
-      "flex items-center min-w-0 align-middle [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]",
-      // TODO: find a way to remove this litter and make it shorter, maybe globals.css?
-      "[&:has(>_.hidden)]:hidden [&:has(>_[class*='@md:'])]:@md:flex [&:has(>_[class*='@lg:'])]:@lg:flex [&:has(>_[class*='@xl:'])]:@xl:flex [&:has(>_[class*='@2xl:'])]:@2xl:flex [&:has(>_[class*='@3xl:'])]:@3xl:flex [&:has(>_[class*='@4xl:'])]:@4xl:flex [&:has(>_[class*='@5xl:'])]:@5xl:flex",
+      "flex items-center min-w-0 align-middle [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px] grid-table-cell",
       className
     )}
     {...props}

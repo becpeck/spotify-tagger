@@ -15,7 +15,7 @@ export function IsSavedCell(props: CellContext<TrackData, boolean>) {
       variant="ghost"
       size="icon"
       className={cn(
-        "rounded-full hover:transform hover:scale-105 active:transform-none active:brightness-75 hover:bg-transparent col-saved",
+        "rounded-full hover:transform hover:scale-105 active:transform-none active:brightness-75 hover:bg-transparent",
         "[--plus-color:--background] group-hover/row:[--plus-color:--muted-foreground] group-hover/row:hover:[--plus-color:--primary]"
       )}
       onClick={toggleIsSaved}

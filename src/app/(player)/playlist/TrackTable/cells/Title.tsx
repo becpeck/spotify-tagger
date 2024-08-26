@@ -10,7 +10,7 @@ export function TitleHeader({ column }: HeaderContext<TrackData, string>) {
   return (
     <Button
       variant="ghost"
-      className="pl-0 gap-2 justify-start hover:bg-inherit col-title"
+      className="pl-0 gap-2 justify-start hover:bg-inherit"
       onClick={() => column.toggleSorting()}
     >
       Title
@@ -30,7 +30,6 @@ export function TitleCell(props: CellContext<TrackData, string>) {
       color={isPlaybackContext ? "green" : "primary"}
       size="base"
       href={`/${type}/${id}`}
-      className="col-title"
     >
       <SearchHighlight
         text={name}

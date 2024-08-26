@@ -13,14 +13,15 @@ export default async function Playlist({ params }: { params: { id: string } }) {
     (acc, track) => acc + track.track.duration_ms,
     0
   );
-  const imageUrl = (() => {
-    const image =
-      images.find(({ width }) => width && width >= 250) ?? images[0];
-    return image?.url ?? "";
-  })();
+  const imageUrl =
+    (images.find(({ width }) => width && width >= 250) ?? images[0])?.url ?? "";
 
   const data = tracks.items.map(({ added_at, track, isSaved }, i) => {
     const { id, artists, album, name, duration_ms, type, uri } = track;
+    const imageUrl =
+      (album.images.find(({ width }) => width && width < 100) ?? images[0])
+        ?.url ?? "";
+
     return {
       number: i + 1,
       track: { id, name, type, uri },
@@ -33,6 +34,7 @@ export default async function Playlist({ params }: { params: { id: string } }) {
       isSaved,
       added_at,
       duration_ms,
+      imageUrl,
     };
   });
 

@@ -7,7 +7,7 @@ export function DateHeader({ column }: HeaderContext<TrackData, Date>) {
   return (
     <Button
       variant="ghost"
-      className="p-0 gap-2 justify-start hover:bg-inherit col-date hidden @5xl:inline-flex"
+      className="p-0 gap-2 justify-start hover:bg-inherit hidden view-compact:@5xl:inline-flex view-list:@3xl:inline-flex"
       onClick={() => column.toggleSorting()}
     >
       Date Added
@@ -18,7 +18,7 @@ export function DateHeader({ column }: HeaderContext<TrackData, Date>) {
 
 export function DateCell({ row }: CellContext<TrackData, Date>) {
   return (
-    <div className="text-muted-foreground col-date hidden @5xl:block">
+    <div className="text-muted-foreground hidden view-compact:@5xl:block view-list:@3xl:block">
       {(row.getValue("added_at") satisfies Date).toLocaleDateString("en-US", {
         month: "short",
         day: "numeric",

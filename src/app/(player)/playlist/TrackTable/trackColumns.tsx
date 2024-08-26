@@ -4,6 +4,7 @@ import {
   NumberHeader,
   NumberCell,
 } from "@/app/(player)/playlist/TrackTable/cells/Number";
+import { TitleArtistCell, TitleArtistHeader } from "@/app/(player)/playlist/TrackTable/cells/TitleArtist";
 import {
   TitleHeader,
   TitleCell,
@@ -29,11 +30,17 @@ import { ActionsCell } from "@/app/(player)/playlist/TrackTable/cells/Actions";
 
 const columnHelper = createColumnHelper<TrackData>();
 
-export const compactColumns = [
+const columns = [
   columnHelper.accessor("number", {
     enableGlobalFilter: false,
     header: NumberHeader,
     cell: NumberCell,
+  }),
+  columnHelper.accessor(row => [row.track.name].concat(row.artists.map((artist => artist.name))).join(", "), {
+    id: "title/artist",
+    filterFn: "includesString",
+    header: TitleArtistHeader,
+    cell: TitleArtistCell,
   }),
   columnHelper.accessor("track.name", {
     id: "title",
@@ -83,3 +90,5 @@ export const compactColumns = [
     cell: ActionsCell,
   }),
 ];
+
+export default columns;

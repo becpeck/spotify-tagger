@@ -5,7 +5,7 @@
 @layer base {
   :root {
     --green: 142 71% 45%;
-    
+
     --background: 0 0% 100%;
     --foreground: 240 10% 3.9%;
 
@@ -74,5 +74,25 @@
   }
   body {
     @apply bg-background text-foreground;
+  }
+}
+
+@layer utilities {
+  .grid-table-cell {
+    @apply [&:has(>_.hidden)]:hidden 
+      [.view-compact_&:has(>_[class*='view-compact:@md:'])]:@md:flex 
+      [.view-compact_&:has(>_[class*='view-compact:@lg:'])]:@lg:flex 
+      [.view-compact_&:has(>_[class*='view-compact:@xl:'])]:@xl:flex 
+      [.view-compact_&:has(>_[class*='view-compact:@2xl:'])]:@2xl:flex 
+      [.view-compact_&:has(>_[class*='view-compact:@3xl:'])]:@3xl:flex 
+      [.view-compact_&:has(>_[class*='view-compact:@4xl:'])]:@4xl:flex 
+      [.view-compact_&:has(>_[class*='view-compact:@5xl:'])]:@5xl:flex 
+      [.view-list_&:has(>_[class*='view-list:@md:'])]:@md:flex 
+      [.view-list_&:has(>_[class*='view-list:@lg:'])]:@lg:flex 
+      [.view-list_&:has(>_[class*='view-list:@xl:'])]:@xl:flex 
+      [.view-list_&:has(>_[class*='view-list:@2xl:'])]:@2xl:flex 
+      [.view-list_&:has(>_[class*='view-list:@3xl:'])]:@3xl:flex 
+      [.view-list_&:has(>_[class*='view-list:@4xl:'])]:@4xl:flex 
+      [.view-list_&:has(>_[class*='view-list:@5xl:'])]:@5xl:flex;
   }
 }

@@ -9,7 +9,7 @@ export function DurationHeader({ column }: HeaderContext<TrackData, number>) {
   return (
     <Button
       variant="ghost"
-      className="px-0 gap-2 w-full justify-end hover:bg-inherit col-duration"
+      className="px-0 gap-2 w-full justify-end hover:bg-inherit"
       onClick={() => column.toggleSorting()}
     >
       <ColumnSortIcon sorting={column.getIsSorted()} />
@@ -22,7 +22,7 @@ export function DurationHeader({ column }: HeaderContext<TrackData, number>) {
 export function DurationCell({ row }: CellContext<TrackData, number>) {
   const duration = toDuration(row.getValue("duration_ms"));
   return (
-    <div className="w-full text-right text-muted-foreground tabular-nums col-duration">
+    <div className="w-full text-right text-muted-foreground tabular-nums">
       {toDurationString(duration, {
         ...(duration.hours > 0
           ? { hours: "numeric", minutes: "2-digit" }

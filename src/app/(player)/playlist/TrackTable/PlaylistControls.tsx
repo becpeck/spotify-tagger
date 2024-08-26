@@ -53,6 +53,8 @@ type PlaylistControlsProps = {
   toggleSort: (label?: string) => () => void;
   globalFilter: string;
   setGlobalFilter: (value: string) => void;
+  view: "list" | "compact";
+  updateView: (newView: "list" | "compact") => void;
 };
 
 export default function PlaylistControls({
@@ -65,6 +67,8 @@ export default function PlaylistControls({
   toggleSort,
   globalFilter,
   setGlobalFilter,
+  view,
+  updateView,
 }: PlaylistControlsProps) {
   const { player, playbackState } = useAppStore(
     ({ player, playbackState }) => ({ player, playbackState })
@@ -134,8 +138,8 @@ export default function PlaylistControls({
       switch (sorting[0].id) {
         case "title":
           return "Title";
-        case "artists":
-          return "Artists";
+        case "artist":
+          return "Artist";
         case "album":
           return "Album";
         case "added_at":
@@ -348,13 +352,13 @@ export default function PlaylistControls({
               <DropdownMenuItem
                 className={cn(
                   "flex justify-between gap-4",
-                  sorting[0]?.id === "artists" &&
+                  sorting[0]?.id === "artist" &&
                     "text-green-500 focus:text-green-500"
                 )}
-                onClick={toggleSort("artists")}
+                onClick={toggleSort("artist")}
               >
                 Artist
-                {sorting[0]?.id === "artists" ? (
+                {sorting[0]?.id === "artist" ? (
                   sorting[0]?.desc ? (
                     <ArrowDownIcon size={18} />
                   ) : (
@@ -419,14 +423,20 @@ export default function PlaylistControls({
               View as
             </DropdownMenuLabel>
             <DropdownMenuGroup>
-              <DropdownMenuItem className="flex justify-between gap-4">
+              <DropdownMenuItem
+                className="flex justify-between gap-4"
+                onClick={() => updateView("compact")}
+              >
                 <div className="flex gap-2">
                   <AlignJustifyIcon size={18} />
                   Compact
                 </div>
                 <CheckIcon size={18} />
               </DropdownMenuItem>
-              <DropdownMenuItem className="flex justify-between gap-4">
+              <DropdownMenuItem
+                className="flex justify-between gap-4"
+                onClick={() => updateView("list")}
+              >
                 <div className="flex gap-2">
                   <LayoutListIcon size={18} />
                   List

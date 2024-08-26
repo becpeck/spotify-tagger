@@ -20,10 +20,12 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 
-import { compactColumns } from "@/app/(player)/playlist/TrackTable/trackColumns";
+import columns from "@/app/(player)/playlist/TrackTable/trackColumns";
 
 import PlaylistControls from "@/app/(player)/playlist/TrackTable/PlaylistControls";
 import TrackTableRow from "@/app/(player)/playlist/TrackTable/TrackTableRow";
+
+import { cn } from "@/lib/utils";
 
 export interface TrackData {
   number: number;
@@ -46,6 +48,7 @@ export interface TrackData {
   added_at: Date;
   duration_ms: number;
   isSaved: boolean;
+  imageUrl: string;
 }
 
 declare module "@tanstack/table-core" {
@@ -70,12 +73,28 @@ type TrackTableProps = {
   playlist: TableMeta<TrackData>["playlist"];
 };
 
+type View = "list" | "compact";
+type ViewVisibilityState = {
+  title: boolean;
+  artist: boolean;
+  "title/artist": boolean;
+};
+
+const COLUMN_VISIBILITIES: Record<View, ViewVisibilityState> = {
+  list: { title: false, artist: false, "title/artist": true },
+  compact: { title: true, artist: true, "title/artist": false },
+} as const;
+
 export default function TrackTable({
   trackDataArr,
   playlist,
 }: TrackTableProps) {
+  const [view, setView] = useState<View>("compact");
   const [sorting, setSorting] = useState<SortingState>([]);
   const [globalFilter, setGlobalFilter] = useState<string>("");
+  const [columnVisibility, setColumnVisibility] = useState<ViewVisibilityState>(
+    COLUMN_VISIBILITIES.compact
+  );
 
   const toggleSort = (label?: string) => () =>
     setSorting(
@@ -84,9 +103,16 @@ export default function TrackTable({
         : []
     );
 
+  const updateView = (newView: View) => {
+    if (newView !== view) {
+      setView(newView);
+      setColumnVisibility(COLUMN_VISIBILITIES[newView]);
+    }
+  };
+
   const table = useReactTable({
     data: trackDataArr,
-    columns: compactColumns,
+    columns,
     meta: {
       playlist,
       userPlaylists: Array.from({ length: 10 }, (_, i) => ({
@@ -100,9 +126,11 @@ export default function TrackTable({
     onGlobalFilterChange: setGlobalFilter,
     getSortedRowModel: getSortedRowModel(),
     onSortingChange: setSorting,
+    onColumnVisibilityChange: setColumnVisibility,
     state: {
       globalFilter,
       sorting,
+      columnVisibility,
     },
   });
 
@@ -118,9 +146,18 @@ export default function TrackTable({
         toggleSort={toggleSort}
         globalFilter={globalFilter}
         setGlobalFilter={setGlobalFilter}
+        view={view}
+        updateView={updateView}
       />
       <div className="border @container">
-        <Table className="grid-cols-playlist-sm @xl:grid-cols-playlist-md @3xl:grid-cols-playlist-lg @5xl:grid-cols-playlist-xl">
+        <Table
+          className={cn(
+            view === "compact" &&
+              "view-compact grid-cols-playlist-compact-sm @xl:grid-cols-playlist-compact-md @3xl:grid-cols-playlist-compact-lg @5xl:grid-cols-playlist-compact-xl",
+            view === "list" &&
+              "view-list grid-cols-playlist-list-sm @xl:grid-cols-playlist-list-md @3xl:grid-cols-playlist-list-lg"
+          )}
+        >
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id} className="hover:bg-inherit">

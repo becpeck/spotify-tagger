@@ -1,14 +1,15 @@
 import type { Config } from "tailwindcss";
 import { fontFamily } from "tailwindcss/defaultTheme";
+import plugin from "tailwindcss/plugin";
 
 export default {
   darkMode: ["class"],
   content: [
-    './pages/**/*.{ts,tsx}',
-    './components/**/*.{ts,tsx}',
-    './app/**/*.{ts,tsx}',
-    './src/**/*.{ts,tsx}',
-	],
+    "./pages/**/*.{ts,tsx}",
+    "./components/**/*.{ts,tsx}",
+    "./app/**/*.{ts,tsx}",
+    "./src/**/*.{ts,tsx}",
+  ],
   prefix: "",
   theme: {
     container: {
@@ -23,7 +24,7 @@ export default {
       fontFamily: {
         sans: ["var(--font-sans)", ...fontFamily.sans],
       },
-      
+
       // shadcn-ui
       colors: {
         border: "hsl(var(--border))",
@@ -82,27 +83,35 @@ export default {
 
       // grid layouts
       gridTemplateColumns: {
-        "playlist-sm": "[first numStart] auto [numEnd titleStart] 2fr [titleEnd savedStart] auto [savedEnd durationStart] auto [durationEnd actionsStart] auto [actionsEnd last]",
-        "playlist-md": "[first numStart] auto [numEnd titleStart] 2fr [titleEnd artistStart] 1.5fr [artistEnd savedStart] auto [savedEnd durationStart] auto [durationEnd actionsStart] auto [actionsEnd last]",
-        "playlist-lg": "[first numStart] auto [numEnd titleStart] 2fr [titleEnd artistStart] 1.5fr [artistEnd albumStart] 1.5fr [albumEnd savedStart] auto [savedEnd durationStart] auto [durationEnd actionsStart] auto [actionsEnd last]",
-        "playlist-xl": "[first numStart] auto [numEnd titleStart] 2fr [titleEnd artistStart] 1.5fr [artistEnd albumStart] 1.5fr [albumEnd dateStart] auto [dateEnd savedStart] auto [savedEnd durationStart] auto [durationEnd actionsStart] auto [actionsEnd last]",
+        "playlist-compact-sm":
+          "[first numStart] auto [numEnd titleStart] 1fr [titleEnd savedStart] auto [savedEnd durationStart] auto [durationEnd actionsStart] auto [actionsEnd last]",
+        "playlist-compact-md":
+          "[first numStart] auto [numEnd titleStart] 2fr [titleEnd artistStart] 1.5fr [artistEnd savedStart] auto [savedEnd durationStart] auto [durationEnd actionsStart] auto [actionsEnd last]",
+        "playlist-compact-lg":
+          "[first numStart] auto [numEnd titleStart] 2fr [titleEnd artistStart] 1.5fr [artistEnd albumStart] 1.5fr [albumEnd savedStart] auto [savedEnd durationStart] auto [durationEnd actionsStart] auto [actionsEnd last]",
+        "playlist-compact-xl":
+          "[first numStart] auto [numEnd titleStart] 2fr [titleEnd artistStart] 1.5fr [artistEnd albumStart] 1.5fr [albumEnd dateStart] auto [dateEnd savedStart] auto [savedEnd durationStart] auto [durationEnd actionsStart] auto [actionsEnd last]",
+
+        "playlist-list-sm":
+          "[first numStart] auto [numEnd titleArtistStart] 1fr [titleArtistEnd savedStart] auto [savedEnd durationStart] auto [durationEnd actionsStart] auto [actionsEnd last]",
+        "playlist-list-md":
+          "[first numStart] auto [numEnd titleArtistStart] 2fr [titleArtistEnd albumStart] 1.5fr [albumEnd savedStart] auto [savedEnd durationStart] auto [durationEnd actionsStart] auto [actionsEnd last]",
+        "playlist-list-lg":
+          "[first numStart] auto [numEnd titleArtistStart] 2fr [titleArtistEnd albumStart] 1.5fr [albumEnd dateStart] auto [dateEnd savedStart] auto [savedEnd durationStart] auto [durationEnd actionsStart] auto [actionsEnd last]",
       },
       gridColumn: {
-        "row": "first / last",
-
-        "num": "numStart / numEnd",
-        "title": "titleStart / titleEnd",
-        "artist": "artistStart / artistEnd",
-        "album": "albumStart / albumEnd",
-        "date": "dateStart / dateEnd",
-        "saved": "savedStart / savedEnd",
-        "duration": "durationStart / durationEnd",
-        "actions": "actionsStart / actionsEnd",
-      }
+        row: "first / last",
+      },
     },
   },
   plugins: [
     require("tailwindcss-animate"),
     require("@tailwindcss/container-queries"),
+    require("tailwindcss/plugin"),
+    plugin(({ addVariant }) => {
+      ["compact", "list"].forEach((view) => {
+        addVariant(`view-${view}`, `:is(.view-${view} &)`);
+      });
+    }),
   ],
 } satisfies Config;
