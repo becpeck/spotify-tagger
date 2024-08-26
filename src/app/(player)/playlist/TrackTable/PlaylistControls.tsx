@@ -314,7 +314,14 @@ export default function PlaylistControls({
         />
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="outline">{sortingLabel}</Button>
+            <Button variant="outline" className="gap-2">
+              {sortingLabel}
+              {view === "list" ? (
+                <LayoutListIcon size={18} />
+              ) : (
+                <AlignJustifyIcon size={18} />
+              )}
+            </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuLabel className="text-xs text-muted-foreground">
