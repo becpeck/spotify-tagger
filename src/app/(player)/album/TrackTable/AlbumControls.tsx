@@ -66,14 +66,14 @@ export default function AlbumControls({
 
   const playMutation = trpc.playback.playWithContext.useMutation();
   const shuffleMutation = trpc.playback.toggleShuffle.useMutation();
-  // const followMutation = trpc.album.followPlaylist.useMutation({
-  //   onMutate: () => setIsSaved(true),
-  //   onError: () => setIsSaved(false),
-  // });
-  // const unfollowMutation = trpc.album.unfollowPlaylist.useMutation({
-  //   onMutate: () => setIsSaved(false),
-  //   onError: () => setIsSaved(true),
-  // });
+  const followMutation = trpc.albums.saveAlbums.useMutation({
+    onMutate: () => setIsSaved(true),
+    onError: () => setIsSaved(false),
+  });
+  const unfollowMutation = trpc.albums.unsaveAlbums.useMutation({
+    onMutate: () => setIsSaved(false),
+    onError: () => setIsSaved(true),
+  });
 
   if (!player || !playbackState) {
     return;
@@ -90,9 +90,9 @@ export default function AlbumControls({
   const toggleIsSaved = () => {
     // UI: Add toasts for failed requests
     if (isSaved) {
-      // unfollowMutation.mutate(id);
+      unfollowMutation.mutate([id]);
     } else {
-      // followMutation.mutate(id);
+      followMutation.mutate([id]);
     }
   };
 
