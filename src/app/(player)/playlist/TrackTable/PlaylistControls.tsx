@@ -18,7 +18,6 @@ import {
   PauseIcon,
   PlayIcon,
   PlusIcon,
-  ShuffleIcon,
 } from "lucide-react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSpotify } from "@fortawesome/free-brands-svg-icons";
@@ -42,6 +41,7 @@ import { useAppStore } from "@/lib/stores/AppStoreProvider";
 import { trpc } from "@/lib/trpc/client";
 import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
+import ShuffleButton from "@/components/buttons/ShuffleButton";
 
 type PlaylistControlsProps = {
   name: string;
@@ -174,20 +174,12 @@ export default function PlaylistControls({
             />
           )}
         </Button>
-        <Button
-          variant="ghost"
-          size="icon"
-          className={cn(
-            "rounded-full hover:transform hover:scale-105 active:transform-none active:brightness-75 hover:bg-transparent",
-            shuffleOn
-              ? "[--shuffle-color:--green]"
-              : "[--shuffle-color:--muted-foreground] hover:[--shuffle-color:--primary]"
-          )}
+        <ShuffleButton
+          disabled={!playbackState}
+          isShuffleOn={shuffleOn}
           onClick={toggleShuffleOn}
           aria-label={`${shuffleOn ? "Disable" : "Enable"} shuffle for ${name}`}
-        >
-          <ShuffleIcon className="h-6 w-6" stroke="hsl(var(--shuffle-color))" />
-        </Button>
+        />
         <Button
           variant="ghost"
           size="icon"

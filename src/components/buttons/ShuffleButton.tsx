@@ -33,15 +33,13 @@ export interface ShuffleButtonProps
     VariantProps<typeof shuffleIconVariants>,
     ButtonProps {
   isShuffleOn: boolean;
-  name?: string;
-  size?: VariantProps<typeof shuffleIconVariants>["size"];
+  size?: "sm" | "default";
 }
 
 export default function ShuffleButton({
   className,
   disabled,
   isShuffleOn,
-  name,
   size,
   onClick,
 }: ShuffleButtonProps) {
@@ -52,9 +50,6 @@ export default function ShuffleButton({
       className={cn(shuffleButtonVariants({ isShuffleOn }), className)}
       disabled={disabled}
       onClick={onClick}
-      aria-label={`${isShuffleOn ? "Disable" : "Enable"} shuffle${
-        name ? ` for ${name}` : ""
-      }`}
     >
       <ShuffleIcon className={cn(shuffleIconVariants({ size }))} />
     </Button>

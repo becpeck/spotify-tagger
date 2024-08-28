@@ -3,7 +3,6 @@
 import {
   PlayIcon,
   PauseIcon,
-  ShuffleIcon,
   SkipBackIcon,
   SkipForwardIcon,
   RepeatIcon,
@@ -12,6 +11,7 @@ import {
 
 import { Button } from "@/components/ui/button";
 import SeekSlider from "@/components/PlaybackBar/SeekSlider";
+import ShuffleButton from "@/components/buttons/ShuffleButton";
 
 import { trpc } from "@/lib/trpc/client";
 import { cn } from "@/lib/utils";
@@ -36,23 +36,15 @@ export default function PlaybackControls(props: PlaybackControlsProps) {
   return (
     <div className={cn("flex flex-col items-center gap-2", className)}>
       <div className="flex justify-center items-center gap-2">
-        <Button
-          variant="ghost"
-          size="icon"
-          className={cn(
-            playerState.shuffle
-              ? "[--shuffle-color:--green]"
-              : "[--shuffle-color:--muted-foreground] hover:[--shuffle-color:--primary]",
-            "rounded-full hover:transform hover:scale-105 active:transform-none active:brightness-75 hover:bg-transparent"
-          )}
-          disabled={playerState.disallows.toggling_shuffle}
+        <ShuffleButton
+          size="sm"
+          disabled={!playerState}
+          isShuffleOn={playerState.shuffle}
           onClick={() =>
             shuffleMutation.mutate({ state: !playerState.shuffle })
           }
           aria-label={`${playerState.shuffle ? "Disable" : "Enable"} shuffle`}
-        >
-          <ShuffleIcon className="h-5 w-5" stroke="hsl(var(--shuffle-color))" />
-        </Button>
+        />
         <Button
           variant="ghost"
           size="icon"
@@ -122,8 +114,8 @@ export default function PlaybackControls(props: PlaybackControlsProps) {
               : "[--repeat-color:--green]",
             "rounded-full hover:transform hover:scale-105 active:transform-none active:brightness-75 hover:bg-transparent"
           )}
-          // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
           disabled={
+            // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
             playerState.disallows.toggling_repeat_context ||
             playerState.disallows.toggling_repeat_track
           }
