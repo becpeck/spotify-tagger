@@ -75,7 +75,8 @@ export default function TrackTable({ tracks, album }: TrackTableProps) {
     <div className="border @container">
       <Table
         className={cn(
-          view === "compact" && "view-compact",
+          "grid-cols-album",
+          view === "compact" && "view-compact @xl:grid-cols-album-exp",
           view === "list" && "view-list"
         )}
       >
