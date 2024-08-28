@@ -7,6 +7,7 @@ export default async function Album({ params }: { params: { id: string } }) {
 
   const {
     album_type,
+    copyrights,
     images,
     name,
     artists,
@@ -17,9 +18,9 @@ export default async function Album({ params }: { params: { id: string } }) {
     (acc, { duration_ms }) => acc + duration_ms,
     0
   );
-
   const imageUrl =
     (images.find(({ width }) => width && width >= 250) ?? images[0])?.url ?? "";
+  const releaseDate = new Date(album.release_date);
 
   return (
     <main>
@@ -30,8 +31,22 @@ export default async function Album({ params }: { params: { id: string } }) {
         artists={artists.map(({ id, name, type }) => ({ id, name, type }))}
         total={total}
         duration_ms={duration_ms}
-        year={new Date(album.release_date).getFullYear()}
+        year={releaseDate.getFullYear()}
       />
+      <div className="text-muted-foreground text-xs p-4">
+        <p className="text-sm">
+          {releaseDate.toLocaleDateString("us-EN", {
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+          })}
+        </p>
+        {copyrights.map(({ type, text }, i) => (
+          <p key={i}>
+            {type === "C" ? "©" : type === "P" ? "℗" : type} {text}
+          </p>
+        ))}
+      </div>
     </main>
   );
 }
