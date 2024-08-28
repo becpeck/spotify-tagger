@@ -43,8 +43,8 @@ type AlbumControlsProps = {
   name: string;
   type: "album";
   id: string;
+  is_saved: boolean;
   uri: `spotify:album:${string}`;
-  isFollowing: boolean;
   view: "list" | "compact";
   updateView: (newView: "list" | "compact") => void;
 };
@@ -53,8 +53,8 @@ export default function AlbumControls({
   name,
   type,
   id,
+  is_saved,
   uri,
-  isFollowing,
   view,
   updateView,
 }: AlbumControlsProps) {
@@ -62,7 +62,7 @@ export default function AlbumControls({
     ({ player, playbackState }) => ({ player, playbackState })
   );
   const [shuffleOn, setShuffleOn] = useState(false);
-  const [isSaved, setIsSaved] = useState(isFollowing);
+  const [isSaved, setIsSaved] = useState(is_saved);
 
   const playMutation = trpc.playback.playWithContext.useMutation();
   const shuffleMutation = trpc.playback.toggleShuffle.useMutation();

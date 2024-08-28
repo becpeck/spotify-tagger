@@ -52,6 +52,7 @@ type TrackTableProps = {
   tracks: AlbumTrack[];
   album: {
     id: string;
+    is_saved: boolean;
     name: string;
     type: "album";
     uri: `spotify:album:${string}`;
@@ -87,8 +88,8 @@ export default function TrackTable({ tracks, album }: TrackTableProps) {
         name={album.name}
         type={album.type}
         id={album.id}
+        is_saved={album.is_saved}
         uri={album.uri}
-        isFollowing={false}
         view={view}
         updateView={updateView}
       />
