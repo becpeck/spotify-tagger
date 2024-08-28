@@ -14,12 +14,10 @@ const albumsRouter = createTRPCRouter({
       );
       return {
         ...album,
-        tracks: {
-          ...album.tracks.items.map((track, i) => ({
-            ...track,
-            is_saved: isSaved[i]!,
-          })),
-        },
+        tracks: album.tracks.items.map((track, i) => ({
+          ...track,
+          is_saved: isSaved[i]!,
+        })),
       };
     }),
 });
