@@ -1,3 +1,5 @@
+import { z } from "zod";
+
 import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
 import { AlbumIdSchema } from "@/server/spotifyWebApi/utils/schemas";
 
@@ -23,6 +25,18 @@ const albumsRouter = createTRPCRouter({
         })),
         is_saved: albumIsSaved,
       };
+    }),
+  saveAlbums: protectedProcedure
+    .input(z.array(AlbumIdSchema))
+    .mutation(async ({ ctx, input }) => {
+      return ctx.spotify.saveAlbums(undefined, { queries: { ids: input } });
+    }),
+  unsaveAlbums: protectedProcedure
+    .input(z.array(AlbumIdSchema))
+    .mutation(async ({ ctx, input }) => {
+      return ctx.spotify.removeSavedAlbums(undefined, {
+        queries: { ids: input },
+      });
     }),
 });
 

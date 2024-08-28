@@ -16,6 +16,7 @@ const removeSavedTracks = makeEndpoint({
     .addQueries({
       ids: z
         .array(TrackIdSchema)
+        .min(1)
         .max(50)
         .transform((ids) => ids.join(",")),
     })

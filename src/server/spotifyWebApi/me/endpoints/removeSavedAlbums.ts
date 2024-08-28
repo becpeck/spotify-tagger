@@ -1,28 +1,28 @@
 import { makeEndpoint, makeErrors, parametersBuilder } from "@zodios/core";
 import { z } from "zod";
 
-import { TrackIdSchema } from "@/server/spotifyWebApi/utils/schemas";
+import { AlbumIdSchema } from "@/server/spotifyWebApi/utils/schemas";
 import {
   ErrorResponse401,
   ErrorResponse403,
   ErrorResponse429,
 } from "@/server/spotifyWebApi/utils/errors";
 
-const checkSavedTracks = makeEndpoint({
-  method: "get",
-  path: "/tracks/contains",
-  alias: "checkSavedTracks",
+const removeSavedAlbums = makeEndpoint({
+  method: "delete",
+  path: "/albums",
+  alias: "removeSavedAlbums",
   parameters: parametersBuilder()
     .addQueries({
       ids: z
-        .array(TrackIdSchema)
+        .array(AlbumIdSchema)
         .min(1)
-        .max(50)
+        .max(20)
         .transform((ids) => ids.join(",")),
     })
     .build(),
-  response: z.array(z.boolean()),
+  response: z.object({}),
   errors: makeErrors([ErrorResponse401, ErrorResponse403, ErrorResponse429]),
 });
 
-export default checkSavedTracks;
+export default removeSavedAlbums;

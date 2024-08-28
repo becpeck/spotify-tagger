@@ -14,13 +14,17 @@ const checkSavedAlbums = makeEndpoint({
   alias: "checkSavedAlbums",
   parameters: parametersBuilder()
     .addQueries({
-      ids: z.array(AlbumIdSchema).transform((ids) => ids.join(",")),
+      ids: z
+        .array(AlbumIdSchema)
+        .min(1)
+        .max(20)
+        .transform((ids) => ids.join(",")),
     })
     .build(),
   response: z
     .array(z.boolean())
     .min(1)
-    .max(1)
+    .max(20)
     .transform(([isSaved]) => isSaved!),
   errors: makeErrors([ErrorResponse401, ErrorResponse403, ErrorResponse429]),
 });
