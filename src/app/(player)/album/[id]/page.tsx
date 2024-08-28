@@ -61,7 +61,7 @@ export default async function Album({ params }: { params: { id: string } }) {
         year={releaseDate.getFullYear()}
       />
       <TrackTable tracks={trackData} album={{ id, name, type, uri }} />
-      <div className="text-muted-foreground text-xs p-4">
+      <footer className="text-muted-foreground text-xs p-4">
         <p className="text-sm">
           {releaseDate.toLocaleDateString("us-EN", {
             year: "numeric",
@@ -74,7 +74,7 @@ export default async function Album({ params }: { params: { id: string } }) {
             {type === "C" ? "©" : type === "P" ? "℗" : type} {text}
           </p>
         ))}
-      </div>
+      </footer>
     </main>
   );
 }

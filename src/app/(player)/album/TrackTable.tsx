@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, Fragment } from "react";
 import {
   Table,
   TableBody,
@@ -14,6 +14,7 @@ import {
   getCoreRowModel,
   useReactTable,
 } from "@tanstack/react-table";
+import { DiscIcon } from "lucide-react";
 
 import columns from "@/app/(player)/album/trackTable/trackColumns";
 import TrackTableRow from "@/app/(player)/album/trackTable/TrackTableRow";
@@ -77,6 +78,8 @@ export default function TrackTable({ tracks, album }: TrackTableProps) {
     }
   };
 
+  const isMultiDisc = tracks[tracks.length - 1]!.disc_number > 1;
+
   return (
     <div className="border @container">
       <Table
@@ -88,7 +91,13 @@ export default function TrackTable({ tracks, album }: TrackTableProps) {
       >
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (
-            <TableRow key={headerGroup.id} className="hover:bg-inherit">
+            <TableRow
+              key={headerGroup.id}
+              className={cn(
+                "bg-muted/30 hover:bg-muted/30",
+                view === "list" ? "h-16" : "h-9"
+              )}
+            >
               {headerGroup.headers.map((header) => (
                 <TableHead key={header.id}>
                   {header.isPlaceholder
@@ -104,11 +113,28 @@ export default function TrackTable({ tracks, album }: TrackTableProps) {
         </TableHeader>
         <TableBody>
           {table.getRowModel().rows?.length ? (
-            table
-              .getRowModel()
-              .rows.map((row) => (
-                <TrackTableRow key={row.id} row={row} album={album} />
-              ))
+            table.getRowModel().rows.map((row, i) => (
+              <Fragment key={row.id}>
+                {isMultiDisc &&
+                (i === 0 ||
+                  row.original.disc_number !== tracks[i - 1]!.disc_number) ? (
+                  <TableRow
+                    className={cn(
+                      "bg-muted/30 hover:bg-muted/30",
+                      view === "list" ? "h-16" : "h-9"
+                    )}
+                  >
+                    <TableHead className="flex justify-center items-center">
+                      <DiscIcon size={18} />
+                    </TableHead>
+                    <TableHead className="font-semibold">
+                      Disc {row.original.disc_number}
+                    </TableHead>
+                  </TableRow>
+                ) : null}
+                <TrackTableRow row={row} album={album} />
+              </Fragment>
+            ))
           ) : (
             <TableRow className="block">
               <TableCell className="h-24 justify-center">No results.</TableCell>
