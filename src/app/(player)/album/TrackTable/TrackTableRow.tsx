@@ -18,6 +18,7 @@ interface TrackTableRowProps {
   album: {
     id: string;
     name: string;
+    type: "album";
     uri: `spotify:album:${string}`;
   };
 }
@@ -26,6 +27,7 @@ export type ExtendedCellContext<TData extends RowData, TValue> = CellContext<
   TData,
   TValue
 > & {
+  album: TrackTableRowProps["album"];
   isPlaybackContext: boolean;
   isSaved: boolean;
   toggleIsSaved: () => boolean;
@@ -80,6 +82,7 @@ export default function TrackTableRow({ row, album }: TrackTableRowProps) {
         <TableCell key={cell.id}>
           {flexRender(cell.column.columnDef.cell, {
             ...cell.getContext(),
+            album,
             isPlaybackContext,
             isSaved,
             toggleIsSaved,

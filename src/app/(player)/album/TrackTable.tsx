@@ -15,6 +15,7 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 
+import columns from "@/app/(player)/album/trackTable/trackColumns";
 import TrackTableRow from "@/app/(player)/album/trackTable/TrackTableRow";
 
 import { cn } from "@/lib/utils";
@@ -47,7 +48,12 @@ export interface AlbumTrack {
 
 type TrackTableProps = {
   tracks: AlbumTrack[];
-  album: { id: string; name: string; uri: `spotify:album:${string}` };
+  album: {
+    id: string;
+    name: string;
+    type: "album";
+    uri: `spotify:album:${string}`;
+  };
 };
 
 export default function TrackTable({ tracks, album }: TrackTableProps) {
@@ -55,7 +61,7 @@ export default function TrackTable({ tracks, album }: TrackTableProps) {
 
   const table = useReactTable({
     data: tracks,
-    columns: [],
+    columns: columns,
     meta: {
       userPlaylists: Array.from({ length: 10 }, (_, i) => ({
         id: `${i + 1}`,

@@ -15,6 +15,7 @@ export default async function Album({ params }: { params: { id: string } }) {
     artists,
     total_tracks,
     tracks,
+    type,
     uri,
   } = album;
 
@@ -59,7 +60,7 @@ export default async function Album({ params }: { params: { id: string } }) {
         duration_ms={duration_ms}
         year={releaseDate.getFullYear()}
       />
-      <TrackTable tracks={trackData} album={{ id, name, uri }} />
+      <TrackTable tracks={trackData} album={{ id, name, type, uri }} />
       <div className="text-muted-foreground text-xs p-4">
         <p className="text-sm">
           {releaseDate.toLocaleDateString("us-EN", {
