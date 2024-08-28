@@ -22,8 +22,6 @@ import TrackTableRow from "@/app/(player)/album/trackTable/TrackTableRow";
 
 import { cn } from "@/lib/utils";
 
-type View = "list" | "compact";
-
 export interface AlbumTrack {
   artists: {
     id: string;
@@ -59,8 +57,23 @@ type TrackTableProps = {
   };
 };
 
+type View = "list" | "compact";
+type ViewVisibilityState = {
+  title: boolean;
+  artist: boolean;
+  "title/artist": boolean;
+};
+
+const COLUMN_VISIBILITIES: Record<View, ViewVisibilityState> = {
+  list: { title: false, artist: false, "title/artist": true },
+  compact: { title: true, artist: true, "title/artist": false },
+} as const;
+
 export default function TrackTable({ tracks, album }: TrackTableProps) {
   const [view, setView] = useState<View>("compact");
+  const [columnVisibility, setColumnVisibility] = useState<ViewVisibilityState>(
+    COLUMN_VISIBILITIES.compact
+  );
 
   const table = useReactTable({
     data: tracks,
@@ -72,11 +85,16 @@ export default function TrackTable({ tracks, album }: TrackTableProps) {
       })),
     },
     getCoreRowModel: getCoreRowModel(),
+    onColumnVisibilityChange: () => setColumnVisibility,
+    state: {
+      columnVisibility,
+    },
   });
 
   const updateView = (newView: View) => {
     if (newView !== view) {
       setView(newView);
+      setColumnVisibility(COLUMN_VISIBILITIES[newView]);
     }
   };
 
@@ -105,10 +123,7 @@ export default function TrackTable({ tracks, album }: TrackTableProps) {
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow
                 key={headerGroup.id}
-                className={cn(
-                  "bg-muted/30 hover:bg-muted/30",
-                  view === "list" ? "h-16" : "h-9"
-                )}
+                className="bg-muted/30 hover:bg-muted/30 h-9"
               >
                 {headerGroup.headers.map((header) => (
                   <TableHead key={header.id}>
@@ -130,12 +145,7 @@ export default function TrackTable({ tracks, album }: TrackTableProps) {
                   {isMultiDisc &&
                   (i === 0 ||
                     row.original.disc_number !== tracks[i - 1]!.disc_number) ? (
-                    <TableRow
-                      className={cn(
-                        "bg-muted/30 hover:bg-muted/30",
-                        view === "list" ? "h-16" : "h-9"
-                      )}
-                    >
+                    <TableRow className="bg-muted/30 hover:bg-muted/30 h-9">
                       <TableHead className="flex justify-center items-center">
                         <DiscIcon size={18} />
                       </TableHead>

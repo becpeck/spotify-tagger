@@ -1,12 +1,24 @@
 import { createColumnHelper } from "@tanstack/react-table";
 import { type AlbumTrack } from "@/app/(player)/album/TrackTable";
 
-import { NumberHeader, NumberCell } from "@/app/(player)/album/trackTable/cells/Number";
-import { TitleHeader, TitleCell } from "@/app/(player)/album/trackTable/cells/Title";
-
-import { ArtistHeader, ArtistCell } from "@/app/(player)/album/trackTable/cells/Artist";
+import {
+  NumberHeader,
+  NumberCell,
+} from "@/app/(player)/album/trackTable/cells/Number";
+import {
+  TitleHeader,
+  TitleCell,
+} from "@/app/(player)/album/trackTable/cells/Title";
+import { TitleArtistCell } from "@/app/(player)/album/trackTable/cells/TitleArtist";
+import {
+  ArtistHeader,
+  ArtistCell,
+} from "@/app/(player)/album/trackTable/cells/Artist";
 import { IsSavedCell } from "@/app/(player)/album/trackTable/cells/isSaved";
-import { DurationHeader, DurationCell } from "@/app/(player)/album/trackTable/cells/Duration";
+import {
+  DurationHeader,
+  DurationCell,
+} from "@/app/(player)/album/trackTable/cells/Duration";
 import { ActionsCell } from "@/app/(player)/album/trackTable/cells/Actions";
 
 const columnHelper = createColumnHelper<AlbumTrack>();
@@ -17,12 +29,15 @@ const columns = [
     header: NumberHeader,
     cell: NumberCell,
   }),
-  // columnHelper.accessor(row => [row.track.name].concat(row.artists.map((artist => artist.name))).join(", "), {
-  //   id: "title/artist",
-  //   filterFn: "includesString",
-  //   header: TitleArtistHeader,
-  //   cell: TitleArtistCell,
-  // }),
+  columnHelper.accessor(
+    (row) =>
+      [row.name].concat(row.artists.map((artist) => artist.name)).join(", "),
+    {
+      id: "title/artist",
+      header: TitleHeader,
+      cell: TitleArtistCell,
+    }
+  ),
   columnHelper.accessor("name", {
     id: "title",
     header: TitleHeader,
