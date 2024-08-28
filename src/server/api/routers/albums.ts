@@ -7,6 +7,9 @@ const albumsRouter = createTRPCRouter({
   getAlbumData: protectedProcedure
     .input(AlbumIdSchema)
     .query(async ({ input, ctx }) => {
+      const albumIsSaved = await ctx.spotify.checkSavedAlbums({
+        queries: { ids: [input] },
+      });
       const album = await ctx.spotify.getAlbum({ params: { album_id: input } });
       const isSaved = await checkSavedTracks(
         ctx.spotify,
@@ -18,6 +21,7 @@ const albumsRouter = createTRPCRouter({
           ...track,
           is_saved: isSaved[i]!,
         })),
+        is_saved: albumIsSaved,
       };
     }),
 });
