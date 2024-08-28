@@ -15,7 +15,7 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 
-import TrackTableRow from "@/app/(player)/album/TrackTable/TrackTableRow";
+import TrackTableRow from "@/app/(player)/album/trackTable/TrackTableRow";
 
 import { cn } from "@/lib/utils";
 
