@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, Fragment } from "react";
+import { Fragment } from "react";
 import {
   Table,
   TableBody,
@@ -16,6 +16,7 @@ import {
 } from "@tanstack/react-table";
 import { DiscIcon } from "lucide-react";
 
+import useView from "@/lib/hooks/useView";
 import columns from "@/app/(player)/album/trackTable/trackColumns";
 import AlbumControls from "@/app/(player)/album/trackTable/AlbumControls";
 import TrackTableRow from "@/app/(player)/album/trackTable/TrackTableRow";
@@ -57,23 +58,9 @@ type TrackTableProps = {
   };
 };
 
-type View = "list" | "compact";
-type ViewVisibilityState = {
-  title: boolean;
-  artist: boolean;
-  "title/artist": boolean;
-};
-
-const COLUMN_VISIBILITIES: Record<View, ViewVisibilityState> = {
-  list: { title: false, artist: false, "title/artist": true },
-  compact: { title: true, artist: true, "title/artist": false },
-} as const;
-
 export default function TrackTable({ tracks, album }: TrackTableProps) {
-  const [view, setView] = useState<View>("compact");
-  const [columnVisibility, setColumnVisibility] = useState<ViewVisibilityState>(
-    COLUMN_VISIBILITIES.compact
-  );
+  const { view, columnVisibility, updateView, onColumnVisibilityChange } =
+    useView("compact");
 
   const table = useReactTable({
     data: tracks,
@@ -85,18 +72,11 @@ export default function TrackTable({ tracks, album }: TrackTableProps) {
       })),
     },
     getCoreRowModel: getCoreRowModel(),
-    onColumnVisibilityChange: () => setColumnVisibility,
+    onColumnVisibilityChange,
     state: {
       columnVisibility,
     },
   });
-
-  const updateView = (newView: View) => {
-    if (newView !== view) {
-      setView(newView);
-      setColumnVisibility(COLUMN_VISIBILITIES[newView]);
-    }
-  };
 
   const isMultiDisc = tracks[tracks.length - 1]!.disc_number > 1;
 

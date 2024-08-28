@@ -20,6 +20,7 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 
+import useView from "@/lib/hooks/useView";
 import columns from "@/app/(player)/playlist/TrackTable/trackColumns";
 
 import PlaylistControls from "@/app/(player)/playlist/TrackTable/PlaylistControls";
@@ -73,28 +74,14 @@ type TrackTableProps = {
   playlist: TableMeta<TrackData>["playlist"];
 };
 
-type View = "list" | "compact";
-type ViewVisibilityState = {
-  title: boolean;
-  artist: boolean;
-  "title/artist": boolean;
-};
-
-const COLUMN_VISIBILITIES: Record<View, ViewVisibilityState> = {
-  list: { title: false, artist: false, "title/artist": true },
-  compact: { title: true, artist: true, "title/artist": false },
-} as const;
-
 export default function TrackTable({
   trackDataArr,
   playlist,
 }: TrackTableProps) {
-  const [view, setView] = useState<View>("compact");
+  const { view, columnVisibility, updateView, onColumnVisibilityChange } =
+    useView("compact");
   const [sorting, setSorting] = useState<SortingState>([]);
   const [globalFilter, setGlobalFilter] = useState<string>("");
-  const [columnVisibility, setColumnVisibility] = useState<ViewVisibilityState>(
-    COLUMN_VISIBILITIES.compact
-  );
 
   const toggleSort = (label?: string) => () =>
     setSorting(
@@ -102,13 +89,6 @@ export default function TrackTable({
         ? [{ id: label, desc: !(sorting[0]?.id !== label || sorting[0]?.desc) }]
         : []
     );
-
-  const updateView = (newView: View) => {
-    if (newView !== view) {
-      setView(newView);
-      setColumnVisibility(COLUMN_VISIBILITIES[newView]);
-    }
-  };
 
   const table = useReactTable({
     data: trackDataArr,
@@ -126,11 +106,11 @@ export default function TrackTable({
     onGlobalFilterChange: setGlobalFilter,
     getSortedRowModel: getSortedRowModel(),
     onSortingChange: setSorting,
-    onColumnVisibilityChange: setColumnVisibility,
+    onColumnVisibilityChange,
     state: {
       globalFilter,
       sorting,
-      columnVisibility,
+      columnVisibility: columnVisibility,
     },
   });
 
@@ -160,7 +140,10 @@ export default function TrackTable({
         >
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id} className="hover:bg-inherit">
+              <TableRow
+                key={headerGroup.id}
+                className="bg-muted/30 hover:bg-muted/30 h-9"
+              >
                 {headerGroup.headers.map((header) => (
                   <TableHead key={header.id}>
                     {header.isPlaceholder
