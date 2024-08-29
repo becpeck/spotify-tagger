@@ -43,7 +43,7 @@ export function NumberCell(props: CellContext<TrackData, number>) {
       const globalFilter = tableState.globalFilter as string;
       // TODO: change this to a function that determines whether view is different from original
       if (globalFilter.length === 0 && sorting.length === 0) {
-        playContextMutation.mutate({
+        await playContextMutation.mutateAsync({
           context: { uri: table.options.meta!.playlist!.uri },
           offset: { uri: row.original.track.uri },
         });
@@ -55,7 +55,7 @@ export function NumberCell(props: CellContext<TrackData, number>) {
           const index = uris.findIndex((uri) => uri === row.original.track.uri);
           uris = uris.slice(index).concat(uris.slice(0, index));
         }
-        playUrisMutation.mutate({ uris });
+        await playUrisMutation.mutateAsync({ uris });
       }
     } else {
       if (isPlaying) {

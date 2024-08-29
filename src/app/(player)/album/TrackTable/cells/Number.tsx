@@ -35,7 +35,7 @@ export function NumberCell(props: CellContext<AlbumTrack, number>) {
 
   const toggleIsPlaying = async () => {
     if (!isPlaybackContext) {
-      playContextMutation.mutate({
+      await playContextMutation.mutateAsync({
         context: { uri: album.uri },
         offset: { uri: row.original.uri },
       });

@@ -87,21 +87,21 @@ export default function AlbumControls({
     setShuffleOn(playbackState.shuffle);
   }
 
-  const toggleIsSaved = () => {
+  const toggleIsSaved = async () => {
     // UI: Add toasts for failed requests
     if (isSaved) {
-      unfollowMutation.mutate([id]);
+      await unfollowMutation.mutateAsync([id]);
     } else {
-      followMutation.mutate([id]);
+      await followMutation.mutateAsync([id]);
     }
   };
 
   const toggleIsPlaying = async () => {
     if (!isPlaybackContext) {
       if (shuffleOn !== playbackState.shuffle) {
-        shuffleMutation.mutate({ state: shuffleOn });
+        await shuffleMutation.mutateAsync({ state: shuffleOn });
       }
-      playMutation.mutate({ context: { uri } });
+      await playMutation.mutateAsync({ context: { uri } });
     } else {
       if (isPlaying) {
         await player.pause.bind(player)();
@@ -111,9 +111,9 @@ export default function AlbumControls({
     }
   };
 
-  const toggleShuffleOn = () => {
+  const toggleShuffleOn = async () => {
     if (isPlaybackContext) {
-      shuffleMutation.mutate({ state: !shuffleOn });
+      await shuffleMutation.mutateAsync({ state: !shuffleOn });
     } else {
       setShuffleOn(!shuffleOn);
     }

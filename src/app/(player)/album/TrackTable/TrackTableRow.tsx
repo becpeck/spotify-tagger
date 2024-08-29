@@ -54,11 +54,11 @@ export default function TrackTableRow({ row, album }: TrackTableRowProps) {
     onError: (error, trackIds, context) => setIsSaved(context!),
   });
 
-  const toggleIsSaved = () => {
+  const toggleIsSaved = async () => {
     if (isSaved) {
-      unsaveTrackMutation.mutate([row.original.id]);
+      await unsaveTrackMutation.mutateAsync([row.original.id]);
     } else {
-      saveTrackMutation.mutate([row.original.id]);
+      await saveTrackMutation.mutateAsync([row.original.id]);
     }
   };
 

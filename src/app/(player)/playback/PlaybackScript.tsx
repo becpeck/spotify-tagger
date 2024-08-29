@@ -35,9 +35,9 @@ export default function PlaybackScript({ token }: PlaybackScriptProps) {
         volume: 1,
       });
 
-      player.addListener("ready", ({ device_id }) => {
+      player.addListener("ready", async ({ device_id }) => {
         console.log("ready: Device ID", device_id);
-        playbackDevice.mutate({ device_id });
+        await playbackDevice.mutateAsync({ device_id });
       });
 
       player.addListener("not_ready", ({ device_id }) => {

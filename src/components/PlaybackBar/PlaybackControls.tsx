@@ -41,7 +41,7 @@ export default function PlaybackControls(props: PlaybackControlsProps) {
           disabled={!playerState}
           isShuffleOn={playerState.shuffle}
           onClick={() =>
-            shuffleMutation.mutate({ state: !playerState.shuffle })
+            shuffleMutation.mutateAsync({ state: !playerState.shuffle })
           }
           aria-label={`${playerState.shuffle ? "Disable" : "Enable"} shuffle`}
         />
@@ -119,7 +119,7 @@ export default function PlaybackControls(props: PlaybackControlsProps) {
             playerState.disallows.toggling_repeat_context ||
             playerState.disallows.toggling_repeat_track
           }
-          onClick={() => repeatMutation.mutate(playerState.repeat_mode)}
+          onClick={() => repeatMutation.mutateAsync(playerState.repeat_mode)}
           aria-label={
             playerState.repeat_mode === 2
               ? "Turn off repeat"

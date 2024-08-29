@@ -18,7 +18,7 @@ export function ActionsCell(props: CellContext<TrackData, unknown>) {
     onError: (error) => console.error(error), // TODO: add toast
   });
 
-  const addToQueue = () => addToQueueMutation.mutate(track.uri);
+  const addToQueue = () => addToQueueMutation.mutateAsync(track.uri);
 
   return (
     <ActionsMenu

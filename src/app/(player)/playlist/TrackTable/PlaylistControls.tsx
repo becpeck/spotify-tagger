@@ -99,21 +99,21 @@ export default function PlaylistControls({
     setShuffleOn(playbackState.shuffle);
   }
 
-  const toggleIsSaved = () => {
+  const toggleIsSaved = async () => {
     // UI: Add toasts for failed requests
     if (isSaved) {
-      unfollowPlaylistMutation.mutate(id);
+      await unfollowPlaylistMutation.mutateAsync(id);
     } else {
-      followPlaylistMutation.mutate(id);
+      await followPlaylistMutation.mutateAsync(id);
     }
   };
 
   const toggleIsPlaying = async () => {
     if (!isPlaybackContext) {
       if (shuffleOn !== playbackState.shuffle) {
-        shuffleMutation.mutate({ state: shuffleOn });
+        await shuffleMutation.mutateAsync({ state: shuffleOn });
       }
-      playMutation.mutate({ context: { uri } });
+      await playMutation.mutateAsync({ context: { uri } });
     } else {
       if (isPlaying) {
         await player.pause.bind(player)();
@@ -123,9 +123,9 @@ export default function PlaylistControls({
     }
   };
 
-  const toggleShuffleOn = () => {
+  const toggleShuffleOn = async () => {
     if (isPlaybackContext) {
-      shuffleMutation.mutate({ state: !shuffleOn });
+      await shuffleMutation.mutateAsync({ state: !shuffleOn });
     } else {
       setShuffleOn(!shuffleOn);
     }
