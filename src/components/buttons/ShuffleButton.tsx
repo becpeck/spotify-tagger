@@ -1,11 +1,10 @@
+import { forwardRef } from "react";
 import { ShuffleIcon } from "lucide-react";
 import { cva, type VariantProps } from "class-variance-authority";
-
-import { Button, type ButtonProps } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 const shuffleButtonVariants = cva(
-  "rounded-full hover:transform hover:scale-105 active:transform-none active:brightness-75 hover:bg-transparent",
+  "inline-flex items-center justify-center whitespace-nowrap rounded-full transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 hover:transform hover:scale-105 active:transform-none active:brightness-75 h-9 w-9",
   {
     variants: {
       isShuffleOn: {
@@ -29,29 +28,26 @@ const shuffleIconVariants = cva("", {
 });
 
 export interface ShuffleButtonProps
-  extends VariantProps<typeof shuffleButtonVariants>,
-    VariantProps<typeof shuffleIconVariants>,
-    ButtonProps {
+  extends React.ButtonHTMLAttributes<HTMLButtonElement>,
+    VariantProps<typeof shuffleButtonVariants>,
+    VariantProps<typeof shuffleIconVariants> {
   isShuffleOn: boolean;
   size?: "sm" | "default";
 }
 
-export default function ShuffleButton({
-  className,
-  disabled,
-  isShuffleOn,
-  size,
-  onClick,
-}: ShuffleButtonProps) {
-  return (
-    <Button
-      variant="ghost"
-      size="icon"
-      className={cn(shuffleButtonVariants({ isShuffleOn }), className)}
-      disabled={disabled}
-      onClick={onClick}
-    >
-      <ShuffleIcon className={cn(shuffleIconVariants({ size }))} />
-    </Button>
-  );
-}
+const ShuffleButton = forwardRef<HTMLButtonElement, ShuffleButtonProps>(
+  ({ className, isShuffleOn, size, ...props }, ref) => {
+    return (
+      <button
+        className={cn(shuffleButtonVariants({ isShuffleOn }), className)}
+        ref={ref}
+        {...props}
+      >
+        <ShuffleIcon className={cn(shuffleIconVariants({ size }))} />
+      </button>
+    );
+  }
+);
+ShuffleButton.displayName = "ShuffleButton";
+
+export default ShuffleButton;

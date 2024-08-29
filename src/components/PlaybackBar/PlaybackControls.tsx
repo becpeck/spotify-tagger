@@ -1,8 +1,6 @@
 "use client";
 
 import {
-  PlayIcon,
-  PauseIcon,
   SkipBackIcon,
   SkipForwardIcon,
   RepeatIcon,
@@ -10,8 +8,10 @@ import {
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import SeekSlider from "@/components/PlaybackBar/SeekSlider";
 import ShuffleButton from "@/components/buttons/ShuffleButton";
+
+import PlayPauseButton from "@/components/buttons/PlayPauseButton";
+import SeekSlider from "@/components/PlaybackBar/SeekSlider";
 
 import { trpc } from "@/lib/trpc/client";
 import { cn } from "@/lib/utils";
@@ -62,10 +62,8 @@ export default function PlaybackControls(props: PlaybackControlsProps) {
             fill="hsl(var(--back-color))"
           />
         </Button>
-        <Button
-          variant="default"
-          size="icon"
-          className="rounded-full bg-green-500 hover:bg-green-500 h-10 w-10 hover:transform hover:scale-105 active:transform-none active:brightness-75"
+        <PlayPauseButton
+          isPlaying={!playerState.paused}
           disabled={
             playerState.paused
               ? playerState.disallows.resuming
@@ -73,21 +71,7 @@ export default function PlaybackControls(props: PlaybackControlsProps) {
           }
           onClick={async () => await player.togglePlay()}
           aria-label={playerState.paused ? "Play" : "Pause"}
-        >
-          {playerState.paused ? (
-            <PlayIcon
-              className="h-5 w-5"
-              stroke="hsl(var(--background))"
-              fill="hsl(var(--background))"
-            />
-          ) : (
-            <PauseIcon
-              className="h-5 w-5"
-              stroke="hsl(var(--background))"
-              fill="hsl(var(--background))"
-            />
-          )}
-        </Button>
+        />
         <Button
           variant="ghost"
           size="icon"

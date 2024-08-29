@@ -15,13 +15,12 @@ import {
   LayoutListIcon,
   ListMusicIcon,
   MonitorIcon,
-  PauseIcon,
-  PlayIcon,
   PlusIcon,
 } from "lucide-react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSpotify } from "@fortawesome/free-brands-svg-icons";
 
+import { Input } from "@/components/ui/input";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -36,12 +35,12 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
+import ShuffleButton from "@/components/buttons/ShuffleButton";
+import PlayPauseButton from "@/components/buttons/PlayPauseButton";
 
 import { useAppStore } from "@/lib/stores/AppStoreProvider";
 import { trpc } from "@/lib/trpc/client";
 import { cn } from "@/lib/utils";
-import { Input } from "@/components/ui/input";
-import ShuffleButton from "@/components/buttons/ShuffleButton";
 
 type PlaylistControlsProps = {
   name: string;
@@ -87,11 +86,7 @@ export default function PlaylistControls({
     onError: () => setIsSaved(true),
   });
 
-  if (!player || !playbackState) {
-    return;
-  }
-
-  const isPlaybackContext = playbackState.context.uri === uri;
+  const isPlaybackContext = playbackState?.context.uri === uri;
   const isPlaying = isPlaybackContext && !playbackState.paused;
 
   // Reconcile shuffle state
@@ -110,15 +105,15 @@ export default function PlaylistControls({
 
   const toggleIsPlaying = async () => {
     if (!isPlaybackContext) {
-      if (shuffleOn !== playbackState.shuffle) {
+      if (shuffleOn !== playbackState!.shuffle) {
         await shuffleMutation.mutateAsync({ state: shuffleOn });
       }
       await playMutation.mutateAsync({ context: { uri } });
     } else {
       if (isPlaying) {
-        await player.pause.bind(player)();
+        await player!.pause.bind(player)();
       } else {
-        await player.resume.bind(player)();
+        await player!.resume.bind(player)();
       }
     }
   };
@@ -153,27 +148,12 @@ export default function PlaylistControls({
   return (
     <div className="flex justify-between m-4">
       <div className="flex items-center gap-4">
-        <Button
-          variant="default"
-          size="icon"
-          className="rounded-full bg-green-500 hover:bg-green-500 h-10 w-10 hover:transform hover:scale-105 active:transform-none active:brightness-75"
+        <PlayPauseButton
+          isPlaying={isPlaying}
+          disabled={!player || !playbackState}
           onClick={toggleIsPlaying}
-          aria-label={isPlaying ? `Pause ${""}` : `Play ${""}`}
-        >
-          {isPlaying ? (
-            <PauseIcon
-              className="h-5 w-5"
-              stroke="hsl(var(--background))"
-              fill="hsl(var(--background))"
-            />
-          ) : (
-            <PlayIcon
-              className="h-5 w-5"
-              stroke="hsl(var(--background))"
-              fill="hsl(var(--background))"
-            />
-          )}
-        </Button>
+          aria-label={isPlaying ? `Pause ${name}` : `Play ${name}`}
+        />
         <ShuffleButton
           disabled={!playbackState}
           isShuffleOn={shuffleOn}
