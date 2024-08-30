@@ -2,10 +2,9 @@
 
 import { Fragment, useState } from "react";
 import Image from "next/image";
-import Link from "@/components/Link";
-import { HeartIcon } from "lucide-react";
 
-import { Button } from "@/components/ui/button";
+import Link from "@/components/Link";
+import HeartButton from "@/components/buttons/HeartButton";
 import { cn } from "@/lib/utils";
 
 export default function CurrentlyPlaying({
@@ -16,13 +15,13 @@ export default function CurrentlyPlaying({
   currentTrack: WebPlaybackState["track_window"]["current_track"];
 }) {
   const { name, id, type, album } = currentTrack;
-  const [ image ] = album.images.sort((a, b) => a.height - b.height);
+  const [image] = album.images.sort((a, b) => a.height - b.height);
   const artists = currentTrack.artists.map(({ name, uri }) => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const [_, type, id] = uri.split(":");
     return { id: id!, name, type: type! };
   });
-
-  const [isSaved, setIsSaved] = useState(false);
+  const [isSaved, setIsSaved] = useState(false); // TODO: implement saved state
 
   const toggleIsSaved = () => setIsSaved(!isSaved);
 
@@ -56,23 +55,13 @@ export default function CurrentlyPlaying({
           ))}
         </div>
       </div>
-      <Button
-        variant="ghost"
-        size="icon"
-        className={cn(
-          "rounded-full hover:transform hover:scale-105 active:transform-none active:brightness-75 hover:bg-transparent shrink-0",
-          isSaved
-            ? "text-green-500 hover:text-green-500"
-            : "text-muted-foreground hover:text-primary"
-        )}
+      <HeartButton
+        size="sm"
+        className="shrink-0"
+        isSaved={isSaved}
         onClick={toggleIsSaved}
         aria-label={isSaved ? "Remove from Liked Songs" : "Save to Liked Songs"}
-      >
-        <HeartIcon
-          className="h-4 w-4"
-          {...(isSaved ? { fill: "currentColor" } : {})}
-        />
-      </Button>
+      />
     </div>
   );
 }

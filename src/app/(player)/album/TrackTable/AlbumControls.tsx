@@ -33,6 +33,7 @@ import {
 import { Button } from "@/components/ui/button";
 import PlayPauseButton from "@/components/buttons/PlayPauseButton";
 import ShuffleButton from "@/components/buttons/ShuffleButton";
+import HeartButton from "@/components/buttons/HeartButton";
 
 import { useAppStore } from "@/lib/stores/AppStoreProvider";
 import { trpc } from "@/lib/trpc/client";
@@ -129,26 +130,11 @@ export default function AlbumControls({
           onClick={toggleShuffleOn}
           aria-label={`${shuffleOn ? "Disable" : "Enable"} shuffle for ${name}`}
         />
-        <Button
-          variant="ghost"
-          size="icon"
-          className={cn(
-            "rounded-full hover:transform hover:scale-105 active:transform-none active:brightness-75 hover:bg-transparent",
-            "[--plus-color:--muted-foreground] hover:[--plus-color:--primary]"
-          )}
+        <HeartButton
+          isSaved={isSaved}
           onClick={toggleIsSaved}
           aria-label={isSaved ? "Remove from Library" : "Save to Library"}
-        >
-          <HeartIcon
-            className={cn(
-              "h-6 w-6",
-              isSaved
-                ? "text-green-500"
-                : "text-muted-foreground hover:text-primary"
-            )}
-            {...(isSaved ? { fill: "currentColor" } : {})}
-          />
-        </Button>
+        />
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button

@@ -1,18 +1,19 @@
 import { forwardRef } from "react";
-import { ShuffleIcon } from "lucide-react";
+import { HeartIcon } from "lucide-react";
 import { cva, type VariantProps } from "class-variance-authority";
+
 import { cn } from "@/lib/utils";
 
-const shuffleButtonVariants = cva(
+const heartButtonVariants = cva(
   "inline-flex items-center justify-center rounded-full transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 hover:transform hover:scale-105 active:transform-none active:brightness-75",
   {
     variants: {
-      isShuffleOn: {
-        true: "text-green-500 hover:text-green-500",
+      isSaved: {
+        true: "text-green-500",
         false: "text-muted-foreground hover:text-primary",
       },
       size: {
-        md: "h-7 w-7",
+        sm: "p-1",
         lg: "h-9 w-9",
       },
     },
@@ -22,10 +23,10 @@ const shuffleButtonVariants = cva(
   }
 );
 
-const shuffleIconVariants = cva("", {
+const heartIconVariants = cva("", {
   variants: {
     size: {
-      md: "h-5 w-5",
+      sm: "h-4 w-4",
       lg: "h-6 w-6",
     },
   },
@@ -34,27 +35,30 @@ const shuffleIconVariants = cva("", {
   },
 });
 
-export interface ShuffleButtonProps
+export interface HeartButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement>,
-    VariantProps<typeof shuffleButtonVariants>,
-    VariantProps<typeof shuffleIconVariants> {
-  isShuffleOn: boolean;
-  size?: "md" | "lg";
+    VariantProps<typeof heartButtonVariants>,
+    VariantProps<typeof heartIconVariants> {
+  isSaved: boolean;
+  size?: "sm" | "lg";
 }
 
-const ShuffleButton = forwardRef<HTMLButtonElement, ShuffleButtonProps>(
-  ({ className, isShuffleOn, size, ...props }, ref) => {
+const HeartButton = forwardRef<HTMLButtonElement, HeartButtonProps>(
+  ({ className, isSaved, size, ...props }, ref) => {
     return (
       <button
-        className={cn(shuffleButtonVariants({ isShuffleOn, size }), className)}
+        className={cn(heartButtonVariants({ isSaved, size }), className)}
         ref={ref}
         {...props}
       >
-        <ShuffleIcon className={cn(shuffleIconVariants({ size }))} />
+        <HeartIcon
+          className={cn(heartIconVariants({ size }))}
+          {...(isSaved ? { fill: "currentColor" } : {})}
+        />
       </button>
     );
   }
 );
-ShuffleButton.displayName = "ShuffleButton";
+HeartButton.displayName = "HeartButton";
 
-export default ShuffleButton;
+export default HeartButton;
