@@ -8,10 +8,10 @@ import {
   ArrowDownIcon,
   ArrowUpIcon,
   CheckIcon,
-  CirclePlusIcon,
   CopyIcon,
   EllipsisIcon,
   ExternalLinkIcon,
+  HeartIcon,
   LayoutListIcon,
   ListMusicIcon,
   MonitorIcon,
@@ -170,26 +170,15 @@ export default function PlaylistControls({
           onClick={toggleIsSaved}
           aria-label={isSaved ? "Remove from Library" : "Save to Library"}
         >
-          <div
+          <HeartIcon
             className={cn(
-              "flex justify-center items-center rounded-full h-6 w-6",
+              "h-6 w-6",
               isSaved
-                ? "bg-green-500"
-                : "border-2 border-[hsl(var(--plus-color))]"
+                ? "text-green-500"
+                : "text-muted-foreground hover:text-primary"
             )}
-          >
-            {isSaved ? (
-              <CheckIcon
-                className="h-4 w-4 stroke-[12%]"
-                stroke="hsl(var(--background))"
-              />
-            ) : (
-              <PlusIcon
-                className="h-4 w-4 stroke-[12%]"
-                stroke="hsl(var(--plus-color))"
-              />
-            )}
-          </div>
+            {...(isSaved ? { fill: "currentColor" } : {})}
+          />
         </Button>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -208,23 +197,12 @@ export default function PlaylistControls({
           <DropdownMenuContent align="start">
             <DropdownMenuGroup>
               <DropdownMenuItem className="flex gap-2" onClick={toggleIsSaved}>
-                {isSaved ? (
-                  <>
-                    <div className="flex justify-center items-center rounded-full h-[18px] w-[18px] bg-green-500">
-                      <CheckIcon
-                        size={12}
-                        strokeWidth={3}
-                        stroke="hsl(var(--background))"
-                      />
-                    </div>
-                    Remove from Your Library
-                  </>
-                ) : (
-                  <>
-                    <CirclePlusIcon size={18} />
-                    Save to Your Library
-                  </>
-                )}
+                <HeartIcon
+                  size={18}
+                  className={cn(isSaved ? "text-green-500" : "")}
+                  {...(isSaved ? { fill: "currentColor" } : {})}
+                />
+                {isSaved ? "Remove from Your Library" : "Save to Your Library"}
               </DropdownMenuItem>
               <DropdownMenuItem className="flex gap-2" disabled>
                 <ListMusicIcon size={18} />

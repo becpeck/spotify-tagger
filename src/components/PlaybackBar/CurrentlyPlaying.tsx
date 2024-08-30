@@ -3,7 +3,7 @@
 import { Fragment, useState } from "react";
 import Image from "next/image";
 import Link from "@/components/Link";
-import { CheckIcon, PlusIcon } from "lucide-react";
+import { HeartIcon } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -60,27 +60,18 @@ export default function CurrentlyPlaying({
         variant="ghost"
         size="icon"
         className={cn(
-          "rounded-full h-4 w-4 hover:transform hover:scale-105 active:transform-none active:brightness-75 shrink-0",
+          "rounded-full hover:transform hover:scale-105 active:transform-none active:brightness-75 hover:bg-transparent shrink-0",
           isSaved
-            ? "bg-green-500 hover:bg-green-500"
-            : "[--plus-color:--muted-foreground] hover:[--plus-color:--primary] border border-[hsl(var(--plus-color))]"
+            ? "text-green-500 hover:text-green-500"
+            : "text-muted-foreground hover:text-primary"
         )}
         onClick={toggleIsSaved}
-        aria-label={isSaved ? "Remove from Library" : "Save to Library"}
+        aria-label={isSaved ? "Remove from Liked Songs" : "Save to Liked Songs"}
       >
-        {isSaved ? (
-          <CheckIcon
-            className="h-[66%] w-[66%] pt-[7%]"
-            strokeWidth={3}
-            stroke="hsl(var(--background))"
-          />
-        ) : (
-          <PlusIcon
-            className="h-[66%] w-[66%]"
-            strokeWidth={3}
-            stroke="hsl(var(--plus-color))"
-          />
-        )}
+        <HeartIcon
+          className="h-4 w-4"
+          {...(isSaved ? { fill: "currentColor" } : {})}
+        />
       </Button>
     </div>
   );
