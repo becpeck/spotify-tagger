@@ -5,15 +5,23 @@ interface SpotifyPlayerConstructorOptions {
   getOAuthToken: (cb: (token: string) => void) => void;
   volume?: number;
   enableMediaSession?: boolean;
-};
+}
 
-type SpotifyPlayerConstructor = new (options: SpotifyPlayerConstructorOptions) => SpotifyPlayer;
+type SpotifyPlayerConstructor = new (
+  options: SpotifyPlayerConstructorOptions
+) => SpotifyPlayer;
 
 interface SpotifyPlayer {
   connect: () => Promise<boolean>;
   disconnect: () => void;
-  addListener: <K extends keyof PlayerEventMap>(type: K, listener: (ev: PlayerEventMap[K]) => unknown) => boolean;
-  removeListener: <K extends keyof PlayerEventMap>(type: K, listener?: (ev: PlayerEventMap[K]) => unknown) => boolean;
+  addListener: <K extends keyof PlayerEventMap>(
+    type: K,
+    listener: (ev: PlayerEventMap[K]) => unknown
+  ) => boolean;
+  removeListener: <K extends keyof PlayerEventMap>(
+    type: K,
+    listener?: (ev: PlayerEventMap[K]) => unknown
+  ) => boolean;
   on: SpotifyPlayer["addListener"];
   getCurrentState: () => Promise<WebPlaybackState | null>;
   setName: (name: string) => Promise<void>;
@@ -26,34 +34,31 @@ interface SpotifyPlayer {
   previousTrack: () => Promise<void>;
   nextTrack: () => Promise<void>;
   activateElement: () => Promise<void>;
-};
-
+}
 
 // Events
 
 interface PlayerEventMap extends PlayerErrorMap {
-  "ready": WebPlaybackPlayer;
-  "not_ready": WebPlaybackPlayer;
-  "player_state_changed": WebPlaybackState;
-  "autoplay_failed": null;
+  ready: WebPlaybackPlayer;
+  not_ready: WebPlaybackPlayer;
+  player_state_changed: WebPlaybackState;
+  autoplay_failed: null;
 }
-
 
 // Errors
 
 interface PlayerErrorMap {
-  "initialization_error": WebPlaybackError;
-  "authentication_error": WebPlaybackError;
-  "account_error": WebPlaybackError;
-  "playback_error": WebPlaybackError;
+  initialization_error: WebPlaybackError;
+  authentication_error: WebPlaybackError;
+  account_error: WebPlaybackError;
+  playback_error: WebPlaybackError;
 }
-
 
 // Objects
 
 interface WebPlaybackPlayer {
   device_id: string;
-};
+}
 
 interface WebPlaybackState {
   context: {
@@ -78,14 +83,14 @@ interface WebPlaybackState {
   paused: boolean;
   playback_speed: number;
   position: number;
-  repeat_mode: number;
+  repeat_mode: 0 | 1 | 2;
   shuffle: boolean;
   track_window: {
     current_track: WebPlaybackTrack;
     previous_tracks: WebPlaybackTrack[];
     next_tracks: WebPlaybackTrack[];
-  }
-};
+  };
+}
 
 interface WebPlaybackTrack {
   uri: string;
@@ -100,13 +105,13 @@ interface WebPlaybackTrack {
     images: Array<{
       height: number;
       size: string;
-      url: string
+      url: string;
       width: number;
     }>;
   };
-  artists: Array<{ uri: string, name: string }>;
+  artists: Array<{ uri: string; name: string }>;
 }
 
 interface WebPlaybackError {
   message: string;
-};
+}
