@@ -9,7 +9,6 @@ import {
   ArrowUpIcon,
   CheckIcon,
   CopyIcon,
-  EllipsisIcon,
   ExternalLinkIcon,
   HeartIcon,
   LayoutListIcon,
@@ -37,6 +36,7 @@ import { Button } from "@/components/ui/button";
 import ShuffleButton from "@/components/buttons/ShuffleButton";
 import PlayPauseButton from "@/components/buttons/PlayPauseButton";
 import HeartButton from "@/components/buttons/HeartButton";
+import MoreOptionsButton from "@/components/buttons/MoreOptionsButton";
 
 import { useAppStore } from "@/lib/stores/AppStoreProvider";
 import { trpc } from "@/lib/trpc/client";
@@ -167,17 +167,7 @@ export default function PlaylistControls({
         />
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="rounded-full hover:transform hover:scale-105 active:transform-none active:brightness-75 hover:bg-transparent [--ellipsis-color:--muted-foreground] hover:[--ellipsis-color:--primary]"
-              aria-label={`More options for ${name}`}
-            >
-              <EllipsisIcon
-                className="h-6 w-6"
-                stroke="hsl(var(--ellipsis-color))"
-              />
-            </Button>
+            <MoreOptionsButton aria-label={`More options for ${name}`} />
           </DropdownMenuTrigger>
           <DropdownMenuContent align="start">
             <DropdownMenuGroup>
