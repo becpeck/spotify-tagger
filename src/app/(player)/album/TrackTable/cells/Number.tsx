@@ -1,8 +1,8 @@
 import { type CellContext } from "@tanstack/react-table";
 import { HashIcon, PlayIcon, PauseIcon } from "lucide-react";
 
-import { type TrackData } from "@/app/(player)/playlist/TrackTable";
-import { type ExtendedCellContext } from "@/app/(player)/playlist/TrackTable/TrackTableRow";
+import { type AlbumTrack } from "@/app/(player)/album/TrackTable";
+import { type ExtendedCellContext } from "@/app/(player)/album/trackTable/TrackTableRow";
 import { Button } from "@/components/ui/button";
 
 import { useAppStore } from "@/lib/stores/AppStoreProvider";
@@ -18,9 +18,9 @@ export function NumberHeader() {
   );
 }
 
-export function NumberCell(props: CellContext<TrackData, number>) {
-  const { row, table, isPlaybackContext } = props as ExtendedCellContext<
-    TrackData,
+export function NumberCell(props: CellContext<AlbumTrack, number>) {
+  const { album, row, isPlaybackContext } = props as ExtendedCellContext<
+    AlbumTrack,
     number
   >;
   const { playbackState, player } = useAppStore(
@@ -29,34 +29,16 @@ export function NumberCell(props: CellContext<TrackData, number>) {
       player,
     })
   );
-  const playContextMutation = trpc.playback.playWithContext.useMutation();
-  const playUrisMutation = trpc.playback.playUris.useMutation({
-    // onSuccess: () => {}   // TODO: add secondary playback state context
-  });
+  const playContextMutation = trpc.playback.playWithContext.useMutation(); // TODO: add secondary playback state context
   const isPlaying = isPlaybackContext && !playbackState!.paused;
   const Icon = isPlaying ? PauseIcon : PlayIcon;
 
   const toggleIsPlaying = async () => {
     if (!isPlaybackContext) {
-      const tableState = table.getState();
-      const sorting = tableState.sorting;
-      const globalFilter = tableState.globalFilter as string;
-      // TODO: change this to a function that determines whether view is different from original
-      if (globalFilter.length === 0 && sorting.length === 0) {
-        await playContextMutation.mutateAsync({
-          context: { uri: table.options.meta!.playlist!.uri },
-          offset: { uri: row.original.track.uri },
-        });
-      } else {
-        let uris = table
-          .getRowModel()
-          .rows.map((row) => row.original.track.uri);
-        if (uris[0] !== row.original.track.uri) {
-          const index = uris.findIndex((uri) => uri === row.original.track.uri);
-          uris = uris.slice(index).concat(uris.slice(0, index));
-        }
-        await playUrisMutation.mutateAsync({ uris });
-      }
+      await playContextMutation.mutateAsync({
+        context: { uri: album.uri },
+        offset: { uri: row.original.uri },
+      });
     } else {
       if (isPlaying) {
         await player!.pause.bind(player)();
@@ -79,7 +61,7 @@ export function NumberCell(props: CellContext<TrackData, number>) {
           isPlaybackContext && "text-green-500"
         )}
       >
-        {row.original.number}
+        {row.original.track_number}
       </div>
       <div className="hidden group-hover/row:block">
         <span className="sr-only">{isPlaying ? "Pause" : "Play"}</span>

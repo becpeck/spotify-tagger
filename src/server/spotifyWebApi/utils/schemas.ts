@@ -45,6 +45,12 @@ export const ExplicitContentSchema = z.object({
   filter_locked: z.boolean(),
 });
 
+export const ExternalIdsSchema = z.object({
+  isrc: z.string().optional(),
+  ean: z.string().optional(),
+  upc: z.string().optional(),
+});
+
 export const ExternalUrlsSchema = z.object({
   spotify: z.string(),
 });
@@ -63,6 +69,10 @@ export const ImagesSchema = z
     })
   )
   .transform((images) => images.reverse());
+
+export const MarketSchema = z.string().length(2);
+
+export const AvailableMarketsSchema = z.array(MarketSchema);
 
 export const ProductSchema = z.union([
   z.literal("premium"),

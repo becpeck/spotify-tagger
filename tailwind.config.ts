@@ -98,6 +98,11 @@ export default {
           "[first numStart] auto [numEnd titleArtistStart] 2fr [titleArtistEnd albumStart] 1.5fr [albumEnd savedStart] auto [savedEnd durationStart] auto [durationEnd actionsStart] auto [actionsEnd last]",
         "playlist-list-lg":
           "[first numStart] auto [numEnd titleArtistStart] 2fr [titleArtistEnd albumStart] 1.5fr [albumEnd dateStart] auto [dateEnd savedStart] auto [savedEnd durationStart] auto [durationEnd actionsStart] auto [actionsEnd last]",
+
+        "album":
+          "[first numStart] auto [numEnd titleStart titleArtistStart] 1fr [titleEnd titleArtistEnd savedStart] auto [savedEnd durationStart] auto [durationEnd actionsStart] auto [actionsEnd last]",
+        "album-exp":
+          "[first numStart] auto [numEnd titleStart] 2fr [titleEnd artistStart] 1.5fr [artistEnd savedStart] auto [savedEnd durationStart] auto [durationEnd actionsStart] auto [actionsEnd last]",
       },
       gridColumn: {
         row: "first / last",

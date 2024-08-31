@@ -1,12 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { type SortingState } from "@tanstack/react-table";
 
 import {
   AlignJustifyIcon,
-  ArrowDownIcon,
-  ArrowUpIcon,
   CheckIcon,
   CirclePlusIcon,
   CopyIcon,
@@ -20,7 +17,6 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSpotify } from "@fortawesome/free-brands-svg-icons";
 
-import { Input } from "@/components/ui/input";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -35,53 +31,45 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
-import ShuffleButton from "@/components/buttons/ShuffleButton";
 import PlayPauseButton from "@/components/buttons/PlayPauseButton";
+import ShuffleButton from "@/components/buttons/ShuffleButton";
 
 import { useAppStore } from "@/lib/stores/AppStoreProvider";
 import { trpc } from "@/lib/trpc/client";
 import { cn } from "@/lib/utils";
 
-type PlaylistControlsProps = {
+type AlbumControlsProps = {
   name: string;
-  type: "playlist";
+  type: "album";
   id: string;
-  uri: `spotify:playlist:${string}`;
-  isFollowing: boolean;
-  sorting: SortingState;
-  toggleSort: (label?: string) => () => void;
-  globalFilter: string;
-  setGlobalFilter: (value: string) => void;
+  is_saved: boolean;
+  uri: `spotify:album:${string}`;
   view: "list" | "compact";
   updateView: (newView: "list" | "compact") => void;
 };
 
-export default function PlaylistControls({
+export default function AlbumControls({
   name,
   type,
   id,
+  is_saved,
   uri,
-  isFollowing,
-  sorting,
-  toggleSort,
-  globalFilter,
-  setGlobalFilter,
   view,
   updateView,
-}: PlaylistControlsProps) {
+}: AlbumControlsProps) {
   const { player, playbackState } = useAppStore(
     ({ player, playbackState }) => ({ player, playbackState })
   );
   const [shuffleOn, setShuffleOn] = useState(false);
-  const [isSaved, setIsSaved] = useState(isFollowing);
+  const [isSaved, setIsSaved] = useState(is_saved);
 
   const playMutation = trpc.playback.playWithContext.useMutation();
   const shuffleMutation = trpc.playback.toggleShuffle.useMutation();
-  const followPlaylistMutation = trpc.playlist.followPlaylist.useMutation({
+  const followMutation = trpc.albums.saveAlbums.useMutation({
     onMutate: () => setIsSaved(true),
     onError: () => setIsSaved(false),
   });
-  const unfollowPlaylistMutation = trpc.playlist.unfollowPlaylist.useMutation({
+  const unfollowMutation = trpc.albums.unsaveAlbums.useMutation({
     onMutate: () => setIsSaved(false),
     onError: () => setIsSaved(true),
   });
@@ -97,9 +85,9 @@ export default function PlaylistControls({
   const toggleIsSaved = async () => {
     // UI: Add toasts for failed requests
     if (isSaved) {
-      await unfollowPlaylistMutation.mutateAsync(id);
+      await unfollowMutation.mutateAsync([id]);
     } else {
-      await followPlaylistMutation.mutateAsync(id);
+      await followMutation.mutateAsync([id]);
     }
   };
 
@@ -125,25 +113,6 @@ export default function PlaylistControls({
       setShuffleOn(!shuffleOn);
     }
   };
-
-  const sortingLabel = ((sorting: SortingState) => {
-    if (sorting.length === 0 || !sorting[0]) {
-      return "Custom Order";
-    } else {
-      switch (sorting[0].id) {
-        case "title":
-          return "Title";
-        case "artist":
-          return "Artist";
-        case "album":
-          return "Album";
-        case "added_at":
-          return "Date Added";
-        case "duration_ms":
-          return "Duration";
-      }
-    }
-  })(sorting);
 
   return (
     <div className="flex justify-between m-4">
@@ -230,6 +199,11 @@ export default function PlaylistControls({
                 <ListMusicIcon size={18} />
                 Add to Queue
               </DropdownMenuItem>
+              <DropdownMenuItem className="flex gap-2" disabled>
+                <PlusIcon size={18} />
+                Add to Playlist
+                {/* TODO: add way to add all album tracks to playlist */}
+              </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
@@ -242,7 +216,7 @@ export default function PlaylistControls({
                 }}
               >
                 <CopyIcon size={18} />
-                Copy Playlist Link
+                Copy Album Link
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
@@ -276,162 +250,51 @@ export default function PlaylistControls({
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
-      <div className="flex items-center gap-4">
-        <Input
-          type="text"
-          placeholder="Search"
-          className="max-w-40"
-          value={globalFilter}
-          onChange={(evt) => setGlobalFilter(evt.target.value)}
-        />
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="gap-2">
-              {sortingLabel}
-              {view === "list" ? (
-                <LayoutListIcon size={18} />
-              ) : (
-                <AlignJustifyIcon size={18} />
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button variant="outline" className="gap-2 capitalize">
+            {view}
+            {view === "list" ? (
+              <LayoutListIcon size={18} />
+            ) : (
+              <AlignJustifyIcon size={18} />
+            )}
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end">
+          <DropdownMenuLabel className="text-xs text-muted-foreground">
+            View as
+          </DropdownMenuLabel>
+          <DropdownMenuGroup>
+            <DropdownMenuItem
+              className={cn(
+                "flex justify-between gap-4",
+                view === "compact" && "text-green-500 focus:text-green-500"
               )}
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel className="text-xs text-muted-foreground">
-              Sort by
-            </DropdownMenuLabel>
-            <DropdownMenuGroup>
-              <DropdownMenuItem
-                className={cn(
-                  "flex justify-between gap-4 [--icon-color:--background] focus:[--icon-color:--muted-background]",
-                  sorting.length === 0 &&
-                    "text-green-500 focus:text-green-500 [--icon-color:--green] focus:[--icon-color:--green]"
-                )}
-                onClick={toggleSort()}
-              >
-                Custom Order
-                <CheckIcon size={18} stroke="hsl(var(--icon-color))" />
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                className={cn(
-                  "flex justify-between gap-4",
-                  sorting[0]?.id === "title" &&
-                    "text-green-500 focus:text-green-500"
-                )}
-                onClick={toggleSort("title")}
-              >
-                Title
-                {sorting[0]?.id === "title" ? (
-                  sorting[0]?.desc ? (
-                    <ArrowDownIcon size={18} />
-                  ) : (
-                    <ArrowUpIcon size={18} />
-                  )
-                ) : null}
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                className={cn(
-                  "flex justify-between gap-4",
-                  sorting[0]?.id === "artist" &&
-                    "text-green-500 focus:text-green-500"
-                )}
-                onClick={toggleSort("artist")}
-              >
-                Artist
-                {sorting[0]?.id === "artist" ? (
-                  sorting[0]?.desc ? (
-                    <ArrowDownIcon size={18} />
-                  ) : (
-                    <ArrowUpIcon size={18} />
-                  )
-                ) : null}
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                className={cn(
-                  "flex justify-between gap-4",
-                  sorting[0]?.id === "album" &&
-                    "text-green-500 focus:text-green-500"
-                )}
-                onClick={toggleSort("album")}
-              >
-                Album
-                {sorting[0]?.id === "album" ? (
-                  sorting[0]?.desc ? (
-                    <ArrowDownIcon size={18} />
-                  ) : (
-                    <ArrowUpIcon size={18} />
-                  )
-                ) : null}
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                className={cn(
-                  "flex justify-between gap-4",
-                  sorting[0]?.id === "added_at" &&
-                    "text-green-500 focus:text-green-500"
-                )}
-                onClick={toggleSort("added_at")}
-              >
-                Date Added
-                {sorting[0]?.id === "added_at" ? (
-                  sorting[0]?.desc ? (
-                    <ArrowDownIcon size={18} />
-                  ) : (
-                    <ArrowUpIcon size={18} />
-                  )
-                ) : null}
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                className={cn(
-                  "flex justify-between gap-4",
-                  sorting[0]?.id === "duration_ms" &&
-                    "text-green-500 focus:text-green-500"
-                )}
-                onClick={toggleSort("duration_ms")}
-              >
-                Duration
-                {sorting[0]?.id === "duration_ms" ? (
-                  sorting[0]?.desc ? (
-                    <ArrowDownIcon size={18} />
-                  ) : (
-                    <ArrowUpIcon size={18} />
-                  )
-                ) : null}
-              </DropdownMenuItem>
-            </DropdownMenuGroup>
-            <DropdownMenuSeparator />
-            <DropdownMenuLabel className="text-xs text-muted-foreground">
-              View as
-            </DropdownMenuLabel>
-            <DropdownMenuGroup>
-              <DropdownMenuItem
-                className={cn(
-                  "flex justify-between gap-4",
-                  view === "compact" && "text-green-500 focus:text-green-500"
-                )}
-                onClick={() => updateView("compact")}
-              >
-                <div className="flex gap-2">
-                  <AlignJustifyIcon size={18} />
-                  Compact
-                </div>
-                {view === "compact" ? <CheckIcon size={18} /> : null}
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                className={cn(
-                  "flex justify-between gap-4",
-                  view === "list" && "text-green-500 focus:text-green-500"
-                )}
-                onClick={() => updateView("list")}
-              >
-                <div className="flex gap-2">
-                  <LayoutListIcon size={18} />
-                  List
-                </div>
-                {view === "list" ? <CheckIcon size={18} /> : null}
-              </DropdownMenuItem>
-            </DropdownMenuGroup>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </div>
+              onClick={() => updateView("compact")}
+            >
+              <div className="flex gap-2">
+                <AlignJustifyIcon size={18} />
+                Compact
+              </div>
+              {view === "compact" ? <CheckIcon size={18} /> : null}
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              className={cn(
+                "flex justify-between gap-4",
+                view === "list" && "text-green-500 focus:text-green-500"
+              )}
+              onClick={() => updateView("list")}
+            >
+              <div className="flex gap-2">
+                <LayoutListIcon size={18} />
+                List
+              </div>
+              {view === "list" ? <CheckIcon size={18} /> : null}
+            </DropdownMenuItem>
+          </DropdownMenuGroup>
+        </DropdownMenuContent>
+      </DropdownMenu>
     </div>
   );
 }

@@ -8,35 +8,36 @@ import {
   type RowData,
 } from "@tanstack/react-table";
 import { TableRow, TableCell } from "@/components/ui/table-grid";
-import { type TrackData } from "@/app/(player)/playlist/TrackTable";
+import { type AlbumTrack } from "@/app/(player)/album/TrackTable";
 
 import { trpc } from "@/lib/trpc/client";
 import { useAppStore } from "@/lib/stores/AppStoreProvider";
 
 interface TrackTableRowProps {
-  row: Row<TrackData>;
-  trackData: TrackData;
-  playlistUri: `spotify:playlist:${string}`;
+  row: Row<AlbumTrack>;
+  album: {
+    id: string;
+    name: string;
+    type: "album";
+    uri: `spotify:album:${string}`;
+  };
 }
 
 export type ExtendedCellContext<TData extends RowData, TValue> = CellContext<
   TData,
   TValue
 > & {
+  album: TrackTableRowProps["album"];
   isPlaybackContext: boolean;
   isSaved: boolean;
   toggleIsSaved: () => boolean;
 };
 
-export default function TrackTableRow({
-  row,
-  trackData,
-  playlistUri,
-}: TrackTableRowProps) {
+export default function TrackTableRow({ row, album }: TrackTableRowProps) {
   const { playbackState } = useAppStore(({ playbackState }) => ({
     playbackState,
   }));
-  const [isSaved, setIsSaved] = useState(trackData.isSaved);
+  const [isSaved, setIsSaved] = useState(row.original.is_saved);
 
   const addOrDelete = (addOrDelete: "add" | "delete") => {
     const oldSaved = isSaved;
@@ -55,21 +56,21 @@ export default function TrackTableRow({
 
   const toggleIsSaved = async () => {
     if (isSaved) {
-      await unsaveTrackMutation.mutateAsync([trackData.track.id]);
+      await unsaveTrackMutation.mutateAsync([row.original.id]);
     } else {
-      await saveTrackMutation.mutateAsync([trackData.track.id]);
+      await saveTrackMutation.mutateAsync([row.original.id]);
     }
   };
 
   const isPlaybackContext = playbackState
-    ? playbackState.context.uri === playlistUri &&
-      (playbackState.track_window.current_track.uri === trackData.track.uri ||
-        (playbackState.track_window.current_track.name ===
-          trackData.track.name &&
-          playbackState.track_window.current_track.album.name ===
-            trackData.album.name))
-    : // && artists.every(artist => artists)
-      false;
+    ? playbackState.context.uri === album.uri &&
+      (playbackState.track_window.current_track.uri === row.original.uri
+        || (playbackState.track_window.current_track.name === row.original.name 
+          && playbackState.track_window.current_track.album.name === album.name
+          // && artists.every(artist => artists)
+        )
+      )
+    : false;
 
   return (
     <TableRow
@@ -81,6 +82,7 @@ export default function TrackTableRow({
         <TableCell key={cell.id}>
           {flexRender(cell.column.columnDef.cell, {
             ...cell.getContext(),
+            album,
             isPlaybackContext,
             isSaved,
             toggleIsSaved,
