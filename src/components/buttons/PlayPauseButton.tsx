@@ -18,10 +18,10 @@ export interface PlayPauseButtonProps
 }
 
 const PlayPauseButton = forwardRef<HTMLButtonElement, PlayPauseButtonProps>(
-  ({ isPlaying, ...props }, ref) => {
+  ({ isPlaying, className,...props }, ref) => {
     const Icon = isPlaying ? PauseIcon : PlayIcon;
     return (
-      <button className={cn(playPauseButtonVariants())} ref={ref} {...props}>
+      <button className={cn(playPauseButtonVariants(), className)} ref={ref} {...props}>
         <Icon className="h-5 w-5" fill="currentColor" />
       </button>
     );

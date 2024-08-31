@@ -4,8 +4,8 @@ import { useAppStore } from "@/lib/stores/AppStoreProvider";
 
 import CurrentlyPlaying from "@/components/PlaybackBar/CurrentlyPlaying";
 import PlaybackControls from "@/components/PlaybackBar/PlaybackControls";
-import QueueButton from "@/components/PlaybackBar/QueueButton";
-import DeviceButton from "@/components/PlaybackBar/DeviceButton";
+import QueueButton from "@/components/buttons/QueueButton";
+import DeviceButton from "@/components/buttons/DeviceButton";
 import VolumeControls from "@/components/PlaybackBar/VolumeControls";
 
 export default function PlaybackBar() {
