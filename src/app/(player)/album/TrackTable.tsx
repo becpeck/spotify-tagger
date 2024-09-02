@@ -64,7 +64,7 @@ export default function TrackTable({ tracks, album }: TrackTableProps) {
 
   const table = useReactTable({
     data: tracks,
-    columns: columns,
+    columns,
     meta: {
       userPlaylists: Array.from({ length: 10 }, (_, i) => ({
         id: `${i + 1}`,
@@ -82,15 +82,7 @@ export default function TrackTable({ tracks, album }: TrackTableProps) {
 
   return (
     <>
-      <AlbumControls
-        name={album.name}
-        type={album.type}
-        id={album.id}
-        is_saved={album.is_saved}
-        uri={album.uri}
-        view={view}
-        updateView={updateView}
-      />
+      <AlbumControls {...album} view={view} updateView={updateView} />
       <div className="border @container">
         <Table
           className={cn(

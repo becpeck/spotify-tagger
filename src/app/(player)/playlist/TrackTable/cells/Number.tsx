@@ -19,7 +19,7 @@ export function NumberHeader() {
 }
 
 export function NumberCell(props: CellContext<PlaylistTrack, number>) {
-  const { row, table, isPlaybackContext } = props as ExtendedCellContext<
+  const { row, table, isPlaybackContext, playlist } = props as ExtendedCellContext<
     PlaylistTrack,
     number
   >;
@@ -43,15 +43,15 @@ export function NumberCell(props: CellContext<PlaylistTrack, number>) {
       // TODO: change this to a function that determines whether view is different from original
       if (globalFilter.length === 0 && sorting.length === 0) {
         await playContextMutation.mutateAsync({
-          context: { uri: table.options.meta!.playlist!.uri },
-          offset: { uri: row.original.track.uri },
+          context: { uri: playlist.uri },
+          offset: { uri: row.original.uri },
         });
       } else {
         let uris = table
           .getRowModel()
-          .rows.map((row) => row.original.track.uri);
-        if (uris[0] !== row.original.track.uri) {
-          const index = uris.findIndex((uri) => uri === row.original.track.uri);
+          .rows.map((row) => row.original.uri);
+        if (uris[0] !== row.original.uri) {
+          const index = uris.findIndex((uri) => uri === row.original.uri);
           uris = uris.slice(index).concat(uris.slice(0, index));
         }
         await playUrisMutation.mutateAsync({ uris });
@@ -82,7 +82,7 @@ export function NumberCell(props: CellContext<PlaylistTrack, number>) {
           isPlaybackContext && "text-green-500"
         )}
       >
-        {row.original.number}
+        {row.original.track_number}
       </div>
     </div>
   );

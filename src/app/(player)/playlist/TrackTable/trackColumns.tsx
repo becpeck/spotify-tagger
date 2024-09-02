@@ -34,16 +34,14 @@ import { ActionsCell } from "@/app/(player)/playlist/TrackTable/cells/Actions";
 const columnHelper = createColumnHelper<PlaylistTrack>();
 
 const columns = [
-  columnHelper.accessor("number", {
+  columnHelper.accessor("track_number", {
     enableGlobalFilter: false,
     header: NumberHeader,
     cell: NumberCell,
   }),
   columnHelper.accessor(
     (row) =>
-      [row.track.name]
-        .concat(row.artists.map((artist) => artist.name))
-        .join(", "),
+      [row.name].concat(row.artists.map((artist) => artist.name)).join(", "),
     {
       id: "title/artist",
       filterFn: "includesString",
@@ -51,10 +49,10 @@ const columns = [
       cell: TitleArtistCell,
     }
   ),
-  columnHelper.accessor("track.name", {
+  columnHelper.accessor("name", {
     id: "title",
-    sortingFn: "text",
     filterFn: "includesString",
+    sortingFn: "text",
     header: TitleHeader,
     cell: TitleCell,
   }),
@@ -62,29 +60,28 @@ const columns = [
     (row) => row.artists.map((artist) => artist.name).join(", "),
     {
       id: "artist",
-      sortingFn: "text",
       filterFn: "includesString",
+      sortingFn: "text",
       header: ArtistHeader,
       cell: ArtistCell,
     }
   ),
   columnHelper.accessor("album.name", {
     id: "album",
-    sortingFn: "text",
     filterFn: "includesString",
+    sortingFn: "text",
     header: AlbumHeader,
     cell: AlbumCell,
   }),
   columnHelper.accessor("added_at", {
     sortingFn: "datetime",
-    sortDescFirst: false,
     enableGlobalFilter: false,
+    sortDescFirst: false,
     header: DateHeader,
     cell: DateCell,
   }),
-  columnHelper.accessor("isSaved", {
-    enableGlobalFilter: false,
-    header: () => null,
+  columnHelper.display({
+    id: "isSaved",
     cell: IsSavedCell,
   }),
   columnHelper.accessor("duration_ms", {
@@ -95,7 +92,6 @@ const columns = [
   }),
   columnHelper.display({
     id: "actions",
-    enableGlobalFilter: false,
     cell: ActionsCell,
   }),
 ];

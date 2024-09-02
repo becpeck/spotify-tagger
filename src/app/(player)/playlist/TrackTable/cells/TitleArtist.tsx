@@ -48,11 +48,7 @@ export function TitleArtistCell(props: CellContext<PlaylistTrack, unknown>) {
     PlaylistTrack,
     string
   >;
-  const {
-    track: { id, name, type },
-    artists,
-    imageUrl,
-  } = row.original;
+  const { id, name, type, artists, imageUrl } = row.original;
   return (
     <div className="flex items-center gap-4">
       <Image

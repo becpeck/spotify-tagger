@@ -46,8 +46,8 @@ type PlaylistControlsProps = {
   name: string;
   type: "playlist";
   id: string;
+  is_saved: boolean;
   uri: `spotify:playlist:${string}`;
-  isFollowing: boolean;
   view: "list" | "compact";
   updateView: (newView: "list" | "compact") => void;
   sorting: SortingState;
@@ -60,8 +60,8 @@ export default function PlaylistControls({
   name,
   type,
   id,
+  is_saved,
   uri,
-  isFollowing,
   view,
   updateView,
   sorting,
@@ -73,7 +73,7 @@ export default function PlaylistControls({
     ({ player, playbackState }) => ({ player, playbackState })
   );
   const [shuffleOn, setShuffleOn] = useState(false);
-  const [isSaved, setIsSaved] = useState(isFollowing);
+  const [isSaved, setIsSaved] = useState(is_saved);
 
   const playMutation = trpc.playback.playWithContext.useMutation();
   const shuffleMutation = trpc.playback.toggleShuffle.useMutation();

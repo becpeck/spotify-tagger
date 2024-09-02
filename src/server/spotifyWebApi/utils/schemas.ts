@@ -70,6 +70,14 @@ export const ImagesSchema = z
   )
   .transform((images) => images.reverse());
 
+export const LinkedFromSchema = z.object({
+  external_urls: ExternalUrlsSchema,
+  href: z.string(),
+  id: TrackIdSchema,
+  type: TrackTypeSchema,
+  uri: TrackURISchema,
+});
+
 export const MarketSchema = z.string().length(2);
 
 export const AvailableMarketsSchema = z.array(MarketSchema);
@@ -119,7 +127,7 @@ export const TrackObjectSchema = z.object({
       z.literal("month"),
       z.literal("day"),
     ]),
-    // restrictions: RestrictionsSchema.optional(),
+    restrictions: RestrictionsSchema.optional(),
     type: AlbumTypeSchema,
     uri: AlbumURISchema,
     artists: z.array(SimplifiedArtistObjectSchema),
@@ -137,9 +145,9 @@ export const TrackObjectSchema = z.object({
   external_urls: ExternalUrlsSchema,
   href: z.string(),
   id: TrackIdSchema,
-  // is_playable: z.boolean().optional(),
-  // linked_from: z.object({}).optional(),
-  // restrictions: RestrictionsSchema.optional(),
+  is_playable: z.boolean().optional(),
+  linked_from: LinkedFromSchema.optional(),
+  restrictions: RestrictionsSchema.optional(),
   name: z.string(),
   popularity: z.number().int().min(0).max(100),
   preview_url: z.string().nullable(),

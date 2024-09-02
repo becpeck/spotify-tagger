@@ -24,7 +24,7 @@ export function TitleCell(props: CellContext<PlaylistTrack, string>) {
     PlaylistTrack,
     string
   >;
-  const { id, name, type } = row.original.track;
+  const { id, name, type } = row.original;
   return (
     <Link
       color={isPlaybackContext ? "green" : "primary"}

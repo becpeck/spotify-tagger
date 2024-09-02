@@ -4,10 +4,10 @@ import { type ExtendedCellContext } from "@/app/(player)/playlist/TrackTable/Tra
 import HeartButton from "@/components/buttons/HeartButton";
 import { cn } from "@/lib/utils";
 
-export function IsSavedCell(props: CellContext<PlaylistTrack, boolean>) {
+export function IsSavedCell(props: CellContext<PlaylistTrack, unknown>) {
   const { isSaved, toggleIsSaved } = props as ExtendedCellContext<
     PlaylistTrack,
-    boolean
+    unknown
   >;
   return (
     <HeartButton
