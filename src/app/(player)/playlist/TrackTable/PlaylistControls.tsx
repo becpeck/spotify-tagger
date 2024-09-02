@@ -18,7 +18,7 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSpotify } from "@fortawesome/free-brands-svg-icons";
 
-import { Input } from "@/components/ui/input";
+import SearchInput from "@/components/SearchInput";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -230,12 +230,10 @@ export default function PlaylistControls({
         </DropdownMenu>
       </div>
       <div className="flex items-center gap-4">
-        <Input
-          type="text"
-          placeholder="Search"
-          className="max-w-40"
-          value={globalFilter}
-          onChange={(evt) => setGlobalFilter(evt.target.value)}
+        <SearchInput
+          inputValue={globalFilter}
+          handleInputChange={(evt) => setGlobalFilter(evt.target.value)}
+          handleClearInput={() => setGlobalFilter("")}
         />
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
