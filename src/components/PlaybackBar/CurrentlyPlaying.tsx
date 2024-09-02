@@ -29,10 +29,11 @@ export default function CurrentlyPlaying({
     <div className={cn("flex items-center gap-4", className)}>
       {image ? (
         <Image
+          className="rounded-sm w-[50px] h-[50px]"
           src={image.url}
           alt={`${album.name} cover`}
-          width={64}
-          height={64}
+          width={50}
+          height={50}
         />
       ) : null}
       <div className="flex flex-col gap-1 shrink min-w-0">

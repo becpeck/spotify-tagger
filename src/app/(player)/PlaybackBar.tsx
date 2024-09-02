@@ -20,7 +20,7 @@ export default function PlaybackBar() {
     return;
   } else {
     return (
-      <footer className="flex justify-between items-center w-full p-4 border gap-8">
+      <footer className="flex justify-between items-center w-full p-3 border gap-8">
         <CurrentlyPlaying
           className="grow max-w-[30%]"
           currentTrack={playbackState.track_window.current_track}

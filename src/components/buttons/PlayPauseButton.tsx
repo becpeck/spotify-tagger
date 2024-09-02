@@ -19,17 +19,17 @@ const playPauseButtonVariants = cva("", {
     {
       variant: "cutout",
       size: "sm",
-      className: "h-7 w-7",
+      className: "h-6 w-6",
     },
     {
       variant: "cutout",
       size: "md",
-      className: "h-8 w-8",
+      className: "h-7 w-7",
     },
     {
       variant: "cutout",
       size: "lg",
-      className: "h-9 w-9",
+      className: "h-8 w-8",
     },
     {
       variant: "cutout",

@@ -30,7 +30,12 @@ export default function PlaybackControls(props: PlaybackControlsProps) {
   const repeatMutation = trpc.playback.cycleRepeat.useMutation();
 
   return (
-    <div className={cn("flex flex-col items-center gap-2", className)}>
+    <div
+      className={cn(
+        "flex flex-col items-center justify-between h-full",
+        className
+      )}
+    >
       <div className="flex justify-center items-center gap-3">
         <ShuffleButton
           size="lg"
@@ -47,6 +52,7 @@ export default function PlaybackControls(props: PlaybackControlsProps) {
           aria-label="Skip Back"
         />
         <PlayPauseButton
+          size="lg"
           isPlaying={!playerState.paused}
           disabled={
             playerState.paused
