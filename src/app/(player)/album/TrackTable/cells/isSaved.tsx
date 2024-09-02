@@ -1,8 +1,7 @@
 import { type CellContext } from "@tanstack/react-table";
-import { CheckIcon, PlusIcon } from "lucide-react";
 import { type AlbumTrack } from "@/app/(player)/album/TrackTable";
 import { type ExtendedCellContext } from "@/app/(player)/playlist/TrackTable/TrackTableRow";
-import { Button } from "@/components/ui/button";
+import HeartButton from "@/components/buttons/HeartButton";
 import { cn } from "@/lib/utils";
 
 export function IsSavedCell(props: CellContext<AlbumTrack, unknown>) {
@@ -11,34 +10,15 @@ export function IsSavedCell(props: CellContext<AlbumTrack, unknown>) {
     unknown
   >;
   return (
-    <Button
-      variant="ghost"
-      size="icon"
+    <HeartButton
+      size="sm"
       className={cn(
-        "rounded-full hover:transform hover:scale-105 active:transform-none active:brightness-75 hover:bg-transparent",
-        "[--plus-color:--background] group-hover/row:[--plus-color:--muted-foreground] group-hover/row:hover:[--plus-color:--primary]"
+        !isSaved &&
+          "text-background group-hover/row:text-muted-foreground group-hover/row:hover:text-primary"
       )}
+      isSaved={isSaved}
       onClick={toggleIsSaved}
-      aria-label={isSaved ? "Remove from Library" : "Save to Library"}
-    >
-      <div
-        className={cn(
-          "flex justify-center items-center rounded-full h-4 w-4",
-          isSaved ? "bg-green-500" : "border border-[hsl(var(--plus-color))]"
-        )}
-      >
-        {isSaved ? (
-          <CheckIcon
-            className="h-[66%] w-[66%] stroke-[14%]"
-            stroke="hsl(var(--background))"
-          />
-        ) : (
-          <PlusIcon
-            className="h-[66%] w-[66%] stroke-[14%]"
-            stroke="hsl(var(--plus-color))"
-          />
-        )}
-      </div>
-    </Button>
+      aria-label={isSaved ? "Remove from Liked Songs" : "Save to Liked Songs"}
+    />
   );
 }

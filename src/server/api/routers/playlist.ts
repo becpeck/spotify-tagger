@@ -18,14 +18,13 @@ const playlistRouter = createTRPCRouter({
       );
       return {
         ...playlist,
-        tracks: {
-          ...playlist.tracks,
-          items: playlist.tracks.items.map((track, i) => ({
-            ...track,
-            isSaved: isSaved[i]!,
-          })),
-        },
-        isFollowing,
+        total_tracks: playlist.tracks.total,
+        tracks: playlist.tracks.items.map(({ track, ...rest }, i) => ({
+          ...rest,
+          ...track,
+          is_saved: isSaved[i]!,
+        })),
+        is_saved: isFollowing,
       };
     }),
   followPlaylist: protectedProcedure

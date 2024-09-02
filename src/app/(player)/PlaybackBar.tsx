@@ -4,8 +4,8 @@ import { useAppStore } from "@/lib/stores/AppStoreProvider";
 
 import CurrentlyPlaying from "@/components/PlaybackBar/CurrentlyPlaying";
 import PlaybackControls from "@/components/PlaybackBar/PlaybackControls";
-import QueueButton from "@/components/PlaybackBar/QueueButton";
-import DeviceButton from "@/components/PlaybackBar/DeviceButton";
+import QueueButton from "@/components/buttons/QueueButton";
+import DeviceButton from "@/components/buttons/DeviceButton";
 import VolumeControls from "@/components/PlaybackBar/VolumeControls";
 
 export default function PlaybackBar() {
@@ -20,7 +20,7 @@ export default function PlaybackBar() {
     return;
   } else {
     return (
-      <footer className="flex justify-between items-center w-full p-4 border gap-8">
+      <footer className="flex justify-between items-center w-full p-3 border gap-8">
         <CurrentlyPlaying
           className="grow max-w-[30%]"
           currentTrack={playbackState.track_window.current_track}
@@ -35,7 +35,7 @@ export default function PlaybackBar() {
           }}
           playerState={playbackState}
         />
-        <div className="grow max-w-[30%] flex justify-end items-center">
+        <div className="grow max-w-[30%] flex justify-end items-center gap-2">
           <QueueButton />
           <DeviceButton />
           <VolumeControls

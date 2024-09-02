@@ -1,10 +1,13 @@
 import { createColumnHelper } from "@tanstack/react-table";
-import { type TrackData } from "@/app/(player)/playlist/TrackTable";
+import { type PlaylistTrack } from "@/app/(player)/playlist/TrackTable";
 import {
   NumberHeader,
   NumberCell,
 } from "@/app/(player)/playlist/TrackTable/cells/Number";
-import { TitleArtistCell, TitleArtistHeader } from "@/app/(player)/playlist/TrackTable/cells/TitleArtist";
+import {
+  TitleArtistCell,
+  TitleArtistHeader,
+} from "@/app/(player)/playlist/TrackTable/cells/TitleArtist";
 import {
   TitleHeader,
   TitleCell,
@@ -28,24 +31,28 @@ import {
 } from "@/app/(player)/playlist/TrackTable/cells/Duration";
 import { ActionsCell } from "@/app/(player)/playlist/TrackTable/cells/Actions";
 
-const columnHelper = createColumnHelper<TrackData>();
+const columnHelper = createColumnHelper<PlaylistTrack>();
 
 const columns = [
-  columnHelper.accessor("number", {
+  columnHelper.accessor("track_number", {
     enableGlobalFilter: false,
     header: NumberHeader,
     cell: NumberCell,
   }),
-  columnHelper.accessor(row => [row.track.name].concat(row.artists.map((artist => artist.name))).join(", "), {
-    id: "title/artist",
-    filterFn: "includesString",
-    header: TitleArtistHeader,
-    cell: TitleArtistCell,
-  }),
-  columnHelper.accessor("track.name", {
+  columnHelper.accessor(
+    (row) =>
+      [row.name].concat(row.artists.map((artist) => artist.name)).join(", "),
+    {
+      id: "title/artist",
+      filterFn: "includesString",
+      header: TitleArtistHeader,
+      cell: TitleArtistCell,
+    }
+  ),
+  columnHelper.accessor("name", {
     id: "title",
-    sortingFn: "text",
     filterFn: "includesString",
+    sortingFn: "text",
     header: TitleHeader,
     cell: TitleCell,
   }),
@@ -53,29 +60,28 @@ const columns = [
     (row) => row.artists.map((artist) => artist.name).join(", "),
     {
       id: "artist",
-      sortingFn: "text",
       filterFn: "includesString",
+      sortingFn: "text",
       header: ArtistHeader,
       cell: ArtistCell,
     }
   ),
   columnHelper.accessor("album.name", {
     id: "album",
-    sortingFn: "text",
     filterFn: "includesString",
+    sortingFn: "text",
     header: AlbumHeader,
     cell: AlbumCell,
   }),
   columnHelper.accessor("added_at", {
     sortingFn: "datetime",
-    sortDescFirst: false,
     enableGlobalFilter: false,
+    sortDescFirst: false,
     header: DateHeader,
     cell: DateCell,
   }),
-  columnHelper.accessor("isSaved", {
-    enableGlobalFilter: false,
-    header: () => null,
+  columnHelper.display({
+    id: "isSaved",
     cell: IsSavedCell,
   }),
   columnHelper.accessor("duration_ms", {
@@ -86,7 +92,6 @@ const columns = [
   }),
   columnHelper.display({
     id: "actions",
-    enableGlobalFilter: false,
     cell: ActionsCell,
   }),
 ];

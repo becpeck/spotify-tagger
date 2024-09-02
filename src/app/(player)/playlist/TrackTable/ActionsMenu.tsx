@@ -2,11 +2,10 @@
 
 import Link from "next/link";
 import {
-  EllipsisIcon,
   DiscIcon,
   ListMusicIcon,
   PlusIcon,
-  CheckIcon,
+  HeartIcon,
   CopyIcon,
   ExternalLinkIcon,
   UserRoundIcon,
@@ -14,7 +13,6 @@ import {
 } from "lucide-react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSpotify } from "@fortawesome/free-brands-svg-icons";
-import { cn } from "@/lib/utils";
 
 import {
   DropdownMenu,
@@ -28,7 +26,9 @@ import {
   DropdownMenuSubContent,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Button } from "@/components/ui/button";
+import MoreOptionsButton from "@/components/buttons/MoreOptionsButton";
+
+import { cn } from "@/lib/utils";
 
 type ActionsMenuProps = {
   album: {
@@ -70,16 +70,11 @@ export default function ActionsMenu({
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button
-          variant="ghost"
-          className="h-8 w-8 p-0 [--ellipsis-color:--background] group-hover/row:[--ellipsis-color:--primary]"
-        >
-          <span className="sr-only">Open menu</span>
-          <EllipsisIcon
-            className="h-4 w-4"
-            stroke="hsl(var(--ellipsis-color))"
-          />
-        </Button>
+        <MoreOptionsButton
+          size="sm"
+          className="text-background group-hover/row:text-primary"
+          aria-label={`More options for ${track.name}`}
+        />
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         <DropdownMenuGroup>
@@ -99,23 +94,11 @@ export default function ActionsMenu({
             </DropdownMenuPortal>
           </DropdownMenuSub>
           <DropdownMenuItem className="flex gap-2" onClick={toggleIsSaved}>
-            <div
-              className={cn(
-                "flex justify-center items-center rounded-full h-4 w-4",
-                track.isSaved
-                  ? "bg-green-500"
-                  : "border border-[hsl(var(--plus-color))]"
-              )}
-            >
-              {track.isSaved ? (
-                <CheckIcon
-                  className="h-[66%] w-[66%] stroke-[14%]"
-                  stroke="hsl(var(--background))"
-                />
-              ) : (
-                <PlusIcon className="h-[66%] w-[66%] stroke-[14%]" />
-              )}
-            </div>
+            <HeartIcon
+              size={18}
+              className={cn(track.isSaved ? "text-green-500" : "")}
+              {...(track.isSaved ? { fill: "currentColor" } : {})}
+            />
             {track.isSaved ? "Remove From Liked Songs" : "Save to Liked Songs"}
           </DropdownMenuItem>
           <DropdownMenuItem className="flex gap-2" onClick={addToQueue}>

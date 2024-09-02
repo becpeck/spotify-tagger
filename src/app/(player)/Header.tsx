@@ -29,8 +29,8 @@ export default function Header({ session }: HeaderProps) {
           <h1 className="text-xl font-semibold">Spotify Tagger</h1>
         </Link>
         <DropdownMenu>
-          <DropdownMenuTrigger className="rounded-full group">
-            <Avatar className="">
+          <DropdownMenuTrigger className="rounded-full transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring hover:transform hover:scale-105 active:transform-none active:brightness-75">
+            <Avatar>
               <AvatarImage src={images[0]?.url} />
               <AvatarFallback>{name[0]?.toUpperCase()}</AvatarFallback>
             </Avatar>

@@ -9,9 +9,7 @@ import {
   SliderRange,
   SliderThumb,
 } from "@/components/ui/slider";
-import { Button } from "@/components/ui/button";
-
-import { cn } from "@/lib/utils";
+import IconButton from "@/components/buttons/IconButton";
 
 export default function VolumeControls({
   initialVolume,
@@ -46,24 +44,20 @@ export default function VolumeControls({
   };
 
   return (
-    <div className="flex items-center group/volume basis-56 shrink">
-      <Button
-        variant="ghost"
-        size="icon"
-        className={cn(
-          "[--volume-color:--muted-foreground] hover:[--volume-color:--primary]",
-          "rounded-full hover:transform hover:scale-105 active:transform-none active:brightness-75 hover:bg-transparent px-2"
-        )}
+    <div className="flex items-center group/volume basis-56 shrink gap-2">
+      <IconButton
+        size="md"
+        className="shrink-0"
+        Icon={
+          volumeLevel === 0
+            ? VolumeXIcon
+            : volumeLevel < 0.51
+              ? Volume1Icon
+              : Volume2Icon
+        }
         onClick={volumeLevel === 0 ? unMute : mute}
         aria-label={volumeLevel === 0 ? "Unmute" : "Mute"}
-      >
-        {volumeLevel === 0
-          ? <VolumeXIcon className="h-5 w-5" stroke="hsl(var(--volume-color))"/>
-          : volumeLevel < 0.51 
-            ? <Volume1Icon className="h-5 w-5" stroke="hsl(var(--volume-color))"/>
-            : <Volume2Icon className="h-5 w-5" stroke="hsl(var(--volume-color))"/>
-        }
-      </Button>
+      />
       <Slider
         value={[volumeLevel]}
         onValueChange={handleVolumeChange}

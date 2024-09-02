@@ -4,22 +4,22 @@ import { type AlbumTrack } from "@/app/(player)/album/TrackTable";
 import {
   NumberHeader,
   NumberCell,
-} from "@/app/(player)/album/trackTable/cells/Number";
+} from "@/app/(player)/album/TrackTable/cells/Number";
 import {
   TitleHeader,
   TitleCell,
-} from "@/app/(player)/album/trackTable/cells/Title";
-import { TitleArtistCell } from "@/app/(player)/album/trackTable/cells/TitleArtist";
+} from "@/app/(player)/album/TrackTable/cells/Title";
+import { TitleArtistCell } from "@/app/(player)/album/TrackTable/cells/TitleArtist";
 import {
   ArtistHeader,
   ArtistCell,
-} from "@/app/(player)/album/trackTable/cells/Artist";
-import { IsSavedCell } from "@/app/(player)/album/trackTable/cells/isSaved";
+} from "@/app/(player)/album/TrackTable/cells/Artist";
+import { IsSavedCell } from "@/app/(player)/album/TrackTable/cells/isSaved";
 import {
   DurationHeader,
   DurationCell,
-} from "@/app/(player)/album/trackTable/cells/Duration";
-import { ActionsCell } from "@/app/(player)/album/trackTable/cells/Actions";
+} from "@/app/(player)/album/TrackTable/cells/Duration";
+import { ActionsCell } from "@/app/(player)/album/TrackTable/cells/Actions";
 
 const columnHelper = createColumnHelper<AlbumTrack>();
 

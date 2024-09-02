@@ -8,19 +8,17 @@ import {
   ArrowDownIcon,
   ArrowUpIcon,
   CheckIcon,
-  CirclePlusIcon,
   CopyIcon,
-  EllipsisIcon,
   ExternalLinkIcon,
+  HeartIcon,
   LayoutListIcon,
   ListMusicIcon,
   MonitorIcon,
-  PlusIcon,
 } from "lucide-react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSpotify } from "@fortawesome/free-brands-svg-icons";
 
-import { Input } from "@/components/ui/input";
+import SearchInput from "@/components/SearchInput";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -37,6 +35,8 @@ import {
 import { Button } from "@/components/ui/button";
 import ShuffleButton from "@/components/buttons/ShuffleButton";
 import PlayPauseButton from "@/components/buttons/PlayPauseButton";
+import HeartButton from "@/components/buttons/HeartButton";
+import MoreOptionsButton from "@/components/buttons/MoreOptionsButton";
 
 import { useAppStore } from "@/lib/stores/AppStoreProvider";
 import { trpc } from "@/lib/trpc/client";
@@ -46,34 +46,34 @@ type PlaylistControlsProps = {
   name: string;
   type: "playlist";
   id: string;
+  is_saved: boolean;
   uri: `spotify:playlist:${string}`;
-  isFollowing: boolean;
+  view: "list" | "compact";
+  updateView: (newView: "list" | "compact") => void;
   sorting: SortingState;
   toggleSort: (label?: string) => () => void;
   globalFilter: string;
   setGlobalFilter: (value: string) => void;
-  view: "list" | "compact";
-  updateView: (newView: "list" | "compact") => void;
 };
 
 export default function PlaylistControls({
   name,
   type,
   id,
+  is_saved,
   uri,
-  isFollowing,
+  view,
+  updateView,
   sorting,
   toggleSort,
   globalFilter,
   setGlobalFilter,
-  view,
-  updateView,
 }: PlaylistControlsProps) {
   const { player, playbackState } = useAppStore(
     ({ player, playbackState }) => ({ player, playbackState })
   );
   const [shuffleOn, setShuffleOn] = useState(false);
-  const [isSaved, setIsSaved] = useState(isFollowing);
+  const [isSaved, setIsSaved] = useState(is_saved);
 
   const playMutation = trpc.playback.playWithContext.useMutation();
   const shuffleMutation = trpc.playback.toggleShuffle.useMutation();
@@ -160,71 +160,24 @@ export default function PlaylistControls({
           onClick={toggleShuffleOn}
           aria-label={`${shuffleOn ? "Disable" : "Enable"} shuffle for ${name}`}
         />
-        <Button
-          variant="ghost"
-          size="icon"
-          className={cn(
-            "rounded-full hover:transform hover:scale-105 active:transform-none active:brightness-75 hover:bg-transparent",
-            "[--plus-color:--muted-foreground] hover:[--plus-color:--primary]"
-          )}
+        <HeartButton
+          isSaved={isSaved}
           onClick={toggleIsSaved}
           aria-label={isSaved ? "Remove from Library" : "Save to Library"}
-        >
-          <div
-            className={cn(
-              "flex justify-center items-center rounded-full h-6 w-6",
-              isSaved
-                ? "bg-green-500"
-                : "border-2 border-[hsl(var(--plus-color))]"
-            )}
-          >
-            {isSaved ? (
-              <CheckIcon
-                className="h-4 w-4 stroke-[12%]"
-                stroke="hsl(var(--background))"
-              />
-            ) : (
-              <PlusIcon
-                className="h-4 w-4 stroke-[12%]"
-                stroke="hsl(var(--plus-color))"
-              />
-            )}
-          </div>
-        </Button>
+        />
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="rounded-full hover:transform hover:scale-105 active:transform-none active:brightness-75 hover:bg-transparent [--ellipsis-color:--muted-foreground] hover:[--ellipsis-color:--primary]"
-              aria-label={`More options for ${name}`}
-            >
-              <EllipsisIcon
-                className="h-6 w-6"
-                stroke="hsl(var(--ellipsis-color))"
-              />
-            </Button>
+            <MoreOptionsButton aria-label={`More options for ${name}`} />
           </DropdownMenuTrigger>
           <DropdownMenuContent align="start">
             <DropdownMenuGroup>
               <DropdownMenuItem className="flex gap-2" onClick={toggleIsSaved}>
-                {isSaved ? (
-                  <>
-                    <div className="flex justify-center items-center rounded-full h-[18px] w-[18px] bg-green-500">
-                      <CheckIcon
-                        size={12}
-                        strokeWidth={3}
-                        stroke="hsl(var(--background))"
-                      />
-                    </div>
-                    Remove from Your Library
-                  </>
-                ) : (
-                  <>
-                    <CirclePlusIcon size={18} />
-                    Save to Your Library
-                  </>
-                )}
+                <HeartIcon
+                  size={18}
+                  className={cn(isSaved ? "text-green-500" : "")}
+                  {...(isSaved ? { fill: "currentColor" } : {})}
+                />
+                {isSaved ? "Remove from Your Library" : "Save to Your Library"}
               </DropdownMenuItem>
               <DropdownMenuItem className="flex gap-2" disabled>
                 <ListMusicIcon size={18} />
@@ -277,12 +230,10 @@ export default function PlaylistControls({
         </DropdownMenu>
       </div>
       <div className="flex items-center gap-4">
-        <Input
-          type="text"
-          placeholder="Search"
-          className="max-w-40"
-          value={globalFilter}
-          onChange={(evt) => setGlobalFilter(evt.target.value)}
+        <SearchInput
+          inputValue={globalFilter}
+          handleInputChange={(evt) => setGlobalFilter(evt.target.value)}
+          handleClearInput={() => setGlobalFilter("")}
         />
         <DropdownMenu>
           <DropdownMenuTrigger asChild>

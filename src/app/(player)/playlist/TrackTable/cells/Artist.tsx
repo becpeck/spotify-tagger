@@ -1,12 +1,12 @@
 import { type HeaderContext, type CellContext } from "@tanstack/react-table";
 import { Fragment } from "react";
-import { type TrackData } from "@/app/(player)/playlist/TrackTable";
+import { type PlaylistTrack } from "@/app/(player)/playlist/TrackTable";
 import { Button } from "@/components/ui/button";
 import ColumnSortIcon from "@/components/icons/ColumnSortIcon";
 import Link from "@/components/Link";
 import SearchHighlight from "@/components/SearchHighlight";
 
-export function ArtistHeader({ column }: HeaderContext<TrackData, string>) {
+export function ArtistHeader({ column }: HeaderContext<PlaylistTrack, string>) {
   return (
     <Button
       variant="ghost"
@@ -19,7 +19,7 @@ export function ArtistHeader({ column }: HeaderContext<TrackData, string>) {
   );
 }
 
-export function ArtistCell({ row, table }: CellContext<TrackData, string>) {
+export function ArtistCell({ row, table }: CellContext<PlaylistTrack, string>) {
   const { artists } = row.original;
   return (
     <div className="text-muted-foreground truncate whitespace-normal break-all hidden view-compact:@xl:line-clamp-1">

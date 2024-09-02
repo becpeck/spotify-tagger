@@ -23,9 +23,9 @@ type SeekSliderProps = {
 
 export default function SeekSlider(props: SeekSliderProps) {
   const { disabled, duration_ms, paused, position_ms, seek } = props;
-  const [ position, setPosition ] = useState(position_ms);
-  
-  useEffect(()=> {
+  const [position, setPosition] = useState(position_ms);
+
+  useEffect(() => {
     setPosition(position_ms);
   }, [position_ms]);
 
@@ -33,14 +33,14 @@ export default function SeekSlider(props: SeekSliderProps) {
     let interval: NodeJS.Timer;
     if (!paused) {
       interval = setInterval(() => {
-        setPosition(p => p + 1000);
+        setPosition((p) => p + 1000);
       }, 1000);
     }
     return () => clearInterval(interval);
   }, [paused]);
 
   const duration = toDuration(duration_ms);
-  
+
   const durationFormat: DurationFormat = {
     ...(duration.hours > 0
       ? { hours: "numeric", minutes: "2-digit" }
@@ -50,10 +50,11 @@ export default function SeekSlider(props: SeekSliderProps) {
 
   const handleChangeSeekPosition = ([value]: number[]) => setPosition(value!);
 
-  const handleCommitSeekPosition = async ([value]: number[]) => await seek(value!);
+  const handleCommitSeekPosition = async ([value]: number[]) =>
+    await seek(value!);
 
   return (
-    <div className="flex justify-between items-center gap-2 group/seek w-full text-muted-foreground text-xs h-full">
+    <div className="flex justify-between items-center gap-2 group/seek w-full text-muted-foreground text-xs leading-none">
       <div>{toDurationString(position, durationFormat)}</div>
       <Slider
         value={[position]}

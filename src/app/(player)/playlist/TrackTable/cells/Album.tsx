@@ -1,11 +1,11 @@
 import { type HeaderContext, type CellContext } from "@tanstack/react-table";
-import { type TrackData } from "@/app/(player)/playlist/TrackTable";
+import { type PlaylistTrack } from "@/app/(player)/playlist/TrackTable";
 import { Button } from "@/components/ui/button";
 import ColumnSortIcon from "@/components/icons/ColumnSortIcon";
 import Link from "@/components/Link";
 import SearchHighlight from "@/components/SearchHighlight";
 
-export function AlbumHeader({ column }: HeaderContext<TrackData, string>) {
+export function AlbumHeader({ column }: HeaderContext<PlaylistTrack, string>) {
   return (
     <Button
       variant="ghost"
@@ -18,7 +18,7 @@ export function AlbumHeader({ column }: HeaderContext<TrackData, string>) {
   );
 }
 
-export function AlbumCell({ row, table }: CellContext<TrackData, string>) {
+export function AlbumCell({ row, table }: CellContext<PlaylistTrack, string>) {
   const { id, name, type } = row.original.album;
   return (
     <Link

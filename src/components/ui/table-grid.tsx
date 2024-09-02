@@ -65,7 +65,7 @@ const TableRow = React.forwardRef<
   <div
     ref={ref}
     className={cn(
-      "border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted px-2 py-0 grid grid-cols-subgrid col-row [&>*:not(:last-child)]:mr-4",
+      "border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted pl-2 pr-4 grid grid-cols-subgrid col-row [&>*:not(:last-child)]:mr-4",
       className
     )}
     {...props}
@@ -95,7 +95,7 @@ const TableCell = React.forwardRef<
   <div
     ref={ref}
     className={cn(
-      "flex items-center min-w-0 align-middle [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px] grid-table-cell",
+      "flex items-center min-w-0 align-middle [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px] grid-table-cell min-h-8",
       className
     )}
     {...props}

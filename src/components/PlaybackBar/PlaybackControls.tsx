@@ -1,16 +1,12 @@
 "use client";
 
 import {
-  SkipBackIcon,
-  SkipForwardIcon,
-  RepeatIcon,
-  Repeat1Icon,
-} from "lucide-react";
-
-import { Button } from "@/components/ui/button";
-import ShuffleButton from "@/components/buttons/ShuffleButton";
-
+  SkipBackButton,
+  SkipForwardButton,
+} from "@/components/buttons/SkipButton";
 import PlayPauseButton from "@/components/buttons/PlayPauseButton";
+import RepeatButton from "@/components/buttons/RepeatButton";
+import ShuffleButton from "@/components/buttons/ShuffleButton";
 import SeekSlider from "@/components/PlaybackBar/SeekSlider";
 
 import { trpc } from "@/lib/trpc/client";
@@ -34,10 +30,15 @@ export default function PlaybackControls(props: PlaybackControlsProps) {
   const repeatMutation = trpc.playback.cycleRepeat.useMutation();
 
   return (
-    <div className={cn("flex flex-col items-center gap-2", className)}>
-      <div className="flex justify-center items-center gap-2">
+    <div
+      className={cn(
+        "flex flex-col items-center justify-between h-full",
+        className
+      )}
+    >
+      <div className="flex justify-center items-center gap-3">
         <ShuffleButton
-          size="sm"
+          size="lg"
           disabled={!playerState}
           isShuffleOn={playerState.shuffle}
           onClick={() =>
@@ -45,24 +46,13 @@ export default function PlaybackControls(props: PlaybackControlsProps) {
           }
           aria-label={`${playerState.shuffle ? "Disable" : "Enable"} shuffle`}
         />
-        <Button
-          variant="ghost"
-          size="icon"
-          className={cn(
-            "[--back-color:--muted-foreground] hover:[--back-color:--primary]",
-            "rounded-full hover:transform hover:scale-105 active:transform-none active:brightness-75 hover:bg-transparent"
-          )}
+        <SkipBackButton
           disabled={playerState.disallows.skipping_prev}
           onClick={async () => await player.previousTrack()}
           aria-label="Skip Back"
-        >
-          <SkipBackIcon
-            className="h-5 w-5"
-            stroke="hsl(var(--back-color))"
-            fill="hsl(var(--back-color))"
-          />
-        </Button>
+        />
         <PlayPauseButton
+          size="lg"
           isPlaying={!playerState.paused}
           disabled={
             playerState.paused
@@ -72,55 +62,20 @@ export default function PlaybackControls(props: PlaybackControlsProps) {
           onClick={async () => await player.togglePlay()}
           aria-label={playerState.paused ? "Play" : "Pause"}
         />
-        <Button
-          variant="ghost"
-          size="icon"
-          className={cn(
-            "[--forward-color:--muted-foreground] hover:[--forward-color:--primary]",
-            "rounded-full hover:transform hover:scale-105 active:transform-none active:brightness-75 hover:bg-transparent"
-          )}
+        <SkipForwardButton
           disabled={playerState.disallows.skipping_next}
           onClick={async () => await player.nextTrack()}
           aria-label="Skip Forward"
-        >
-          <SkipForwardIcon
-            className="h-5 w-5"
-            stroke="hsl(var(--forward-color))"
-            fill="hsl(var(--forward-color))"
-          />
-        </Button>
-        <Button
-          variant="ghost"
-          size="icon"
-          className={cn(
-            playerState.repeat_mode === 0
-              ? "[--repeat-color:--muted-foreground] hover:[--repeat-color:--primary]"
-              : "[--repeat-color:--green]",
-            "rounded-full hover:transform hover:scale-105 active:transform-none active:brightness-75 hover:bg-transparent"
-          )}
+        />
+        <RepeatButton
+          repeat_mode={playerState.repeat_mode}
           disabled={
             // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
             playerState.disallows.toggling_repeat_context ||
             playerState.disallows.toggling_repeat_track
           }
           onClick={() => repeatMutation.mutateAsync(playerState.repeat_mode)}
-          aria-label={
-            playerState.repeat_mode === 2
-              ? "Turn off repeat"
-              : `Set repeat to ${
-                  playerState.repeat_mode === 0 ? "context" : "track"
-                }`
-          }
-        >
-          {playerState.repeat_mode === 2 ? (
-            <Repeat1Icon
-              className="h-5 w-5"
-              stroke="hsl(var(--repeat-color))"
-            />
-          ) : (
-            <RepeatIcon className="h-5 w-5" stroke="hsl(var(--repeat-color))" />
-          )}
-        </Button>
+        />
       </div>
       <SeekSlider
         disabled={playerState.disallows.seeking}
