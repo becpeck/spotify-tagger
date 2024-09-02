@@ -47,7 +47,7 @@ export default function VolumeControls({
     <div className="flex items-center group/volume basis-56 shrink">
       <IconButton
         size="md"
-        className="mx-2"
+        className="mr-2"
         Icon={
           volumeLevel === 0
             ? VolumeXIcon

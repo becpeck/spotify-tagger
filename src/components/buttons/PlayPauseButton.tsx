@@ -9,7 +9,8 @@ import { cn } from "@/lib/utils";
 const playPauseButtonVariants = cva("", {
   variants: {
     variant: {
-      cutout: "bg-green-500 hover:bg-green-500 text-background",
+      cutout:
+        "bg-green-500 hover:bg-green-500 text-background hover:text-background",
       normal: "text-muted-foreground hover:text-primary",
     },
     size: { sm: "", md: "", lg: "", xl: "" },

@@ -35,7 +35,7 @@ export default function PlaybackBar() {
           }}
           playerState={playbackState}
         />
-        <div className="grow max-w-[30%] flex justify-end items-center">
+        <div className="grow max-w-[30%] flex justify-end items-center gap-2">
           <QueueButton />
           <DeviceButton />
           <VolumeControls
