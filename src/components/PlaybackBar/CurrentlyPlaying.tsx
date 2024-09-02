@@ -29,7 +29,7 @@ export default function CurrentlyPlaying({
     <div className={cn("flex items-center gap-4", className)}>
       {image ? (
         <Image
-          className="rounded-sm w-[50px] h-[50px]"
+          className="w-[50px] h-[50px] rounded-sm"
           src={image.url}
           alt={`${album.name} cover`}
           width={50}

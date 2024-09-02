@@ -38,7 +38,7 @@ export default function PlaylistInfo({
           width={250}
           alt={`${name} cover`}
           priority
-          className="h-[250px] w-[250px]"
+          className="h-[250px] w-[250px] rounded-sm"
         />
       ) : null}
       <div className="shrink">
