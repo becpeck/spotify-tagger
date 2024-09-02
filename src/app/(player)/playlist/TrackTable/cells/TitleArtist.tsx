@@ -1,7 +1,7 @@
 import Image from "next/image";
 import { type HeaderContext, type CellContext } from "@tanstack/react-table";
 import { Fragment } from "react";
-import { type TrackData } from "@/app/(player)/playlist/TrackTable";
+import { type PlaylistTrack } from "@/app/(player)/playlist/TrackTable";
 import { type ExtendedCellContext } from "@/app/(player)/playlist/TrackTable/TrackTableRow";
 import { Button } from "@/components/ui/button";
 import ColumnSortIcon from "@/components/icons/ColumnSortIcon";
@@ -10,7 +10,7 @@ import SearchHighlight from "@/components/SearchHighlight";
 
 export function TitleArtistHeader({
   table,
-}: HeaderContext<TrackData, unknown>) {
+}: HeaderContext<PlaylistTrack, unknown>) {
   const toggleSorting = () => {
     const sorting = table.getState().sorting;
     switch (true) {
@@ -43,9 +43,9 @@ export function TitleArtistHeader({
   );
 }
 
-export function TitleArtistCell(props: CellContext<TrackData, unknown>) {
+export function TitleArtistCell(props: CellContext<PlaylistTrack, unknown>) {
   const { row, table, isPlaybackContext } = props as ExtendedCellContext<
-    TrackData,
+    PlaylistTrack,
     string
   >;
   const {

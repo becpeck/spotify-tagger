@@ -1,11 +1,13 @@
 import { type HeaderContext, type CellContext } from "@tanstack/react-table";
 import { ClockIcon } from "lucide-react";
-import { type TrackData } from "@/app/(player)/playlist/TrackTable";
+import { type PlaylistTrack } from "@/app/(player)/playlist/TrackTable";
 import { Button } from "@/components/ui/button";
 import ColumnSortIcon from "@/components/icons/ColumnSortIcon";
 import { toDuration, toDurationString } from "@/utils/timeUtils";
 
-export function DurationHeader({ column }: HeaderContext<TrackData, number>) {
+export function DurationHeader({
+  column,
+}: HeaderContext<PlaylistTrack, number>) {
   return (
     <Button
       variant="ghost"
@@ -19,7 +21,7 @@ export function DurationHeader({ column }: HeaderContext<TrackData, number>) {
   );
 }
 
-export function DurationCell({ row }: CellContext<TrackData, number>) {
+export function DurationCell({ row }: CellContext<PlaylistTrack, number>) {
   const duration = toDuration(row.getValue("duration_ms"));
   return (
     <div className="w-full text-right text-muted-foreground tabular-nums">

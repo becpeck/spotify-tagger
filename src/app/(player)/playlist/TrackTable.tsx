@@ -28,7 +28,7 @@ import TrackTableRow from "@/app/(player)/playlist/TrackTable/TrackTableRow";
 
 import { cn } from "@/lib/utils";
 
-export interface TrackData {
+export interface PlaylistTrack {
   number: number;
   track: {
     id: string;
@@ -70,8 +70,8 @@ declare module "@tanstack/table-core" {
 }
 
 type TrackTableProps = {
-  trackDataArr: TrackData[];
-  playlist: TableMeta<TrackData>["playlist"];
+  trackDataArr: PlaylistTrack[];
+  playlist: TableMeta<PlaylistTrack>["playlist"];
 };
 
 export default function TrackTable({
@@ -122,12 +122,12 @@ export default function TrackTable({
         id={playlist!.id}
         uri={playlist!.uri}
         isFollowing={playlist!.isFollowing} // PLACEHOLDER for saved playlists store
+        view={view}
+        updateView={updateView}
         sorting={sorting}
         toggleSort={toggleSort}
         globalFilter={globalFilter}
         setGlobalFilter={setGlobalFilter}
-        view={view}
-        updateView={updateView}
       />
       <div className="border @container">
         <Table

@@ -1,7 +1,7 @@
 import { type CellContext } from "@tanstack/react-table";
 import { HashIcon } from "lucide-react";
 
-import { type TrackData } from "@/app/(player)/playlist/TrackTable";
+import { type PlaylistTrack } from "@/app/(player)/playlist/TrackTable";
 import { type ExtendedCellContext } from "@/app/(player)/playlist/TrackTable/TrackTableRow";
 import PlayPauseButton from "@/components/buttons/PlayPauseButton";
 
@@ -18,9 +18,9 @@ export function NumberHeader() {
   );
 }
 
-export function NumberCell(props: CellContext<TrackData, number>) {
+export function NumberCell(props: CellContext<PlaylistTrack, number>) {
   const { row, table, isPlaybackContext } = props as ExtendedCellContext<
-    TrackData,
+    PlaylistTrack,
     number
   >;
   const { playbackState, player } = useAppStore(

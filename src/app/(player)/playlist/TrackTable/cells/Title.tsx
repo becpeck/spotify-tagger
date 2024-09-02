@@ -1,12 +1,12 @@
 import { type HeaderContext, type CellContext } from "@tanstack/react-table";
-import { type TrackData } from "@/app/(player)/playlist/TrackTable";
+import { type PlaylistTrack } from "@/app/(player)/playlist/TrackTable";
 import { type ExtendedCellContext } from "@/app/(player)/playlist/TrackTable/TrackTableRow";
 import { Button } from "@/components/ui/button";
 import ColumnSortIcon from "@/components/icons/ColumnSortIcon";
 import Link from "@/components/Link";
 import SearchHighlight from "@/components/SearchHighlight";
 
-export function TitleHeader({ column }: HeaderContext<TrackData, string>) {
+export function TitleHeader({ column }: HeaderContext<PlaylistTrack, string>) {
   return (
     <Button
       variant="ghost"
@@ -19,9 +19,9 @@ export function TitleHeader({ column }: HeaderContext<TrackData, string>) {
   );
 }
 
-export function TitleCell(props: CellContext<TrackData, string>) {
+export function TitleCell(props: CellContext<PlaylistTrack, string>) {
   const { row, table, isPlaybackContext } = props as ExtendedCellContext<
-    TrackData,
+    PlaylistTrack,
     string
   >;
   const { id, name, type } = row.original.track;

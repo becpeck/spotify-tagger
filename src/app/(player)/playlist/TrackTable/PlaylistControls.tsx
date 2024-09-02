@@ -48,12 +48,12 @@ type PlaylistControlsProps = {
   id: string;
   uri: `spotify:playlist:${string}`;
   isFollowing: boolean;
+  view: "list" | "compact";
+  updateView: (newView: "list" | "compact") => void;
   sorting: SortingState;
   toggleSort: (label?: string) => () => void;
   globalFilter: string;
   setGlobalFilter: (value: string) => void;
-  view: "list" | "compact";
-  updateView: (newView: "list" | "compact") => void;
 };
 
 export default function PlaylistControls({
@@ -62,12 +62,12 @@ export default function PlaylistControls({
   id,
   uri,
   isFollowing,
+  view,
+  updateView,
   sorting,
   toggleSort,
   globalFilter,
   setGlobalFilter,
-  view,
-  updateView,
 }: PlaylistControlsProps) {
   const { player, playbackState } = useAppStore(
     ({ player, playbackState }) => ({ player, playbackState })

@@ -8,14 +8,14 @@ import {
   type RowData,
 } from "@tanstack/react-table";
 import { TableRow, TableCell } from "@/components/ui/table-grid";
-import { type TrackData } from "@/app/(player)/playlist/TrackTable";
+import { type PlaylistTrack } from "@/app/(player)/playlist/TrackTable";
 
 import { trpc } from "@/lib/trpc/client";
 import { useAppStore } from "@/lib/stores/AppStoreProvider";
 
 interface TrackTableRowProps {
-  row: Row<TrackData>;
-  trackData: TrackData;
+  row: Row<PlaylistTrack>;
+  trackData: PlaylistTrack;
   playlistUri: `spotify:playlist:${string}`;
 }
 

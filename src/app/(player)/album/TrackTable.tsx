@@ -17,9 +17,9 @@ import {
 import { DiscIcon } from "lucide-react";
 
 import useView from "@/lib/hooks/useView";
-import columns from "@/app/(player)/album/trackTable/trackColumns";
-import AlbumControls from "@/app/(player)/album/trackTable/AlbumControls";
-import TrackTableRow from "@/app/(player)/album/trackTable/TrackTableRow";
+import columns from "@/app/(player)/album/TrackTable/trackColumns";
+import AlbumControls from "@/app/(player)/album/TrackTable/AlbumControls";
+import TrackTableRow from "@/app/(player)/album/TrackTable/TrackTableRow";
 
 import { cn } from "@/lib/utils";
 

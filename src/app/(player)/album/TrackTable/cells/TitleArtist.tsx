@@ -1,7 +1,7 @@
 import { type CellContext } from "@tanstack/react-table";
 import { Fragment } from "react";
 import { type AlbumTrack } from "@/app/(player)/album/TrackTable";
-import { type ExtendedCellContext } from "@/app/(player)/album/trackTable/TrackTableRow";
+import { type ExtendedCellContext } from "@/app/(player)/album/TrackTable/TrackTableRow";
 import Link from "@/components/Link";
 
 export function TitleArtistCell(props: CellContext<AlbumTrack, unknown>) {

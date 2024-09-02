@@ -1,7 +1,7 @@
 import { type CellContext } from "@tanstack/react-table";
 import { type AlbumTrack } from "@/app/(player)/album/TrackTable";
-import { type ExtendedCellContext } from "@/app/(player)/album/trackTable/TrackTableRow";
-import ActionsMenu from "@/app/(player)/album/trackTable/ActionsMenu";
+import { type ExtendedCellContext } from "@/app/(player)/album/TrackTable/TrackTableRow";
+import ActionsMenu from "@/app/(player)/album/TrackTable/ActionsMenu";
 
 import { trpc } from "@/lib/trpc/client";
 

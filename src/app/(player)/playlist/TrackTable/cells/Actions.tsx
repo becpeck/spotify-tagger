@@ -1,13 +1,13 @@
 import { type CellContext } from "@tanstack/react-table";
-import { type TrackData } from "@/app/(player)/playlist/TrackTable";
+import { type PlaylistTrack } from "@/app/(player)/playlist/TrackTable";
 import { type ExtendedCellContext } from "@/app/(player)/playlist/TrackTable/TrackTableRow";
 import ActionsMenu from "@/app/(player)/playlist/TrackTable/ActionsMenu";
 
 import { trpc } from "@/lib/trpc/client";
 
-export function ActionsCell(props: CellContext<TrackData, unknown>) {
+export function ActionsCell(props: CellContext<PlaylistTrack, unknown>) {
   const { row, table, isSaved, toggleIsSaved } = props as ExtendedCellContext<
-    TrackData,
+    PlaylistTrack,
     null
   >;
   const { album, artists, track } = row.original;

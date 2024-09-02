@@ -1,9 +1,9 @@
 import { type HeaderContext, type CellContext } from "@tanstack/react-table";
-import { type TrackData } from "@/app/(player)/playlist/TrackTable";
+import { type PlaylistTrack } from "@/app/(player)/playlist/TrackTable";
 import { Button } from "@/components/ui/button";
 import ColumnSortIcon from "@/components/icons/ColumnSortIcon";
 
-export function DateHeader({ column }: HeaderContext<TrackData, Date>) {
+export function DateHeader({ column }: HeaderContext<PlaylistTrack, Date>) {
   return (
     <Button
       variant="ghost"
@@ -16,7 +16,7 @@ export function DateHeader({ column }: HeaderContext<TrackData, Date>) {
   );
 }
 
-export function DateCell({ row }: CellContext<TrackData, Date>) {
+export function DateCell({ row }: CellContext<PlaylistTrack, Date>) {
   return (
     <div className="text-muted-foreground hidden view-compact:@5xl:block view-list:@3xl:block">
       {(row.getValue("added_at") satisfies Date).toLocaleDateString("en-US", {

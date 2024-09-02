@@ -1,12 +1,12 @@
 import { type CellContext } from "@tanstack/react-table";
-import { type TrackData } from "@/app/(player)/playlist/TrackTable";
+import { type PlaylistTrack } from "@/app/(player)/playlist/TrackTable";
 import { type ExtendedCellContext } from "@/app/(player)/playlist/TrackTable/TrackTableRow";
 import HeartButton from "@/components/buttons/HeartButton";
 import { cn } from "@/lib/utils";
 
-export function IsSavedCell(props: CellContext<TrackData, boolean>) {
+export function IsSavedCell(props: CellContext<PlaylistTrack, boolean>) {
   const { isSaved, toggleIsSaved } = props as ExtendedCellContext<
-    TrackData,
+    PlaylistTrack,
     boolean
   >;
   return (
