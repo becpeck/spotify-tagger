@@ -6,11 +6,11 @@ import {
   AlbumTypeSchema,
   AlbumURISchema,
   AvailableMarketsSchema,
+  CountrySchema,
   ExternalIdsSchema,
   ExternalUrlsSchema,
   ImagesSchema,
   LinkedFromSchema,
-  MarketSchema,
   RestrictionsSchema,
   SimplifiedArtistObjectSchema,
   TrackIdSchema,
@@ -29,7 +29,7 @@ const getAlbum = makeEndpoint({
   alias: "getAlbum",
   parameters: parametersBuilder()
     .addQueries({
-      market: MarketSchema.optional(),
+      market: CountrySchema.optional(),
     })
     .build(),
   response: z.object({

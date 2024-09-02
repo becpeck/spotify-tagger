@@ -38,7 +38,7 @@ export const UserURISchema = z.custom<`spotify:${z.infer<
   /^spotify:user:[a-zA-Z0-9]+$/g.test(String(str))
 );
 
-export const CountrySchema = z.string();
+export const CountrySchema = z.string().length(2);
 
 export const ExplicitContentSchema = z.object({
   filter_enabled: z.boolean(),
@@ -78,9 +78,7 @@ export const LinkedFromSchema = z.object({
   uri: TrackURISchema,
 });
 
-export const MarketSchema = z.string().length(2);
-
-export const AvailableMarketsSchema = z.array(MarketSchema);
+export const AvailableMarketsSchema = z.array(CountrySchema);
 
 export const ProductSchema = z.union([
   z.literal("premium"),
@@ -107,41 +105,12 @@ export const SimplifiedArtistObjectSchema = z.object({
   uri: z.string(),
 });
 
-export const TrackObjectSchema = z.object({
-  album: z.object({
-    album_type: z.union([
-      z.literal("album"),
-      z.literal("single"),
-      z.literal("compilation"),
-    ]),
-    total_tracks: z.number().int(),
-    available_markets: z.array(CountrySchema),
-    external_urls: ExternalUrlsSchema,
-    href: z.string(),
-    id: AlbumIdSchema,
-    images: ImagesSchema,
-    name: z.string(),
-    release_date: z.string(),
-    release_date_precision: z.union([
-      z.literal("year"),
-      z.literal("month"),
-      z.literal("day"),
-    ]),
-    restrictions: RestrictionsSchema.optional(),
-    type: AlbumTypeSchema,
-    uri: AlbumURISchema,
-    artists: z.array(SimplifiedArtistObjectSchema),
-  }),
+export const SimplifiedTrackObjectSchema = z.object({
   artists: z.array(SimplifiedArtistObjectSchema),
-  available_markets: z.array(CountrySchema),
-  disc_number: z.number().int(),
-  duration_ms: z.number().int(),
+  available_markets: AvailableMarketsSchema,
+  disc_number: z.number(),
+  duration_ms: z.number(),
   explicit: z.boolean(),
-  external_ids: z.object({
-    isrc: z.string().optional(),
-    ean: z.string().optional(),
-    upc: z.string().optional(),
-  }),
   external_urls: ExternalUrlsSchema,
   href: z.string(),
   id: TrackIdSchema,
@@ -149,10 +118,44 @@ export const TrackObjectSchema = z.object({
   linked_from: LinkedFromSchema.optional(),
   restrictions: RestrictionsSchema.optional(),
   name: z.string(),
-  popularity: z.number().int().min(0).max(100),
   preview_url: z.string().nullable(),
-  track_number: z.number().int(),
+  track_number: z.number(),
   type: TrackTypeSchema,
   uri: TrackURISchema,
   is_local: z.boolean(),
 });
+
+export const TrackObjectSchema = SimplifiedTrackObjectSchema.and(
+  z.object({
+    album: z.object({
+      album_type: z.union([
+        z.literal("album"),
+        z.literal("single"),
+        z.literal("compilation"),
+      ]),
+      total_tracks: z.number().int(),
+      available_markets: AvailableMarketsSchema,
+      external_urls: ExternalUrlsSchema,
+      href: z.string(),
+      id: AlbumIdSchema,
+      images: ImagesSchema,
+      name: z.string(),
+      release_date: z.string(),
+      release_date_precision: z.union([
+        z.literal("year"),
+        z.literal("month"),
+        z.literal("day"),
+      ]),
+      restrictions: RestrictionsSchema.optional(),
+      type: AlbumTypeSchema,
+      uri: AlbumURISchema,
+      artists: z.array(SimplifiedArtistObjectSchema),
+    }),
+    external_ids: z.object({
+      isrc: z.string().optional(),
+      ean: z.string().optional(),
+      upc: z.string().optional(),
+    }),
+    popularity: z.number().int().min(0).max(100),
+  })
+);
