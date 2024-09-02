@@ -33,7 +33,7 @@ export default function PlaybackControls(props: PlaybackControlsProps) {
     <div className={cn("flex flex-col items-center gap-2", className)}>
       <div className="flex justify-center items-center gap-3">
         <ShuffleButton
-          size="md"
+          size="lg"
           disabled={!playerState}
           isShuffleOn={playerState.shuffle}
           onClick={() =>

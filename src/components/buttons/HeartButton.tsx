@@ -1,63 +1,37 @@
 import { forwardRef } from "react";
 import { HeartIcon } from "lucide-react";
 import { cva, type VariantProps } from "class-variance-authority";
-
+import IconButton, {
+  type IconButtonProps,
+} from "@/components/buttons/IconButton";
 import { cn } from "@/lib/utils";
 
-const heartButtonVariants = cva(
-  "inline-flex items-center justify-center rounded-full transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 hover:transform hover:scale-105 active:transform-none active:brightness-75",
-  {
-    variants: {
-      isSaved: {
-        true: "text-green-500",
-        false: "text-muted-foreground hover:text-primary",
-      },
-      size: {
-        sm: "p-1",
-        lg: "h-9 w-9",
-      },
-    },
-    defaultVariants: {
-      size: "lg",
-    },
-  }
-);
-
-const heartIconVariants = cva("", {
+const heartButtonVariants = cva("", {
   variants: {
-    size: {
-      sm: "h-4 w-4",
-      lg: "h-6 w-6",
+    isSaved: {
+      true: "text-green-500 hover:text-green-500",
+      false: "text-muted-foreground hover:text-primary",
     },
-  },
-  defaultVariants: {
-    size: "lg",
   },
 });
 
 export interface HeartButtonProps
-  extends React.ButtonHTMLAttributes<HTMLButtonElement>,
-    VariantProps<typeof heartButtonVariants>,
-    VariantProps<typeof heartIconVariants> {
+  extends Omit<IconButtonProps, "Icon">,
+    VariantProps<typeof heartButtonVariants> {
   isSaved: boolean;
-  size?: "sm" | "lg";
 }
 
 const HeartButton = forwardRef<HTMLButtonElement, HeartButtonProps>(
-  ({ className, isSaved, size, ...props }, ref) => {
-    return (
-      <button
-        className={cn(heartButtonVariants({ isSaved, size }), className)}
-        ref={ref}
-        {...props}
-      >
-        <HeartIcon
-          className={cn(heartIconVariants({ size }))}
-          {...(isSaved ? { fill: "currentColor" } : {})}
-        />
-      </button>
-    );
-  }
+  ({ isSaved, className, size = "xl", ...props }, ref) => (
+    <IconButton
+      {...props}
+      ref={ref}
+      Icon={HeartIcon}
+      size={size}
+      className={cn(heartButtonVariants({ isSaved }), className)}
+      fill={isSaved}
+    />
+  )
 );
 HeartButton.displayName = "HeartButton";
 
