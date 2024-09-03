@@ -7,6 +7,10 @@ const meRouter = createTRPCRouter({
   getInitStoreProps: protectedProcedure.query(async ({ ctx }) => {
     const userPlaylists = await ctx.spotify.getMyPlaylists();
     return {
+      user: {
+        id: ctx.session.user.spotifyId,
+        name: ctx.session.user.name,
+      },
       userPlaylists: userPlaylists.items.map((playlist) => ({
         collaborative: playlist.collaborative,
         id: playlist.id,

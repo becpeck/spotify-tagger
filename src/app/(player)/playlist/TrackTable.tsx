@@ -10,7 +10,6 @@ import {
   TableRow,
 } from "@/components/ui/table-grid";
 import {
-  type RowData,
   type SortingState,
   flexRender,
   getCoreRowModel,
@@ -57,16 +56,6 @@ export interface PlaylistTrack {
   uri: `spotify:track:${string}`;
 }
 
-declare module "@tanstack/table-core" {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  interface TableMeta<TData extends RowData> {
-    userPlaylists: Array<{
-      id: string;
-      name: string;
-    }>;
-  }
-}
-
 type TrackTableProps = {
   tracks: PlaylistTrack[];
   playlist: {
@@ -94,12 +83,6 @@ export default function TrackTable({ tracks, playlist }: TrackTableProps) {
   const table = useReactTable({
     data: tracks,
     columns,
-    meta: {
-      userPlaylists: Array.from({ length: 10 }, (_, i) => ({
-        id: `${i + 1}`,
-        name: `Playlist ${i + 1}`, // PLACRHOLDER for saved playlists store
-      })),
-    },
     globalFilterFn: "includesString",
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),

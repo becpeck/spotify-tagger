@@ -65,12 +65,6 @@ export default function TrackTable({ tracks, album }: TrackTableProps) {
   const table = useReactTable({
     data: tracks,
     columns,
-    meta: {
-      userPlaylists: Array.from({ length: 10 }, (_, i) => ({
-        id: `${i + 1}`,
-        name: `Playlist ${i + 1}`, // PLACRHOLDER for saved playlists store
-      })),
-    },
     getCoreRowModel: getCoreRowModel(),
     onColumnVisibilityChange,
     state: {

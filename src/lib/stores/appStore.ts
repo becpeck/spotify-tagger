@@ -16,6 +16,7 @@ export type AppStore = PlayerSlice & PlaybackStateSlice & UserLibrarySlice;
 
 export interface InitAppStoreProps {
   userPlaylists: UserLibrarySlice["userPlaylists"];
+  user: UserLibrarySlice["user"];
 }
 
 export const createAppStore = (initProps: InitAppStoreProps) => {

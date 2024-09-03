@@ -23,6 +23,10 @@ interface UserPlaylist {
 }
 
 export interface UserLibrarySlice {
+  user: {
+    id: string;
+    name: string;
+  };
   userPlaylists: UserPlaylist[];
   setUserPlaylists: (userPlaylists: UserPlaylist[]) => void;
 }
@@ -30,8 +34,9 @@ export interface UserLibrarySlice {
 export const createUserLibrarySlice: (
   initProps: InitAppStoreProps
 ) => StateCreator<AppStore, [], [], UserLibrarySlice> =
-  ({ userPlaylists }) =>
+  ({ userPlaylists, user }) =>
   (set) => ({
-    userPlaylists: userPlaylists,
+    user,
+    userPlaylists,
     setUserPlaylists: (userPlaylists) => set({ userPlaylists }),
   });
