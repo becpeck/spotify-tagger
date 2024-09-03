@@ -12,9 +12,12 @@ import checkSavedTracks from "@/server/spotifyWebApi/me/endpoints/checkSavedTrac
 import saveTracks from "@/server/spotifyWebApi/me/endpoints/saveTracks";
 import removeSavedTracks from "@/server/spotifyWebApi/me/endpoints/removeSavedTracks";
 
+import getMyAlbums from "@/server/spotifyWebApi/me/endpoints/getMyAlbums";
 import checkSavedAlbums from "@/server/spotifyWebApi/me/endpoints/checkSavedAlbums";
 import saveAlbums from "@/server/spotifyWebApi/me/endpoints/saveAlbums";
 import removeSavedAlbums from "@/server/spotifyWebApi/me/endpoints/removeSavedAlbums";
+
+import getMyPlaylists from "@/server/spotifyWebApi/me/endpoints/getMyPlaylists";
 
 const meApi = apiBuilder()
   .addEndpoint(getMyProfile)
@@ -26,9 +29,11 @@ const meApi = apiBuilder()
   .addEndpoint(checkSavedTracks)
   .addEndpoint(saveTracks)
   .addEndpoint(removeSavedTracks)
+  .addEndpoint(getMyAlbums)
   .addEndpoint(checkSavedAlbums)
   .addEndpoint(saveAlbums)
   .addEndpoint(removeSavedAlbums)
+  .addEndpoint(getMyPlaylists)
   .build();
 
 export default meApi;
