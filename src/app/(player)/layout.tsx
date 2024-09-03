@@ -1,7 +1,10 @@
 import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
 import { auth } from "@/server/auth/auth";
-import AuthenticatedProviders from "@/app/(player)/AuthenticatedProviders";
+
+import { trpc } from "@/lib/trpc/server";
+import TRPCReactProvider from "@/lib/trpc/TRPCReactProvider";
+import { AppStoreProvider } from "@/lib/stores/AppStoreProvider";
 
 import {
   ResizableHandle,
@@ -25,25 +28,29 @@ export default async function PlayerLayout({
     redirect("/login");
   }
 
+  const initProps = await trpc.me.getInitStoreProps.query();
+
   return (
-    <AuthenticatedProviders cookies={cookies().toString()}>
-      <div className="flex flex-col h-[100vh] bg-background font-sans antialiased">
-        <Header session={session} />
-        <ResizablePanelGroup
-          direction="horizontal"
-          className="h-full w-full border"
-        >
-          <ResizablePanel defaultSize={15} minSize={10}>
-            <Sidebar />
-          </ResizablePanel>
-          <ResizableHandle withHandle />
-          <ResizablePanel defaultSize={85}>
-            <ScrollArea className="w-full h-full">{children}</ScrollArea>
-          </ResizablePanel>
-        </ResizablePanelGroup>
-        <PlaybackBar />
-        <PlaybackScript token={session.access_token} />
-      </div>
-    </AuthenticatedProviders>
+    <TRPCReactProvider cookies={cookies().toString()}>
+      <AppStoreProvider initProps={initProps}>
+        <div className="flex flex-col h-[100vh] bg-background font-sans antialiased">
+          <Header session={session} />
+          <ResizablePanelGroup
+            direction="horizontal"
+            className="h-full w-full border"
+          >
+            <ResizablePanel defaultSize={15} minSize={10}>
+              <Sidebar />
+            </ResizablePanel>
+            <ResizableHandle withHandle />
+            <ResizablePanel defaultSize={85}>
+              <ScrollArea className="w-full h-full">{children}</ScrollArea>
+            </ResizablePanel>
+          </ResizablePanelGroup>
+          <PlaybackBar />
+          <PlaybackScript token={session.access_token} />
+        </div>
+      </AppStoreProvider>
+    </TRPCReactProvider>
   );
 }

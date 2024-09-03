@@ -3,7 +3,11 @@ import "client-only";
 import { createContext, useRef, useContext } from "react";
 import { useStore } from "zustand";
 
-import { type AppStore, createAppStore } from "@/lib/stores/appStore";
+import {
+  type AppStore,
+  type InitAppStoreProps,
+  createAppStore,
+} from "@/lib/stores/appStore";
 
 export type AppStoreApi = ReturnType<typeof createAppStore>;
 
@@ -13,12 +17,16 @@ export const AppStoreContext = createContext<AppStoreApi | undefined>(
 
 export interface AppStoreProviderProps {
   children: React.ReactNode;
+  initProps: InitAppStoreProps;
 }
 
-export const AppStoreProvider = ({ children }: AppStoreProviderProps) => {
+export const AppStoreProvider = ({
+  children,
+  initProps,
+}: AppStoreProviderProps) => {
   const storeRef = useRef<AppStoreApi>();
   if (!storeRef.current) {
-    storeRef.current = createAppStore();
+    storeRef.current = createAppStore(initProps);
   }
 
   return (
