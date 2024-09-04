@@ -59,9 +59,22 @@ export interface PlaylistTrack {
 type TrackTableProps = {
   tracks: PlaylistTrack[];
   playlist: {
+    collaborative: boolean;
     id: string;
+    images:
+      | {
+          url: string;
+          height: number | null;
+          width: number | null;
+        }[];
     is_saved: boolean;
     name: string;
+    owner: {
+      display_name: string | null;
+      id: string;
+      type: "user";
+      uri: `spotify:user:${string}`;
+    };
     type: "playlist";
     uri: `spotify:playlist:${string}`;
   };
@@ -100,7 +113,7 @@ export default function TrackTable({ tracks, playlist }: TrackTableProps) {
   return (
     <>
       <PlaylistControls
-        {...playlist}
+        playlist={playlist}
         view={view}
         updateView={updateView}
         sorting={sorting}

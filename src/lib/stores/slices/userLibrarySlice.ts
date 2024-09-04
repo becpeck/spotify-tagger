@@ -28,15 +28,27 @@ export interface UserLibrarySlice {
     name: string;
   };
   userPlaylists: UserPlaylist[];
-  setUserPlaylists: (userPlaylists: UserPlaylist[]) => void;
+  addUserPlaylist: (userPlaylist: UserPlaylist) => void;
+  removeUserPlaylist: (playlistId: string) => void;
 }
 
 export const createUserLibrarySlice: (
   initProps: InitAppStoreProps
 ) => StateCreator<AppStore, [], [], UserLibrarySlice> =
   ({ userPlaylists, user }) =>
-  (set) => ({
+  (set, get) => ({
     user,
     userPlaylists,
-    setUserPlaylists: (userPlaylists) => set({ userPlaylists }),
+    addUserPlaylist: (userPlaylist) => {
+      const { userPlaylists } = get();
+      if (!userPlaylists.some((playlist) => playlist.id === userPlaylist.id)) {
+        set({ userPlaylists: [userPlaylist, ...userPlaylists] });
+      }
+    },
+    removeUserPlaylist: (playlistId) =>
+      set({
+        userPlaylists: userPlaylists.filter(
+          (playlist) => playlist.id !== playlistId
+        ),
+      }),
   });

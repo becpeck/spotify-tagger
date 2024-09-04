@@ -7,6 +7,7 @@ export default async function Playlist({ params }: { params: { id: string } }) {
   const playlist = await trpc.playlist.getPlaylistData.query(params.id);
 
   const {
+    collaborative,
     description,
     followers,
     id,
@@ -72,7 +73,19 @@ export default async function Playlist({ params }: { params: { id: string } }) {
         total={total_tracks}
         duration_ms={duration_ms}
       />
-      <TrackTable tracks={data} playlist={{ id, is_saved, name, type, uri }} />
+      <TrackTable
+        tracks={data}
+        playlist={{
+          collaborative,
+          id,
+          images,
+          is_saved,
+          name,
+          owner,
+          type,
+          uri,
+        }}
+      />
     </main>
   );
 }
