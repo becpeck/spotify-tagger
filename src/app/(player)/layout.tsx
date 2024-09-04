@@ -33,7 +33,7 @@ export default async function PlayerLayout({
   return (
     <TRPCReactProvider cookies={cookies().toString()}>
       <AppStoreProvider initProps={initProps}>
-        <div className="flex flex-col h-[100vh] bg-background font-sans antialiased">
+        <div className="flex flex-col h-[100vh]">
           <Header session={session} />
           <ResizablePanelGroup
             direction="horizontal"
