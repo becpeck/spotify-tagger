@@ -40,39 +40,64 @@ import { trpc } from "@/lib/trpc/client";
 import { cn } from "@/lib/utils";
 
 type AlbumControlsProps = {
-  name: string;
-  type: "album";
-  id: string;
-  is_saved: boolean;
-  uri: `spotify:album:${string}`;
+  album: {
+    artists: {
+      id: string;
+      name: string;
+    }[];
+    id: string;
+    images: {
+      url: string;
+      height: number | null;
+      width: number | null;
+    }[];
+    is_saved: boolean;
+    name: string;
+    type: "album";
+    uri: `spotify:album:${string}`;
+  };
   view: "list" | "compact";
   updateView: (newView: "list" | "compact") => void;
 };
 
 export default function AlbumControls({
-  name,
-  type,
-  id,
-  is_saved,
-  uri,
+  album,
   view,
   updateView,
 }: AlbumControlsProps) {
-  const { player, playbackState } = useAppStore(
-    ({ player, playbackState }) => ({ player, playbackState })
+  const { id, name, type, is_saved, uri, images, artists } = album;
+  const { player, playbackState, addUserAlbum, removeUserAlbum } = useAppStore(
+    (state) => ({
+      player: state.player,
+      playbackState: state.playbackState,
+      addUserAlbum: state.addUserAlbum,
+      removeUserAlbum: state.removeUserAlbum,
+    })
   );
   const [shuffleOn, setShuffleOn] = useState(false);
   const [isSaved, setIsSaved] = useState(is_saved);
 
   const playMutation = trpc.playback.playWithContext.useMutation();
   const shuffleMutation = trpc.playback.toggleShuffle.useMutation();
-  const followMutation = trpc.albums.saveAlbums.useMutation({
-    onMutate: () => setIsSaved(true),
-    onError: () => setIsSaved(false),
+  const saveMutation = trpc.albums.saveAlbums.useMutation({
+    onMutate: () => {
+      setIsSaved(true);
+      addUserAlbum({ id, name, type, uri, images, artists });
+    },
+    onError: () => {
+      setIsSaved(false);
+      removeUserAlbum(id);
+    },
   });
-  const unfollowMutation = trpc.albums.unsaveAlbums.useMutation({
-    onMutate: () => setIsSaved(false),
-    onError: () => setIsSaved(true),
+  const unsaveMutation = trpc.albums.unsaveAlbums.useMutation({
+    onMutate: () => {
+      setIsSaved(false);
+      removeUserAlbum(id);
+    },
+    onError: () => {
+      setIsSaved(true);
+      addUserAlbum({ id, name, type, uri, images, artists });
+    },
   });
 
   const isPlaybackContext = playbackState?.context.uri === uri;
@@ -86,9 +111,9 @@ export default function AlbumControls({
   const toggleIsSaved = async () => {
     // UI: Add toasts for failed requests
     if (isSaved) {
-      await unfollowMutation.mutateAsync([id]);
+      await unsaveMutation.mutateAsync([id]);
     } else {
-      await followMutation.mutateAsync([id]);
+      await saveMutation.mutateAsync([id]);
     }
   };
 

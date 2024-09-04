@@ -81,7 +81,12 @@ export default async function Playlist({ params }: { params: { id: string } }) {
           images,
           is_saved,
           name,
-          owner,
+          owner: {
+            display_name: owner.display_name,
+            id: owner.id,
+            type: owner.type,
+            uri: owner.uri,
+          },
           type,
           uri,
         }}
