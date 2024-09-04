@@ -80,7 +80,7 @@ export const ImagesSchema = z
 export const LinkedFromSchema = z.object({
   external_urls: ExternalUrlsSchema,
   href: z.string(),
-  id: TrackIdSchema,
+  id: TrackIdSchema.nullable(),
   type: TrackTypeSchema,
   uri: TrackURISchema,
 });

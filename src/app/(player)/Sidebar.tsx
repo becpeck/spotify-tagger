@@ -9,11 +9,14 @@ import { useAppStore } from "@/lib/stores/AppStoreProvider";
 
 export default function Sidebar() {
   const pathname = usePathname();
-  const { playbackState, user, userPlaylists } = useAppStore((state) => ({
-    playbackState: state.playbackState,
-    user: state.user,
-    userPlaylists: state.userPlaylists,
-  }));
+  const { playbackState, user, userAlbums, userPlaylists } = useAppStore(
+    (state) => ({
+      playbackState: state.playbackState,
+      user: state.user,
+      userAlbums: state.userAlbums,
+      userPlaylists: state.userPlaylists,
+    })
+  );
 
   return (
     <div className="flex flex-col h-full items-center">
@@ -48,6 +51,22 @@ export default function Sidebar() {
                 name={playlist.name}
                 type={playlist.type}
                 isCurrentPage={pathname === `/${playlist.type}/${playlist.id}`}
+                isPlaybackContext={isPlaybackContext}
+                isPlaying={isPlaying}
+              />
+            );
+          })}
+          {userAlbums.map((album) => {
+            const isPlaybackContext =
+              playbackState && playbackState.context.uri === album.uri;
+            const isPlaying = isPlaybackContext && !playbackState.paused;
+            return (
+              <SidebarItem
+                key={album.id}
+                href={`/${album.type}/${album.id}`}
+                name={album.name}
+                type={album.type}
+                isCurrentPage={pathname === `/${album.type}/${album.id}`}
                 isPlaybackContext={isPlaybackContext}
                 isPlaying={isPlaying}
               />
