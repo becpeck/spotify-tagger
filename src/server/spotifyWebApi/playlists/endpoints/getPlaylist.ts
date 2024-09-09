@@ -6,6 +6,7 @@ import {
   ExternalUrlsSchema,
   FollowersSchema,
   ImagesSchema,
+  LocalTrackObjectSchema,
   PlaylistIdSchema,
   PlaylistTypeSchema,
   PlaylistURISchema,
@@ -70,19 +71,31 @@ const getPlaylist = makeEndpoint({
       previous: z.string().nullable(),
       total: z.number().int(),
       items: z.array(
-        z.object({
-          added_at: z.string().transform((datetime) => new Date(datetime)),
-          added_by: z.object({
-            external_urls: ExternalUrlsSchema,
-            // followers: FollowersSchema.optional(),
-            href: z.string(),
-            id: UserIdSchema,
-            type: UserTypeSchema,
-            uri: UserURISchema,
-          }),
-          is_local: z.boolean(),
-          track: TrackObjectSchema,
-        })
+        z
+          .object({
+            added_at: z.string().transform((datetime) => new Date(datetime)),
+            added_by: z.object({
+              external_urls: ExternalUrlsSchema,
+              // followers: FollowersSchema.optional(),
+              href: z.string(),
+              id: UserIdSchema,
+              type: UserTypeSchema,
+              uri: UserURISchema,
+            }),
+          })
+          .and(
+            z
+              .object({
+                is_local: z.literal(false),
+                track: TrackObjectSchema,
+              })
+              .or(
+                z.object({
+                  is_local: z.literal(true),
+                  track: LocalTrackObjectSchema,
+                })
+              )
+          )
       ),
     }),
     type: PlaylistTypeSchema,

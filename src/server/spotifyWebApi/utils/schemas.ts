@@ -35,7 +35,7 @@ export const TrackURISchema = z.custom<`spotify:${z.infer<
 export const UserURISchema = z.custom<`spotify:${z.infer<
   typeof UserTypeSchema
 >}:${z.infer<typeof UserIdSchema>}`>((str) =>
-  /^spotify:user:[a-zA-Z0-9]+$/g.test(String(str))
+  /^spotify:user:[a-zA-Z0-9]*$/g.test(String(str))
 );
 
 export const CopyrightsSchema = z.array(
@@ -195,3 +195,50 @@ export const TrackObjectSchema = SimplifiedTrackObjectSchema.and(
     popularity: z.number().int().min(0).max(100),
   })
 );
+
+export const LocalTrackObjectSchema = z.object({
+  album: z.object({
+    album_type: z.null(),
+    available_markets: z.array(z.any()).length(0),
+    external_urls: z.object({}),
+    href: z.null(),
+    id: z.null(),
+    images: z.array(z.any()).length(0),
+    name: z.string(),
+    release_date: z.null(),
+    release_date_precision: z.null(),
+    type: AlbumTypeSchema,
+    uri: z.null(),
+    artists: z.array(z.any()).length(0),
+  }),
+  artists: z.array(
+    z.object({
+      external_urls: z.object({}),
+      href: z.null(),
+      id: z.null(),
+      name: z.string(),
+      type: ArtistTypeSchema,
+      uri: z.null(),
+    })
+  ),
+  available_markets: z.array(z.any()).length(0),
+  disc_number: z.literal(0),
+  duration_ms: z.number(),
+  explicit: z.boolean(),
+  external_ids: z.object({}),
+  external_urls: z.object({}),
+  href: z.null(),
+  id: z.null(),
+  name: z.string(),
+  popularity: z.literal(0),
+  preview_url: z.null(),
+  track_number: z.literal(0),
+  type: TrackTypeSchema,
+  uri: z.custom<`spotify:local:${string}:${string}:${string}:${number}`>(
+    (str) =>
+      /^spotify:local:\+|[a-zA-Z0-9]*:\+|[a-zA-Z0-9]*:\+|[a-zA-Z0-9]+:[0-9]+$/g.test(
+        String(str)
+      )
+  ),
+  is_local: z.literal(true),
+});
