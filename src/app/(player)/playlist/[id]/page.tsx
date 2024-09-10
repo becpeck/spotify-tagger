@@ -30,9 +30,9 @@ export default async function Playlist({ params }: { params: { id: string } }) {
   const data = tracks.map((track, i) => {
     const imageUrl =
       (
-        track.album.images.find(({ width }) => width && width < 100) ??
-        images[0]
-      )?.url ?? "";
+        track.album.images.find(({ width }) => width && width < 100)
+        ?? track.album.images[0]
+      )?.url ?? null;
 
     return {
       added_at: track.added_at,
@@ -51,10 +51,10 @@ export default async function Playlist({ params }: { params: { id: string } }) {
       id: track.id,
       imageUrl,
       is_local: track.is_local,
-      is_playable: track.is_playable,
+      is_playable: "is_playable" in track ? track.is_playable : undefined,
       is_saved: track.is_saved,
       name: track.name,
-      restrictions: track.restrictions,
+      restrictions: "restrictions" in track ? track.restrictions : undefined,
       track_number: i + 1,
       type: track.type,
       uri: track.uri,

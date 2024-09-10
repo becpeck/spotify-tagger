@@ -28,6 +28,14 @@ const playlistRouter = createTRPCRouter({
         tracks: playlist.tracks.items.map(({ track, ...rest }, i) => ({
           ...rest,
           ...track,
+          restrictions:
+            !track.restrictions?.reason && !track.is_local
+              ? track.explicit && ctx.session.user.explicitFiltered
+                ? { reason: "explicit" }
+                : !track.available_markets.includes(ctx.session.user.country)
+                ? { reason: "market" }
+                : track.restrictions
+              : track.restrictions,
           is_saved: track.is_local ? false : isSaved[i]!,
         })),
         is_saved: isFollowing,

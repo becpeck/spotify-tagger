@@ -199,17 +199,17 @@ export const TrackObjectSchema = SimplifiedTrackObjectSchema.and(
 export const LocalTrackObjectSchema = z.object({
   album: z.object({
     album_type: z.null(),
-    available_markets: z.array(z.any()).length(0),
+    available_markets: AvailableMarketsSchema.length(0),
     external_urls: z.object({}),
     href: z.null(),
     id: z.null(),
-    images: z.array(z.any()).length(0),
+    images: ImagesSchema.refine((images) => images.length === 0),
     name: z.string(),
     release_date: z.null(),
     release_date_precision: z.null(),
     type: AlbumTypeSchema,
     uri: z.null(),
-    artists: z.array(z.any()).length(0),
+    artists: z.array(SimplifiedArtistObjectSchema).length(0),
   }),
   artists: z.array(
     z.object({
@@ -221,7 +221,7 @@ export const LocalTrackObjectSchema = z.object({
       uri: z.null(),
     })
   ),
-  available_markets: z.array(z.any()).length(0),
+  available_markets: AvailableMarketsSchema.length(0),
   disc_number: z.literal(0),
   duration_ms: z.number(),
   explicit: z.boolean(),
@@ -232,6 +232,7 @@ export const LocalTrackObjectSchema = z.object({
   name: z.string(),
   popularity: z.literal(0),
   preview_url: z.null(),
+  restrictions: RestrictionsSchema.optional(),
   track_number: z.literal(0),
   type: TrackTypeSchema,
   uri: z.custom<`spotify:local:${string}:${string}:${string}:${number}`>(

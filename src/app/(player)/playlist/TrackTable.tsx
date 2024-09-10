@@ -29,19 +29,19 @@ import { cn } from "@/lib/utils";
 export interface PlaylistTrack {
   added_at: Date;
   album: {
-    id: string;
+    id: string | null;
     name: string;
     type: "album";
   };
   artists: {
-    id: string;
+    id: string | null;
     name: string;
     type: "artist";
   }[];
   duration_ms: number;
   explicit: boolean;
-  id: string;
-  imageUrl: string;
+  id: string | null;
+  imageUrl: string | null;
   is_local: boolean;
   is_playable: boolean | undefined;
   is_saved: boolean;
@@ -53,7 +53,9 @@ export interface PlaylistTrack {
     | undefined;
   track_number: number;
   type: "track";
-  uri: `spotify:track:${string}`;
+  uri:
+    | `spotify:track:${string}`
+    | `spotify:local:${string}:${string}:${string}:${number}`;
 }
 
 type TrackTableProps = {

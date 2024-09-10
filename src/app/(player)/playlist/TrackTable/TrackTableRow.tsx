@@ -55,6 +55,7 @@ export default function TrackTableRow({ row, playlist }: TrackTableRowProps) {
   });
 
   const toggleIsSaved = async () => {
+    if (row.original.is_local || row.original.id === null) return;
     if (isSaved) {
       await unsaveTrackMutation.mutateAsync([row.original.id]);
     } else {
@@ -77,6 +78,11 @@ export default function TrackTableRow({ row, playlist }: TrackTableRowProps) {
     <TableRow
       key={row.id}
       data-state={row.getIsSelected() && "selected"}
+      data-disabled={
+        row.original.is_playable === false ||
+        row.original.is_local ||
+        !!row.original.restrictions?.reason
+      }
       className="group/row"
     >
       {row.getVisibleCells().map((cell) => (
