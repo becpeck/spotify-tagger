@@ -45,11 +45,13 @@ import { cn } from "@/lib/utils";
 type PlaylistControlsProps = {
   playlist: {
     collaborative: boolean;
-    images: {
-      url: string;
-      height: number | null;
-      width: number | null;
-    }[];
+    images:
+      | {
+          url: string;
+          height: number | null;
+          width: number | null;
+        }[]
+      | null;
     owner: {
       display_name: string | null;
       id: string;

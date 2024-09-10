@@ -28,7 +28,7 @@ export default async function Playlist({ params }: { params: { id: string } }) {
     0
   );
   const imageUrl =
-    (images.find(({ width }) => width && width >= 250) ?? images[0])?.url ?? "";
+    (images?.find(({ width }) => width && width >= 250) ?? images?.[0])?.url ?? "";
 
   const data = tracks.map((track, i) => {
     const imageUrl =

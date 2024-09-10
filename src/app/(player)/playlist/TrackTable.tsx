@@ -68,7 +68,8 @@ type TrackTableProps = {
           url: string;
           height: number | null;
           width: number | null;
-        }[];
+        }[]
+      | null;
     is_saved: boolean;
     name: string;
     owner: {

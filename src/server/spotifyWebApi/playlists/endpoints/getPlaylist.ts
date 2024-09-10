@@ -47,7 +47,7 @@ const getPlaylist = makeEndpoint({
     followers: FollowersSchema,
     href: z.string(),
     id: PlaylistIdSchema,
-    images: ImagesSchema,
+    images: ImagesSchema.nullable(),
     name: z.string(),
     owner: z.object({
       external_urls: ExternalUrlsSchema,
