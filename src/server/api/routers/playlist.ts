@@ -31,10 +31,8 @@ const playlistRouter = createTRPCRouter({
           restrictions:
             !track.restrictions?.reason && !track.is_local
               ? track.explicit && ctx.session.user.explicitFiltered
-                ? { reason: "explicit" }
-                : !track.available_markets.includes(ctx.session.user.country)
-                ? { reason: "market" }
-                : track.restrictions
+              ? { reason: "explicit" }
+              : track.restrictions
               : track.restrictions,
           is_saved: track.is_local ? false : isSaved[i]!,
         })),
