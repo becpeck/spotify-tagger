@@ -1,7 +1,9 @@
 import { trpc } from "@/lib/trpc/server";
 
 import PlaylistInfo from "@/app/(player)/playlist/PlaylistInfo";
-import TrackTable from "@/app/(player)/playlist/TrackTable";
+import TrackTable, {
+  type PlaylistTrack,
+} from "@/app/(player)/playlist/TrackTable";
 
 export default async function Playlist({ params }: { params: { id: string } }) {
   const playlist = await trpc.playlist.getPlaylistData.query(params.id);
@@ -30,8 +32,8 @@ export default async function Playlist({ params }: { params: { id: string } }) {
   const data = tracks.map((track, i) => {
     const imageUrl =
       (
-        track.album.images.find(({ width }) => width && width < 100)
-        ?? track.album.images[0]
+        track.album.images.find(({ width }) => width && width < 100) ??
+        track.album.images[0]
       )?.url ?? null;
 
     return {
@@ -74,7 +76,7 @@ export default async function Playlist({ params }: { params: { id: string } }) {
         duration_ms={duration_ms}
       />
       <TrackTable
-        tracks={data}
+        tracks={data as PlaylistTrack[]}
         playlist={{
           collaborative,
           id,

@@ -26,23 +26,11 @@ import TrackTableRow from "@/app/(player)/playlist/TrackTable/TrackTableRow";
 
 import { cn } from "@/lib/utils";
 
-export interface PlaylistTrack {
+export type PlaylistTrack = {
   added_at: Date;
-  album: {
-    id: string | null;
-    name: string;
-    type: "album";
-  };
-  artists: {
-    id: string | null;
-    name: string;
-    type: "artist";
-  }[];
   duration_ms: number;
   explicit: boolean;
-  id: string | null;
   imageUrl: string | null;
-  is_local: boolean;
   is_playable: boolean | undefined;
   is_saved: boolean;
   name: string;
@@ -53,10 +41,22 @@ export interface PlaylistTrack {
     | undefined;
   track_number: number;
   type: "track";
-  uri:
-    | `spotify:track:${string}`
-    | `spotify:local:${string}:${string}:${string}:${number}`;
-}
+} & (
+  | {
+      album: { id: string; name: string; type: "album" };
+      artists: { id: string; name: string; type: "artist" }[];
+      id: string;
+      is_local: false;
+      uri: `spotify:track:${string}`;
+    }
+  | {
+      album: { id: null; name: string; type: "album" };
+      artists: { id: null; name: string; type: "artist" }[];
+      id: null;
+      is_local: true;
+      uri: `spotify:local:${string}:${string}:${string}:${number}`;
+    }
+);
 
 type TrackTableProps = {
   tracks: PlaylistTrack[];

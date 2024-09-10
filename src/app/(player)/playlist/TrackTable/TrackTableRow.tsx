@@ -55,7 +55,7 @@ export default function TrackTableRow({ row, playlist }: TrackTableRowProps) {
   });
 
   const toggleIsSaved = async () => {
-    if (row.original.is_local || row.original.id === null) return;
+    if (row.original.is_local) return;
     if (isSaved) {
       await unsaveTrackMutation.mutateAsync([row.original.id]);
     } else {
@@ -63,7 +63,7 @@ export default function TrackTableRow({ row, playlist }: TrackTableRowProps) {
     }
   };
 
-  const isPlaybackContext = playbackState
+  const isPlaybackContext = row.original.is_local && playbackState
     ? playbackState.context.uri === playlist.uri &&
       (playbackState.track_window.current_track.uri === row.original.uri ||
         (playbackState.track_window.current_track.name === row.original.name &&

@@ -1,12 +1,17 @@
 import Image from "next/image";
-import { type HeaderContext, type CellContext } from "@tanstack/react-table";
 import { Fragment } from "react";
+import { type HeaderContext, type CellContext } from "@tanstack/react-table";
+
 import { type PlaylistTrack } from "@/app/(player)/playlist/TrackTable";
 import { type ExtendedCellContext } from "@/app/(player)/playlist/TrackTable/TrackTableRow";
+
 import { Button } from "@/components/ui/button";
 import ColumnSortIcon from "@/components/icons/ColumnSortIcon";
-import Link from "@/components/Link";
+import TrackImagePlaceholder from "@/components/images/TrackImagePlaceholder";
+import Link, { linkVariants } from "@/components/Link";
 import SearchHighlight from "@/components/SearchHighlight";
+
+import { cn } from "@/lib/utils";
 
 export function TitleArtistHeader({
   table,
@@ -50,38 +55,70 @@ export function TitleArtistCell(props: CellContext<PlaylistTrack, unknown>) {
   >;
   const { id, name, type, artists, imageUrl } = row.original;
   return (
-    <div className="flex items-center gap-4">
-      <Image
-        className="my-3 rounded-sm w-10 h-10"
-        src={imageUrl}
-        alt={`${name} cover`}
-        width={40}
-        height={40}
-      />
+    <div className="flex items-center gap-4 title-artist">
+      {imageUrl ? (
+        <Image
+          className="my-3 rounded-sm w-10 h-10"
+          src={imageUrl}
+          alt={`${name} cover`}
+          width={40}
+          height={40}
+        />
+      ) : (
+        <TrackImagePlaceholder className={cn("my-3 rounded-sm w-10 h-10")} />
+      )}
       <div className="flex flex-col">
-        <Link
-          color={isPlaybackContext ? "green" : "primary"}
-          size="base"
-          href={`/${type}/${id}`}
-        >
-          <SearchHighlight
-            text={name}
-            search={[table.getState().globalFilter as string]}
-          />
-        </Link>
+        {row.original.is_local ? (
+          <span
+            className={cn(
+              linkVariants({ size: "base", color: "primary" }),
+              "hover:no-underline cursor-default"
+            )}
+          >
+            <SearchHighlight
+              text={name}
+              search={[table.getState().globalFilter as string]}
+            />
+          </span>
+        ) : (
+          <Link
+            color={isPlaybackContext ? "green" : "primary"}
+            size="base"
+            href={`/${type}/${id}`}
+          >
+            <SearchHighlight
+              text={name}
+              search={[table.getState().globalFilter as string]}
+            />
+          </Link>
+        )}
         <div className="text-muted-foreground truncate line-clamp-1 whitespace-normal break-all">
           {artists.map(({ id, name, type }, i) => (
-            <Fragment key={id}>
-              <Link
-                href={`/${type}/${id}`}
-                number="list"
-                className="group-hover/row:text-primary"
-              >
-                <SearchHighlight
-                  text={name}
-                  search={[table.getState().globalFilter as string]}
-                />
-              </Link>
+            <Fragment key={id ? id : name}>
+              {row.original.is_local ? (
+                <span
+                  className={cn(
+                    linkVariants(),
+                    "hover:no-underline cursor-default"
+                  )}
+                >
+                  <SearchHighlight
+                    text={name}
+                    search={[table.getState().globalFilter as string]}
+                  />
+                </span>
+              ) : (
+                <Link
+                  href={`/${type}/${id}`}
+                  number="list"
+                  className="group-hover/row:text-primary"
+                >
+                  <SearchHighlight
+                    text={name}
+                    search={[table.getState().globalFilter as string]}
+                  />
+                </Link>
+              )}
               {i < artists.length - 1 ? ", " : null}
             </Fragment>
           ))}
