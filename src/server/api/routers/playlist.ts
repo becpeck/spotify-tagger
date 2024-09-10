@@ -14,7 +14,13 @@ const playlistRouter = createTRPCRouter({
       });
       const isSaved = await checkSavedTracks(
         ctx.spotify,
-        playlist.tracks.items.map((track) => track.track.id)
+        // filter out local tracks with null ids
+        playlist.tracks.items.reduce((filtered, track) => {
+          if (!track.is_local) {
+            filtered.push(track.track.id);
+          }
+          return filtered;
+        }, new Array<string>())
       );
       return {
         ...playlist,
@@ -22,7 +28,13 @@ const playlistRouter = createTRPCRouter({
         tracks: playlist.tracks.items.map(({ track, ...rest }, i) => ({
           ...rest,
           ...track,
-          is_saved: isSaved[i]!,
+          restrictions:
+            !track.restrictions?.reason && !track.is_local
+              ? track.explicit && ctx.session.user.explicitFiltered
+              ? { reason: "explicit" }
+              : track.restrictions
+              : track.restrictions,
+          is_saved: track.is_local ? false : isSaved[i]!,
         })),
         is_saved: isFollowing,
       };

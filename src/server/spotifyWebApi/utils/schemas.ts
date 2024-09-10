@@ -35,7 +35,14 @@ export const TrackURISchema = z.custom<`spotify:${z.infer<
 export const UserURISchema = z.custom<`spotify:${z.infer<
   typeof UserTypeSchema
 >}:${z.infer<typeof UserIdSchema>}`>((str) =>
-  /^spotify:user:[a-zA-Z0-9]+$/g.test(String(str))
+  /^spotify:user:[a-zA-Z0-9]*$/g.test(String(str))
+);
+
+export const CopyrightsSchema = z.array(
+  z.object({
+    text: z.string(),
+    type: z.union([z.literal("C"), z.literal("P")]),
+  })
 );
 
 export const CountrySchema = z.string().length(2);
@@ -73,7 +80,7 @@ export const ImagesSchema = z
 export const LinkedFromSchema = z.object({
   external_urls: ExternalUrlsSchema,
   href: z.string(),
-  id: TrackIdSchema,
+  id: TrackIdSchema.nullable(),
   type: TrackTypeSchema,
   uri: TrackURISchema,
 });
@@ -105,6 +112,58 @@ export const SimplifiedArtistObjectSchema = z.object({
   uri: z.string(),
 });
 
+export const SimplifiedAlbumObjectSchema = z.object({
+  album_type: z.union([
+    z.literal("album"),
+    z.literal("single"),
+    z.literal("compilation"),
+  ]),
+  total_tracks: z.number().int(),
+  available_markets: AvailableMarketsSchema,
+  external_urls: ExternalUrlsSchema,
+  href: z.string(),
+  id: AlbumIdSchema,
+  images: ImagesSchema,
+  name: z.string(),
+  release_date: z.string(),
+  release_date_precision: z.union([
+    z.literal("year"),
+    z.literal("month"),
+    z.literal("day"),
+  ]),
+  restrictions: RestrictionsSchema.optional(),
+  type: AlbumTypeSchema,
+  uri: AlbumURISchema,
+  artists: z.array(SimplifiedArtistObjectSchema),
+});
+
+export const SimplifiedPlaylistObjectSchema = z.object({
+  collaborative: z.boolean(),
+  description: z.string().nullable(),
+  external_urls: ExternalUrlsSchema,
+  href: z.string(),
+  id: PlaylistIdSchema,
+  images: ImagesSchema.nullable(),
+  name: z.string(),
+  owner: z.object({
+    external_urls: ExternalUrlsSchema,
+    followers: FollowersSchema.optional(),
+    href: z.string(),
+    id: UserIdSchema,
+    type: UserTypeSchema,
+    uri: UserURISchema,
+    display_name: z.string().nullable(),
+  }),
+  public: z.boolean().nullable(),
+  snapshot_id: z.string(),
+  tracks: z.object({
+    href: z.string(),
+    total: z.number().int(),
+  }),
+  type: PlaylistTypeSchema,
+  uri: PlaylistURISchema,
+});
+
 export const SimplifiedTrackObjectSchema = z.object({
   artists: z.array(SimplifiedArtistObjectSchema),
   available_markets: AvailableMarketsSchema,
@@ -127,30 +186,7 @@ export const SimplifiedTrackObjectSchema = z.object({
 
 export const TrackObjectSchema = SimplifiedTrackObjectSchema.and(
   z.object({
-    album: z.object({
-      album_type: z.union([
-        z.literal("album"),
-        z.literal("single"),
-        z.literal("compilation"),
-      ]),
-      total_tracks: z.number().int(),
-      available_markets: AvailableMarketsSchema,
-      external_urls: ExternalUrlsSchema,
-      href: z.string(),
-      id: AlbumIdSchema,
-      images: ImagesSchema,
-      name: z.string(),
-      release_date: z.string(),
-      release_date_precision: z.union([
-        z.literal("year"),
-        z.literal("month"),
-        z.literal("day"),
-      ]),
-      restrictions: RestrictionsSchema.optional(),
-      type: AlbumTypeSchema,
-      uri: AlbumURISchema,
-      artists: z.array(SimplifiedArtistObjectSchema),
-    }),
+    album: SimplifiedAlbumObjectSchema,
     external_ids: z.object({
       isrc: z.string().optional(),
       ean: z.string().optional(),
@@ -159,3 +195,51 @@ export const TrackObjectSchema = SimplifiedTrackObjectSchema.and(
     popularity: z.number().int().min(0).max(100),
   })
 );
+
+export const LocalTrackObjectSchema = z.object({
+  album: z.object({
+    album_type: z.null(),
+    available_markets: AvailableMarketsSchema.length(0),
+    external_urls: z.object({}),
+    href: z.null(),
+    id: z.null(),
+    images: ImagesSchema.refine((images) => images.length === 0),
+    name: z.string(),
+    release_date: z.null(),
+    release_date_precision: z.null(),
+    type: AlbumTypeSchema,
+    uri: z.null(),
+    artists: z.array(SimplifiedArtistObjectSchema).length(0),
+  }),
+  artists: z.array(
+    z.object({
+      external_urls: z.object({}),
+      href: z.null(),
+      id: z.null(),
+      name: z.string(),
+      type: ArtistTypeSchema,
+      uri: z.null(),
+    })
+  ),
+  available_markets: AvailableMarketsSchema.length(0),
+  disc_number: z.literal(0),
+  duration_ms: z.number(),
+  explicit: z.boolean(),
+  external_ids: z.object({}),
+  external_urls: z.object({}),
+  href: z.null(),
+  id: z.null(),
+  name: z.string(),
+  popularity: z.literal(0),
+  preview_url: z.null(),
+  restrictions: RestrictionsSchema.optional(),
+  track_number: z.literal(0),
+  type: TrackTypeSchema,
+  uri: z.custom<`spotify:local:${string}:${string}:${string}:${number}`>(
+    (str) =>
+      /^spotify:local:\+|[a-zA-Z0-9]*:\+|[a-zA-Z0-9]*:\+|[a-zA-Z0-9]+:[0-9]+$/g.test(
+        String(str)
+      )
+  ),
+  is_local: z.literal(true),
+});

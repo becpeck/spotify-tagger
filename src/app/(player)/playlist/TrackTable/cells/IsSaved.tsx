@@ -9,6 +9,7 @@ export function IsSavedCell(props: CellContext<PlaylistTrack, unknown>) {
     PlaylistTrack,
     unknown
   >;
+  if (props.row.original.is_local) return null;
   return (
     <HeartButton
       size="sm"

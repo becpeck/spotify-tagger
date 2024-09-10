@@ -2,20 +2,11 @@ import { z } from "zod";
 import { makeEndpoint, makeErrors, parametersBuilder } from "@zodios/core";
 
 import {
-  AlbumIdSchema,
-  AlbumTypeSchema,
-  AlbumURISchema,
-  AvailableMarketsSchema,
+  CopyrightsSchema,
   CountrySchema,
   ExternalIdsSchema,
-  ExternalUrlsSchema,
-  ImagesSchema,
-  LinkedFromSchema,
-  RestrictionsSchema,
-  SimplifiedArtistObjectSchema,
-  TrackIdSchema,
-  TrackTypeSchema,
-  TrackURISchema,
+  SimplifiedAlbumObjectSchema,
+  SimplifiedTrackObjectSchema,
 } from "@/server/spotifyWebApi/utils/schemas";
 import {
   ErrorResponse401,
@@ -32,69 +23,24 @@ const getAlbum = makeEndpoint({
       market: CountrySchema.optional(),
     })
     .build(),
-  response: z.object({
-    album_type: z.union([
-      z.literal("album"),
-      z.literal("single"),
-      z.literal("compilation"),
-    ]),
-    total_tracks: z.number(),
-    available_markets: AvailableMarketsSchema,
-    external_urls: ExternalUrlsSchema,
-    href: z.string(),
-    id: AlbumIdSchema,
-    images: ImagesSchema,
-    name: z.string(),
-    release_date: z.string(),
-    release_date_precision: z.union([
-      z.literal("year"),
-      z.literal("month"),
-      z.literal("day"),
-    ]),
-    restrictions: RestrictionsSchema.optional(),
-    type: AlbumTypeSchema,
-    uri: AlbumURISchema,
-    artists: z.array(SimplifiedArtistObjectSchema),
-    tracks: z.object({
-      href: z.string(),
-      limit: z.number(),
-      next: z.string().nullable(),
-      offset: z.number(),
-      previous: z.string().nullable(),
-      total: z.number(),
-      items: z.array(
-        z.object({
-          artists: z.array(SimplifiedArtistObjectSchema),
-          available_markets: AvailableMarketsSchema,
-          disc_number: z.number(),
-          duration_ms: z.number(),
-          explicit: z.boolean(),
-          external_urls: ExternalUrlsSchema,
-          href: z.string(),
-          id: TrackIdSchema,
-          is_playable: z.boolean().optional(),
-          linked_from: LinkedFromSchema.optional(),
-          restrictions: RestrictionsSchema.optional(),
-          name: z.string(),
-          preview_url: z.string().nullable(),
-          track_number: z.number(),
-          type: TrackTypeSchema,
-          uri: TrackURISchema,
-          is_local: z.boolean(),
-        })
-      ),
-    }),
-    copyrights: z.array(
-      z.object({
-        text: z.string(),
-        type: z.union([z.literal("C"), z.literal("P")]),
-      })
-    ),
-    external_ids: ExternalIdsSchema,
-    genres: z.array(z.string()),
-    label: z.string(),
-    popularity: z.number().min(0).max(100),
-  }),
+  response: SimplifiedAlbumObjectSchema.and(
+    z.object({
+      tracks: z.object({
+        href: z.string(),
+        limit: z.number(),
+        next: z.string().nullable(),
+        offset: z.number(),
+        previous: z.string().nullable(),
+        total: z.number(),
+        items: z.array(SimplifiedTrackObjectSchema),
+      }),
+      copyrights: CopyrightsSchema,
+      external_ids: ExternalIdsSchema,
+      genres: z.array(z.string()),
+      label: z.string(),
+      popularity: z.number().min(0).max(100),
+    })
+  ),
   errors: makeErrors([ErrorResponse401, ErrorResponse403, ErrorResponse429]),
 });
 

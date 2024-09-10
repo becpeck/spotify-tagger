@@ -63,7 +63,7 @@ export default async function Album({ params }: { params: { id: string } }) {
       />
       <TrackTable
         tracks={trackData}
-        album={{ id, is_saved, name, type, uri }}
+        album={{ artists: artists.map(({ id, name }) => ({ id, name })), id, images, is_saved, name, type, uri }}
       />
       <footer className="text-muted-foreground text-xs p-4">
         <p className="text-sm">

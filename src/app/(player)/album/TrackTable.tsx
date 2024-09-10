@@ -50,7 +50,16 @@ export interface AlbumTrack {
 type TrackTableProps = {
   tracks: AlbumTrack[];
   album: {
+    artists: {
+      id: string;
+      name: string;
+    }[];
     id: string;
+    images: {
+      url: string;
+      height: number | null;
+      width: number | null;
+    }[];
     is_saved: boolean;
     name: string;
     type: "album";
@@ -65,12 +74,6 @@ export default function TrackTable({ tracks, album }: TrackTableProps) {
   const table = useReactTable({
     data: tracks,
     columns,
-    meta: {
-      userPlaylists: Array.from({ length: 10 }, (_, i) => ({
-        id: `${i + 1}`,
-        name: `Playlist ${i + 1}`, // PLACRHOLDER for saved playlists store
-      })),
-    },
     getCoreRowModel: getCoreRowModel(),
     onColumnVisibilityChange,
     state: {
@@ -82,7 +85,7 @@ export default function TrackTable({ tracks, album }: TrackTableProps) {
 
   return (
     <>
-      <AlbumControls {...album} view={view} updateView={updateView} />
+      <AlbumControls album={album} view={view} updateView={updateView} />
       <div className="border @container">
         <Table
           className={cn(

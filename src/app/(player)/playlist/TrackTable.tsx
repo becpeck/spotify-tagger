@@ -10,7 +10,6 @@ import {
   TableRow,
 } from "@/components/ui/table-grid";
 import {
-  type RowData,
   type SortingState,
   flexRender,
   getCoreRowModel,
@@ -27,23 +26,11 @@ import TrackTableRow from "@/app/(player)/playlist/TrackTable/TrackTableRow";
 
 import { cn } from "@/lib/utils";
 
-export interface PlaylistTrack {
+export type PlaylistTrack = {
   added_at: Date;
-  album: {
-    id: string;
-    name: string;
-    type: "album";
-  };
-  artists: {
-    id: string;
-    name: string;
-    type: "artist";
-  }[];
   duration_ms: number;
   explicit: boolean;
-  id: string;
-  imageUrl: string;
-  is_local: boolean;
+  imageUrl: string | null;
   is_playable: boolean | undefined;
   is_saved: boolean;
   name: string;
@@ -54,25 +41,42 @@ export interface PlaylistTrack {
     | undefined;
   track_number: number;
   type: "track";
-  uri: `spotify:track:${string}`;
-}
-
-declare module "@tanstack/table-core" {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  interface TableMeta<TData extends RowData> {
-    userPlaylists: Array<{
+} & (
+  | {
+      album: { id: string; name: string; type: "album" };
+      artists: { id: string; name: string; type: "artist" }[];
       id: string;
-      name: string;
-    }>;
-  }
-}
+      is_local: false;
+      uri: `spotify:track:${string}`;
+    }
+  | {
+      album: { id: null; name: string; type: "album" };
+      artists: { id: null; name: string; type: "artist" }[];
+      id: null;
+      is_local: true;
+      uri: `spotify:local:${string}:${string}:${string}:${number}`;
+    }
+);
 
 type TrackTableProps = {
   tracks: PlaylistTrack[];
   playlist: {
+    collaborative: boolean;
     id: string;
+    images:
+      | {
+          url: string;
+          height: number | null;
+          width: number | null;
+        }[];
     is_saved: boolean;
     name: string;
+    owner: {
+      display_name: string | null;
+      id: string;
+      type: "user";
+      uri: `spotify:user:${string}`;
+    };
     type: "playlist";
     uri: `spotify:playlist:${string}`;
   };
@@ -94,12 +98,6 @@ export default function TrackTable({ tracks, playlist }: TrackTableProps) {
   const table = useReactTable({
     data: tracks,
     columns,
-    meta: {
-      userPlaylists: Array.from({ length: 10 }, (_, i) => ({
-        id: `${i + 1}`,
-        name: `Playlist ${i + 1}`, // PLACRHOLDER for saved playlists store
-      })),
-    },
     globalFilterFn: "includesString",
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
@@ -117,7 +115,7 @@ export default function TrackTable({ tracks, playlist }: TrackTableProps) {
   return (
     <>
       <PlaylistControls
-        {...playlist}
+        playlist={playlist}
         view={view}
         updateView={updateView}
         sorting={sorting}

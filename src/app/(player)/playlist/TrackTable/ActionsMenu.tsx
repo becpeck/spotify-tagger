@@ -10,6 +10,7 @@ import {
   ExternalLinkIcon,
   UserRoundIcon,
   MonitorIcon,
+  UsersIcon,
 } from "lucide-react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSpotify } from "@fortawesome/free-brands-svg-icons";
@@ -28,6 +29,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import MoreOptionsButton from "@/components/buttons/MoreOptionsButton";
 
+import { useAppStore } from "@/lib/stores/AppStoreProvider";
 import { cn } from "@/lib/utils";
 
 type ActionsMenuProps = {
@@ -53,7 +55,6 @@ type ActionsMenuProps = {
     uri: `spotify:track:${string}`;
     isSaved: boolean;
   };
-  userPlaylists: Array<{ id: string; name: string }>;
   addToQueue: () => void;
   toggleIsSaved: () => void;
 };
@@ -63,10 +64,16 @@ export default function ActionsMenu({
   artists,
   playlist,
   track,
-  userPlaylists,
   addToQueue,
   toggleIsSaved,
 }: ActionsMenuProps) {
+  const { userPlaylists } = useAppStore((state) => ({
+    userPlaylists: state.userPlaylists.filter(
+      (playlist) =>
+        playlist.owner.id === state.user.id || playlist.collaborative
+    ),
+  }));
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -86,8 +93,12 @@ export default function ActionsMenu({
             <DropdownMenuPortal>
               <DropdownMenuSubContent>
                 {userPlaylists.map((playlist) => (
-                  <DropdownMenuItem key={playlist.id}>
+                  <DropdownMenuItem
+                    key={playlist.id}
+                    className="flex justify-between"
+                  >
                     {playlist.name}
+                    {playlist.collaborative ? <UsersIcon size={18} /> : null}
                   </DropdownMenuItem>
                 ))}
               </DropdownMenuSubContent>

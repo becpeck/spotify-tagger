@@ -19,10 +19,8 @@ export function NumberHeader() {
 }
 
 export function NumberCell(props: CellContext<PlaylistTrack, number>) {
-  const { row, table, isPlaybackContext, playlist } = props as ExtendedCellContext<
-    PlaylistTrack,
-    number
-  >;
+  const { row, table, isPlaybackContext, playlist } =
+    props as ExtendedCellContext<PlaylistTrack, number>;
   const { playbackState, player } = useAppStore(
     ({ playbackState, player }) => ({
       playbackState,
@@ -36,6 +34,7 @@ export function NumberCell(props: CellContext<PlaylistTrack, number>) {
   const isPlaying = isPlaybackContext && !playbackState!.paused;
 
   const toggleIsPlaying = async () => {
+    if (row.original.is_local) return;
     if (!isPlaybackContext) {
       const tableState = table.getState();
       const sorting = tableState.sorting;
@@ -47,9 +46,12 @@ export function NumberCell(props: CellContext<PlaylistTrack, number>) {
           offset: { uri: row.original.uri },
         });
       } else {
-        let uris = table
-          .getRowModel()
-          .rows.map((row) => row.original.uri);
+        let uris = table.getRowModel().rows.reduce((filtered, row) => {
+          if (!row.original.is_local) {
+            filtered.push(row.original.uri);
+          }
+          return filtered;
+        }, new Array<`spotify:track:${string}`>());
         if (uris[0] !== row.original.uri) {
           const index = uris.findIndex((uri) => uri === row.original.uri);
           uris = uris.slice(index).concat(uris.slice(0, index));
@@ -64,6 +66,21 @@ export function NumberCell(props: CellContext<PlaylistTrack, number>) {
       }
     }
   };
+
+  if (row.original.is_local || row.original.restrictions?.reason) {
+    return (
+      <div className="w-full flex justify-end">
+        <div
+          className={cn(
+            "tabular-nums text-base text-muted-foreground px-1",
+            isPlaybackContext && "text-green-500"
+          )}
+        >
+          {row.original.track_number}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="w-full flex justify-end">

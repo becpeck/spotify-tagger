@@ -43,11 +43,25 @@ import { trpc } from "@/lib/trpc/client";
 import { cn } from "@/lib/utils";
 
 type PlaylistControlsProps = {
-  name: string;
-  type: "playlist";
-  id: string;
-  is_saved: boolean;
-  uri: `spotify:playlist:${string}`;
+  playlist: {
+    collaborative: boolean;
+    images: {
+      url: string;
+      height: number | null;
+      width: number | null;
+    }[];
+    owner: {
+      display_name: string | null;
+      id: string;
+      type: "user";
+      uri: `spotify:user:${string}`;
+    };
+    name: string;
+    type: "playlist";
+    id: string;
+    is_saved: boolean;
+    uri: `spotify:playlist:${string}`;
+  };
   view: "list" | "compact";
   updateView: (newView: "list" | "compact") => void;
   sorting: SortingState;
@@ -57,11 +71,7 @@ type PlaylistControlsProps = {
 };
 
 export default function PlaylistControls({
-  name,
-  type,
-  id,
-  is_saved,
-  uri,
+  playlist,
   view,
   updateView,
   sorting,
@@ -69,21 +79,38 @@ export default function PlaylistControls({
   globalFilter,
   setGlobalFilter,
 }: PlaylistControlsProps) {
-  const { player, playbackState } = useAppStore(
-    ({ player, playbackState }) => ({ player, playbackState })
-  );
+  const { name, type, id, is_saved, uri, ...rest } = playlist;
+  const { player, playbackState, addUserPlaylist, removeUserPlaylist } =
+    useAppStore((state) => ({
+      player: state.player,
+      playbackState: state.playbackState,
+      addUserPlaylist: state.addUserPlaylist,
+      removeUserPlaylist: state.removeUserPlaylist,
+    }));
   const [shuffleOn, setShuffleOn] = useState(false);
   const [isSaved, setIsSaved] = useState(is_saved);
 
   const playMutation = trpc.playback.playWithContext.useMutation();
   const shuffleMutation = trpc.playback.toggleShuffle.useMutation();
   const followPlaylistMutation = trpc.playlist.followPlaylist.useMutation({
-    onMutate: () => setIsSaved(true),
-    onError: () => setIsSaved(false),
+    onMutate: () => {
+      setIsSaved(true);
+      addUserPlaylist({ ...rest, id, name, uri, type });
+    },
+    onError: () => {
+      setIsSaved(false);
+      removeUserPlaylist(id);
+    },
   });
   const unfollowPlaylistMutation = trpc.playlist.unfollowPlaylist.useMutation({
-    onMutate: () => setIsSaved(false),
-    onError: () => setIsSaved(true),
+    onMutate: () => {
+      setIsSaved(false);
+      removeUserPlaylist(id);
+    },
+    onError: () => {
+      setIsSaved(true);
+      addUserPlaylist({ ...rest, id, name, uri, type });
+    },
   });
 
   const isPlaybackContext = playbackState?.context.uri === uri;
