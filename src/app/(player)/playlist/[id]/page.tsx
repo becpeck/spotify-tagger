@@ -1,36 +1,23 @@
 import { trpc } from "@/lib/trpc/server";
 
-import PlaylistInfo from "@/app/(player)/playlist/PlaylistInfo";
-import TrackTable, {
-  type PlaylistTrack,
-} from "@/app/(player)/playlist/TrackTable";
+import { type PlaylistTrack } from "@/app/(player)/playlist/TrackTable";
+import PageContent from "@/app/(player)/playlist/[id]/PageContent";
+import EditPageContent from "@/app/(player)/playlist/[id]/EditPageContent";
 
 export default async function Playlist({ params }: { params: { id: string } }) {
   const playlist = await trpc.playlist.getPlaylistData.query(params.id);
 
-  const {
-    collaborative,
-    description,
-    followers,
-    id,
-    images,
-    is_editable,
-    is_saved,
-    name,
-    owner,
-    total_tracks,
-    type,
-    tracks,
-    uri,
-  } = playlist;
-  const duration_ms = tracks.reduce(
+  const duration_ms = playlist.tracks.reduce(
     (acc, { duration_ms }) => acc + duration_ms,
     0
   );
   const imageUrl =
-    (images?.find(({ width }) => width && width >= 250) ?? images?.[0])?.url ?? "";
+    (
+      playlist.images?.find(({ width }) => width && width >= 250) ??
+      playlist.images?.[0]
+    )?.url ?? "";
 
-  const data = tracks.map((track, i) => {
+  const data = playlist.tracks.map((track, i) => {
     const imageUrl =
       (
         track.album.images.find(({ width }) => width && width < 100) ??
@@ -64,37 +51,20 @@ export default async function Playlist({ params }: { params: { id: string } }) {
     };
   });
 
+  const props = {
+    imageUrl,
+    duration_ms,
+    data: data as PlaylistTrack[],
+    playlist,
+  };
+
   return (
     <main>
-      <PlaylistInfo
-        imageUrl={imageUrl}
-        type={type}
-        name={name}
-        description={description}
-        is_editable={is_editable}
-        owner={owner}
-        followers={followers}
-        total={total_tracks}
-        duration_ms={duration_ms}
-      />
-      <TrackTable
-        tracks={data as PlaylistTrack[]}
-        playlist={{
-          collaborative,
-          id,
-          images,
-          is_saved,
-          name,
-          owner: {
-            display_name: owner.display_name,
-            id: owner.id,
-            type: owner.type,
-            uri: owner.uri,
-          },
-          type,
-          uri,
-        }}
-      />
+      {playlist.is_editable ? (
+        <EditPageContent {...props} />
+      ) : (
+        <PageContent {...props} />
+      )}
     </main>
   );
 }

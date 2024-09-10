@@ -1,6 +1,12 @@
 import Image from "next/image";
 import Link from "next/link";
-import { HeartIcon, ListMusicIcon, ClockIcon } from "lucide-react";
+import {
+  HeartIcon,
+  ListMusicIcon,
+  ClockIcon,
+  MusicIcon,
+  PencilIcon,
+} from "lucide-react";
 
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -16,6 +22,8 @@ type PlaylistInfoProps = {
   followers: { total: number };
   total: number;
   duration_ms: number;
+  editableOnClickImage?: () => void;
+  editableOnClickDetails?: () => void;
 };
 
 export default function PlaylistInfo({
@@ -28,25 +36,60 @@ export default function PlaylistInfo({
   followers,
   total,
   duration_ms,
+  editableOnClickImage,
+  editableOnClickDetails,
 }: PlaylistInfoProps) {
   const duration = toDuration(duration_ms);
 
+  const ImageComponent = () => imageUrl ? (
+    <>
+      { is_editable 
+      ? <div className="absolute top-0 left-0 h-full w-full group-hover/edit:bg-black/70 z-10">
+          <div className="hidden group-hover/edit:flex flex-col justify-center items-center gap-2 w-full h-full">
+            <PencilIcon className="w-[30%] h-[30%] mt-[10%]" strokeWidth={1.5} />
+            Choose photo
+          </div>
+      </div>
+      : null }
+      <Image
+        src={imageUrl}
+        height={250}
+        width={250}
+        alt={`${name} cover`}
+        priority
+        className={cn("h-[250px] w-[250px] rounded-sm", is_editable && "absolute top-0 left-0")}
+      />
+    </>
+  ) : (
+    <div
+      className={cn(
+        "h-[250px] w-[250px] rounded-sm flex items-center justify-center bg-muted text-muted-foreground group-hover/edit:text-primary"
+      )}
+    >
+      <MusicIcon className="w-[35%] h-[35%] mr-[5%] group-hover/edit:hidden" strokeWidth={1.5}/>
+      <div className="hidden group-hover/edit:flex flex-col justify-center items-center gap-2 w-full h-full">
+        <PencilIcon className="w-[30%] h-[30%] mt-[10%]" strokeWidth={1.5} />
+        Choose photo
+      </div>
+    </div>
+  );
+
+  const ImageWrapper = ({ children }: { children: React.ReactNode }) =>
+    is_editable ? (
+      <div className="group/edit relative h-[250px] w-[250px]" onClick={editableOnClickImage}>{children}</div>
+    ) : (
+      <>{children}</>
+    );
+
   return (
     <header className="flex m-4 gap-4">
-      {imageUrl ? (
-        <Image
-          src={imageUrl}
-          height={250}
-          width={250}
-          alt={`${name} cover`}
-          priority
-          className="h-[250px] w-[250px] rounded-sm"
-        />
-      ) : null}
+      <ImageWrapper>
+        <ImageComponent />
+      </ImageWrapper>
       <div className="shrink">
         <h4 className="capitalize">{type}</h4>
-        <h1 className="text-4xl font-bold">{name}</h1>
-        <div className="text-muted-foreground">{description}</div>
+        <h1 className="text-4xl font-bold" onClick={is_editable ? editableOnClickDetails : undefined}>{name}</h1>
+        <div className="text-muted-foreground" onClick={is_editable ? editableOnClickDetails : undefined}>{description}</div>
         <Link
           href={`/user/${owner.id}`}
           className={cn(
