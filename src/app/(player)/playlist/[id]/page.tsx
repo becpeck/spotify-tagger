@@ -14,6 +14,7 @@ export default async function Playlist({ params }: { params: { id: string } }) {
     followers,
     id,
     images,
+    is_editable,
     is_saved,
     name,
     owner,
@@ -70,6 +71,7 @@ export default async function Playlist({ params }: { params: { id: string } }) {
         type={type}
         name={name}
         description={description}
+        is_editable={is_editable}
         owner={owner}
         followers={followers}
         total={total_tracks}

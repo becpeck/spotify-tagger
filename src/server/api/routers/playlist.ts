@@ -6,10 +6,10 @@ const playlistRouter = createTRPCRouter({
   getPlaylistData: protectedProcedure
     .input(PlaylistIdSchema)
     .query(async ({ input, ctx }) => {
-      const isFollowing = await ctx.spotify.isFollowingPlaylist({
+      const playlist = await ctx.spotify.getPlaylist({
         params: { playlist_id: input },
       });
-      const playlist = await ctx.spotify.getPlaylist({
+      const isFollowing = await ctx.spotify.isFollowingPlaylist({
         params: { playlist_id: input },
       });
       const isSaved = await checkSavedTracks(
@@ -31,12 +31,13 @@ const playlistRouter = createTRPCRouter({
           restrictions:
             !track.restrictions?.reason && !track.is_local
               ? track.explicit && ctx.session.user.explicitFiltered
-              ? { reason: "explicit" }
-              : track.restrictions
+                ? { reason: "explicit" }
+                : track.restrictions
               : track.restrictions,
           is_saved: track.is_local ? false : isSaved[i]!,
         })),
         is_saved: isFollowing,
+        is_editable: playlist.owner.id === ctx.session.user.spotifyId,
       };
     }),
   followPlaylist: protectedProcedure

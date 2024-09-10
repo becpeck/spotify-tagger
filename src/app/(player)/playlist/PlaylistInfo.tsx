@@ -11,6 +11,7 @@ type PlaylistInfoProps = {
   type: string;
   name: string;
   description: string;
+  is_editable: boolean;
   owner: { id: string; display_name: string };
   followers: { total: number };
   total: number;
@@ -22,6 +23,7 @@ export default function PlaylistInfo({
   type,
   name,
   description,
+  is_editable,
   owner,
   followers,
   total,
