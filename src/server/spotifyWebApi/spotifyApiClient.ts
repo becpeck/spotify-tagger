@@ -1,4 +1,4 @@
-import { Zodios, mergeApis } from "@zodios/core";
+import { Zodios, mergeApis, headerPlugin } from "@zodios/core";
 import albumsApi from "@/server/spotifyWebApi/albums/albumsApi";
 import meApi from "@/server/spotifyWebApi/me/meApi";
 import playlistsApi from "@/server/spotifyWebApi/playlists/playlistsApi";
@@ -28,6 +28,11 @@ const spotifyApi = mergeApis({
 });
 
 const spotifyApiClient = new Zodios(SPOTIFY_BASE_URL, spotifyApi);
+
+spotifyApiClient.use(
+  "updateCoverImage",
+  headerPlugin("Content-Type", "image/jpeg")
+);
 
 export type SpotifyApiClient = typeof spotifyApiClient;
 

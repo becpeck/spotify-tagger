@@ -2,7 +2,7 @@
 
 import { useState, useRef } from "react";
 import { type PlaylistTrack } from "@/app/(player)/playlist/TrackTable";
-import { type RouterOutputs } from "@/lib/trpc/client";
+import { trpc, type RouterOutputs } from "@/lib/trpc/client";
 
 import {
   Dialog,
@@ -33,10 +33,8 @@ export default function EditPageContent({
   data,
   playlist,
 }: EditPageContentProps) {
-  const [image, setImage] = useState<{ url: string; file: File | undefined }>({
-    url: imageUrl,
-    file: undefined,
-  });
+  const [imageInputUrl, setImageInputUrl] = useState(imageUrl);
+  const [fileBase64, setFileBase64] = useState<string | undefined>(undefined);
   const [nameInput, setNameInput] = useState(playlist.name);
   const [descriptionInput, setDescriptionInput] = useState(
     playlist.description
@@ -44,9 +42,27 @@ export default function EditPageContent({
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  const updatePlaylistMutation = trpc.playlist.updatePlaylist.useMutation({
+    onMutate: () => console.log("onMutate"),
+    onSuccess: () => console.log("onSUCCESS"),
+    onError(error, variables, context) {
+      console.log("onError");
+      console.log(error);
+    },
+  });
+
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    setImage({ url: file ? URL.createObjectURL(file) : imageUrl, file });
+    if (file) {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      setImageInputUrl(URL.createObjectURL(file));
+      reader.onload = () =>
+        setFileBase64(reader.result?.toString().split(",")[1]);
+    } else {
+      setImageInputUrl(imageUrl);
+      setFileBase64(undefined);
+    }
   };
 
   return (
@@ -92,10 +108,10 @@ export default function EditPageContent({
             className="shrink-0"
             onClick={() => fileInputRef.current?.click()}
           >
-            {imageUrl ? (
+            {imageInputUrl ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img
-                src={imageUrl}
+                src={imageInputUrl}
                 alt={`${playlist.name} image`}
                 className="w-48 h-48 rounded-md"
               />
@@ -105,7 +121,7 @@ export default function EditPageContent({
           </div>
           <input
             type="file"
-            accept="image/*"
+            accept="image/jpeg"
             onChange={handleImageChange}
             className="hidden"
             ref={fileInputRef}
@@ -133,7 +149,16 @@ export default function EditPageContent({
           </div>
         </div>
         <DialogFooter>
-          <Button>Save</Button>
+          <Button
+            onClick={() =>
+              updatePlaylistMutation.mutateAsync({
+                id: playlist.id,
+                image: fileBase64!,
+              })
+            }
+          >
+            Save
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

@@ -1,4 +1,6 @@
 import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
+import { z } from "zod";
+
 import { PlaylistIdSchema } from "@/server/spotifyWebApi/utils/schemas";
 import { checkSavedTracks } from "@/server/api/routers/tracks";
 
@@ -51,6 +53,20 @@ const playlistRouter = createTRPCRouter({
       await ctx.spotify.unfollowPlaylist(undefined, {
         params: { playlist_id: input },
       });
+    }),
+  updatePlaylist: protectedProcedure
+    .input(
+      z.object({
+        image: z.string().optional(),
+        id: PlaylistIdSchema,
+      })
+    )
+    .mutation(async ({ input, ctx }) => {
+      if (input.image) {
+        await ctx.spotify.updateCoverImage(input.image, {
+          params: { playlist_id: input.id },
+        });
+      }
     }),
 });
 
