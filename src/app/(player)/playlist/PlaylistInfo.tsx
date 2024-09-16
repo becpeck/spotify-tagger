@@ -83,7 +83,7 @@ export default function PlaylistInfo({
 
   const ImageWrapper = ({ children }: { children: React.ReactNode }) =>
     is_editable ? (
-      <DialogTrigger className="group/edit relative h-[250px] w-[250px]">
+      <DialogTrigger className="group/edit relative h-[250px] w-[250px] shrink-0">
         {children}
       </DialogTrigger>
     ) : (

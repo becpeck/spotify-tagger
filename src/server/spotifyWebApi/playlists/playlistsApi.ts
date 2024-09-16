@@ -4,6 +4,7 @@ import followPlaylist from "@/server/spotifyWebApi/playlists/endpoints/followPla
 import unfollowPlaylist from "@/server/spotifyWebApi/playlists/endpoints/unfollowPlaylist";
 import isFollowingPlaylist from "@/server/spotifyWebApi/playlists/endpoints/isFollowingPlaylist";
 import updateCoverImage from "@/server/spotifyWebApi/playlists/endpoints/updateCoverImage";
+import updatePlaylistDetails from "@/server/spotifyWebApi/playlists/endpoints/updatePlaylistDetails";
 
 const playlistsApi = apiBuilder()
   .addEndpoint(getPlaylist)
@@ -11,6 +12,7 @@ const playlistsApi = apiBuilder()
   .addEndpoint(unfollowPlaylist)
   .addEndpoint(isFollowingPlaylist)
   .addEndpoint(updateCoverImage)
+  .addEndpoint(updatePlaylistDetails)
   .build();
 
 export default playlistsApi;

@@ -3,6 +3,7 @@ import { z } from "zod";
 
 import { PlaylistIdSchema } from "@/server/spotifyWebApi/utils/schemas";
 import { checkSavedTracks } from "@/server/api/routers/tracks";
+import { UpdatePlaylistDetailsBodySchema } from "@/server/spotifyWebApi/playlists/endpoints/updatePlaylistDetails";
 
 const playlistRouter = createTRPCRouter({
   getPlaylistData: protectedProcedure
@@ -56,15 +57,37 @@ const playlistRouter = createTRPCRouter({
     }),
   updatePlaylist: protectedProcedure
     .input(
-      z.object({
-        image: z.string().optional(),
-        id: PlaylistIdSchema,
-      })
+      z
+        .object({
+          id: PlaylistIdSchema,
+          image: z.string().optional(),
+        })
+        .and(UpdatePlaylistDetailsBodySchema)
     )
-    .mutation(async ({ input, ctx }) => {
-      if (input.image) {
-        await ctx.spotify.updateCoverImage(input.image, {
-          params: { playlist_id: input.id },
+    .mutation(async ({ input: { id, image, ...rest }, ctx }) => {
+      if (image) {
+        await ctx.spotify.updateCoverImage(image, {
+          params: { playlist_id: id },
+        });
+      }
+      if (
+        rest.description !== undefined ||
+        rest.collaborative !== undefined ||
+        rest.public !== undefined ||
+        rest.name
+      ) {
+        const updateBody = {
+          ...(rest.description !== undefined && {
+            description: rest.description,
+          }),
+          ...(rest.collaborative !== undefined && {
+            collaborative: rest.collaborative,
+          }),
+          ...(rest.public !== undefined && { public: rest.public }),
+          ...(rest.name && { name: rest.name }),
+        };
+        await ctx.spotify.updatePlaylistDetails(updateBody, {
+          params: { playlist_id: id },
         });
       }
     }),
