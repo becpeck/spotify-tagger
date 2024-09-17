@@ -23,6 +23,9 @@ type PlaylistInfoProps = {
   followers: { total: number };
   total: number;
   duration_ms: number;
+  setFocusedField?: React.Dispatch<
+    React.SetStateAction<"description" | "name" | "image">
+  >;
 };
 
 export default function PlaylistInfo({
@@ -35,6 +38,7 @@ export default function PlaylistInfo({
   followers,
   total,
   duration_ms,
+  setFocusedField,
 }: PlaylistInfoProps) {
   const duration = toDuration(duration_ms);
 
@@ -81,24 +85,37 @@ export default function PlaylistInfo({
       </div>
     );
 
-  const ImageWrapper = ({ children }: { children: React.ReactNode }) =>
-    is_editable ? (
-      <DialogTrigger className="group/edit relative h-[250px] w-[250px] shrink-0">
-        {children}
+  const Wrapper = (props: {
+    children: React.ReactNode;
+    type: "name" | "description" | "image";
+  }) =>
+    is_editable && setFocusedField ? (
+      <DialogTrigger asChild onClick={() => setFocusedField(props.type)}>
+        {props.children}
       </DialogTrigger>
     ) : (
-      <>{children}</>
+      <>{props.children}</>
     );
 
   return (
     <header className="flex m-4 gap-4">
-      <ImageWrapper>
-        <ImageComponent />
-      </ImageWrapper>
+      <Wrapper type="image">
+        {is_editable ? (
+          <div className="group/edit relative h-[250px] w-[250px] shrink-0">
+            <ImageComponent />
+          </div>
+        ) : (
+          <ImageComponent />
+        )}
+      </Wrapper>
       <div className="shrink">
         <h4 className="capitalize">{type}</h4>
-        <h1 className="text-4xl font-bold">{name}</h1>
-        <div className="text-muted-foreground">{description}</div>
+        <Wrapper type="name">
+          <h1 className="text-4xl font-bold">{name}</h1>
+        </Wrapper>
+        <Wrapper type="description">
+          <div className="text-muted-foreground">{description}</div>
+        </Wrapper>
         <Link
           href={`/user/${owner.id}`}
           className={cn(
