@@ -25,7 +25,8 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import TrackImagePlaceholder from "@/components/images/TrackImagePlaceholder";
+import EditOverlay from "@/components/images/EditOverlay";
+import PlaylistImagePlaceholder from "@/components/images/PlaylistImagePlaceholder";
 
 const DialogFormSchema = z.object({
   name: z.string().min(1).max(100),
@@ -131,18 +132,23 @@ export default function EditDialogContent({
                   control={form.control}
                   name="imageUrl"
                   render={({ field }) => (
-                    <FormItem>
+                    <FormItem className="space-y-0">
                       <FormLabel className="hidden">Cover Image</FormLabel>
-                      {field.value ? (
-                        // eslint-disable-next-line @next/next/no-img-element
-                        <img
-                          src={field.value}
-                          alt={`${playlist.name} image`}
-                          className="w-48 h-48 rounded-md"
-                        />
-                      ) : (
-                        <TrackImagePlaceholder className="w-48 h-48 rounded-md" />
-                      )}
+                      <EditOverlay
+                        imageIsPlaceholder={!field.value}
+                        className="w-48 h-48"
+                      >
+                        {field.value ? (
+                          // eslint-disable-next-line @next/next/no-img-element
+                          <img
+                            src={field.value}
+                            alt={`${playlist.name} image`}
+                            className="col-span-full row-span-full rounded-sm w-48 h-48"
+                          />
+                        ) : (
+                          <PlaylistImagePlaceholder insideEditOverlay />
+                        )}
+                      </EditOverlay>
                     </FormItem>
                   )}
                 />
@@ -163,12 +169,18 @@ export default function EditDialogContent({
                 control={form.control}
                 name="name"
                 render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Name</FormLabel>
+                  <FormItem className="space-y-1">
+                    <div className="flex justify-between items-center h-5">
+                      <FormLabel>Name</FormLabel>
+                      {field.value.length >= 90 ? (
+                        <div className="text-xs leading-none bg-accent p-1 rounded-sm">
+                          {field.value.length}/100
+                        </div>
+                      ) : null}
+                    </div>
                     <FormControl>
-                      <Input {...field} />
+                      <Input {...field} minLength={1} maxLength={100} />
                     </FormControl>
-                    <FormMessage />
                   </FormItem>
                 )}
               />
@@ -176,10 +188,17 @@ export default function EditDialogContent({
                 control={form.control}
                 name="description"
                 render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Description</FormLabel>
+                  <FormItem className="space-y-1">
+                    <div className="flex justify-between items-center h-5">
+                      <FormLabel>Description</FormLabel>
+                      {field.value.length >= 280 ? (
+                        <div className="text-xs leading-none bg-accent p-1 rounded-sm">
+                          {field.value.length}/300
+                        </div>
+                      ) : null}
+                    </div>
                     <FormControl>
-                      <Textarea {...field} />
+                      <Textarea {...field} maxLength={300} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

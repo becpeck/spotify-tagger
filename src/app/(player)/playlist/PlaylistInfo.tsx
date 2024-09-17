@@ -1,17 +1,14 @@
 import Image from "next/image";
 import Link from "next/link";
-import {
-  HeartIcon,
-  ListMusicIcon,
-  ClockIcon,
-  MusicIcon,
-  PencilIcon,
-} from "lucide-react";
+import { HeartIcon, ListMusicIcon, ClockIcon } from "lucide-react";
 
+import { DialogTrigger } from "@/components/ui/dialog";
+import EditOverlay from "@/components/images/EditOverlay";
+import PlaylistImagePlaceholder from "@/components/images/PlaylistImagePlaceholder";
 import { buttonVariants } from "@/components/ui/button";
+
 import { cn } from "@/lib/utils";
 import { toDuration, toDurationString } from "@/utils/timeUtils";
-import { DialogTrigger } from "@/components/ui/dialog";
 
 type PlaylistInfoProps = {
   imageUrl: string;
@@ -44,45 +41,19 @@ export default function PlaylistInfo({
 
   const ImageComponent = () =>
     imageUrl ? (
-      <>
-        {is_editable ? (
-          <div className="absolute top-0 left-0 h-full w-full group-hover/edit:bg-black/70 z-10">
-            <div className="hidden group-hover/edit:flex flex-col justify-center items-center gap-2 w-full h-full">
-              <PencilIcon
-                className="w-[30%] h-[30%] mt-[10%]"
-                strokeWidth={1.5}
-              />
-              Choose photo
-            </div>
-          </div>
-        ) : null}
-        <Image
-          src={imageUrl}
-          height={250}
-          width={250}
-          alt={`${name} cover`}
-          priority
-          className={cn(
-            "h-[250px] w-[250px] rounded-sm",
-            is_editable && "absolute top-0 left-0"
-          )}
-        />
-      </>
-    ) : (
-      <div
+      <Image
+        src={imageUrl}
+        height={250}
+        width={250}
+        alt={`${name} cover`}
+        priority
         className={cn(
-          "h-[250px] w-[250px] rounded-sm flex items-center justify-center bg-muted text-muted-foreground group-hover/edit:text-primary"
+          "rounded-sm h-[250px] w-[250px]",
+          is_editable && "col-span-full row-span-full"
         )}
-      >
-        <MusicIcon
-          className="w-[35%] h-[35%] mr-[5%] group-hover/edit:hidden"
-          strokeWidth={1.5}
-        />
-        <div className="hidden group-hover/edit:flex flex-col justify-center items-center gap-2 w-full h-full">
-          <PencilIcon className="w-[30%] h-[30%] mt-[10%]" strokeWidth={1.5} />
-          Choose photo
-        </div>
-      </div>
+      />
+    ) : (
+      <PlaylistImagePlaceholder insideEditOverlay={is_editable} />
     );
 
   const Wrapper = (props: {
@@ -101,9 +72,12 @@ export default function PlaylistInfo({
     <header className="flex m-4 gap-4">
       <Wrapper type="image">
         {is_editable ? (
-          <div className="group/edit relative h-[250px] w-[250px] shrink-0">
+          <EditOverlay
+            imageIsPlaceholder={!imageUrl}
+            className="w-[250px] h-[250px] shrink-0"
+          >
             <ImageComponent />
-          </div>
+          </EditOverlay>
         ) : (
           <ImageComponent />
         )}
