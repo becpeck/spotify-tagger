@@ -47,6 +47,7 @@ export default function EditPageContent({
           collaborative: playlist.collaborative,
           id: playlist.id,
           images: playlist.images,
+          is_editable: playlist.is_editable,
           is_saved: playlist.is_saved,
           name: playlist.name,
           owner: {

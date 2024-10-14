@@ -14,6 +14,7 @@ import {
   LayoutListIcon,
   ListMusicIcon,
   MonitorIcon,
+  PencilIcon,
 } from "lucide-react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSpotify } from "@fortawesome/free-brands-svg-icons";
@@ -32,6 +33,7 @@ import {
   DropdownMenuSubContent,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { DialogTrigger } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import ShuffleButton from "@/components/buttons/ShuffleButton";
 import PlayPauseButton from "@/components/buttons/PlayPauseButton";
@@ -45,6 +47,7 @@ import { cn } from "@/lib/utils";
 type PlaylistControlsProps = {
   playlist: {
     collaborative: boolean;
+    id: string;
     images:
       | {
           url: string;
@@ -52,16 +55,16 @@ type PlaylistControlsProps = {
           width: number | null;
         }[]
       | null;
+    is_editable: boolean;
+    is_saved: boolean;
+    name: string;
     owner: {
       display_name: string | null;
       id: string;
       type: "user";
       uri: `spotify:user:${string}`;
     };
-    name: string;
     type: "playlist";
-    id: string;
-    is_saved: boolean;
     uri: `spotify:playlist:${string}`;
   };
   view: "list" | "compact";
@@ -194,7 +197,7 @@ export default function PlaylistControls({
           onClick={toggleIsSaved}
           aria-label={isSaved ? "Remove from Library" : "Save to Library"}
         />
-        <DropdownMenu>
+        <DropdownMenu modal={false}>
           <DropdownMenuTrigger asChild>
             <MoreOptionsButton aria-label={`More options for ${name}`} />
           </DropdownMenuTrigger>
@@ -213,6 +216,17 @@ export default function PlaylistControls({
                 Add to Queue
               </DropdownMenuItem>
             </DropdownMenuGroup>
+            <DropdownMenuSeparator />
+            {playlist.is_editable ? (
+              <DropdownMenuGroup>
+                <DialogTrigger asChild>
+                  <DropdownMenuItem className="flex gap-2">
+                    <PencilIcon size={18} />
+                    Edit Details
+                  </DropdownMenuItem>
+                </DialogTrigger>
+              </DropdownMenuGroup>
+            ) : null}
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
               <DropdownMenuItem
