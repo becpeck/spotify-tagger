@@ -218,16 +218,18 @@ export default function PlaylistControls({
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             {playlist.is_editable ? (
-              <DropdownMenuGroup>
-                <DialogTrigger asChild>
-                  <DropdownMenuItem className="flex gap-2">
-                    <PencilIcon size={18} />
-                    Edit Details
-                  </DropdownMenuItem>
-                </DialogTrigger>
-              </DropdownMenuGroup>
+              <>
+                <DropdownMenuGroup>
+                  <DialogTrigger asChild>
+                    <DropdownMenuItem className="flex gap-2">
+                      <PencilIcon size={18} />
+                      Edit Details
+                    </DropdownMenuItem>
+                  </DialogTrigger>
+                </DropdownMenuGroup>
+                <DropdownMenuSeparator />
+              </>
             ) : null}
-            <DropdownMenuSeparator />
             <DropdownMenuGroup>
               <DropdownMenuItem
                 className="flex gap-2"
