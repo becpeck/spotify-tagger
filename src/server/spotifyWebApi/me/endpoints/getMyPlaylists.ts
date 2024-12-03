@@ -25,7 +25,10 @@ const getMyPlaylists = makeEndpoint({
     offset: z.number(),
     previous: z.string().nullable(),
     total: z.number(),
-    items: z.array(SimplifiedPlaylistObjectSchema),
+    // WHY IS THIS TRANSFORM SUDDENLY NEEDED?
+    items: z
+      .array(SimplifiedPlaylistObjectSchema.or(z.null()))
+      .transform((items) => items.filter((item) => item !== null)),
   }),
   errors: makeErrors([ErrorResponse401, ErrorResponse403, ErrorResponse429]),
 });

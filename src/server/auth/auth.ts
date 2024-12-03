@@ -43,7 +43,7 @@ const config: NextAuthConfig = {
         where: {
           userId: user.id,
           provider: "spotify",
-        }
+        },
       });
       session.access_token = spotifyAccount.access_token;
 
@@ -62,7 +62,7 @@ const config: NextAuthConfig = {
               provider_providerAccountId: {
                 provider: "spotify",
                 providerAccountId: spotifyAccount.providerAccountId,
-              }
+              },
             },
           });
           session.access_token = access_token;
@@ -75,25 +75,39 @@ const config: NextAuthConfig = {
       return session;
     },
     signIn: async ({ user, profile }) => {
-      // Keep db profile data in sync with spotify auth profile
-      if (profile) {
-        await db.user.update({
+      try {
+        // Should be null if not signed in before, or if deleted user in db
+        // Should be user object if signed in before, removed permissions in spotify account settings, and data still exists in db
+        const existingUser = await db.user.findUnique({
           where: { id: user.id! },
-          data: {
-            spotifyId: profile.id!,
-            name: profile.display_name,
-            email: profile.email!,
-            images: profile.images.sort((a, b) => a.height - b.height),
-            followers: profile.followers.total,
-            country: profile.country,
-            product: profile.product,
-            explicitFiltered: profile.explicit_content.filter_enabled,
-            explicitLocked: profile.explicit_content.filter_locked,
-          },
         });
+        if (existingUser) {
+          if (profile === undefined) {
+            throw new Error("signIn callback called with undefined profile");
+          }
+          // Keep db profile data in sync with spotify auth profile
+          await db.user.update({
+            where: { id: user.id! },
+            data: {
+              spotifyId: profile.id!,
+              name: profile.display_name,
+              email: profile.email!,
+              images: profile.images.sort((a, b) => a.height - b.height),
+              followers: profile.followers.total,
+              country: profile.country,
+              product: profile.product,
+              explicitFiltered: profile.explicit_content.filter_enabled,
+              explicitLocked: profile.explicit_content.filter_locked,
+            },
+          });
+        }
+        return true;
+      } catch (error) {
+        console.error("======== SIGNIN CALLBACK ERROR =========");
+        console.error(error);
+        return false;
       }
-      return true;
-    }
+    },
   },
 };
 
