@@ -25,6 +25,7 @@ export default function PageContent({
     is_saved,
     name,
     owner,
+    public: is_public, // TODO: Display in PlaylistInfo or remove
     total_tracks,
     type,
     uri,
@@ -48,6 +49,7 @@ export default function PageContent({
           collaborative,
           id,
           images,
+          is_editable,
           is_saved,
           name,
           owner: {

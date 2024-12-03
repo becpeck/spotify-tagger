@@ -70,6 +70,7 @@ type TrackTableProps = {
           width: number | null;
         }[]
       | null;
+    is_editable: boolean;
     is_saved: boolean;
     name: string;
     owner: {

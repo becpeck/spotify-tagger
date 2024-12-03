@@ -11,6 +11,7 @@ import {
   UserRoundIcon,
   MonitorIcon,
   UsersIcon,
+  TrashIcon,
 } from "lucide-react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSpotify } from "@fortawesome/free-brands-svg-icons";
@@ -45,15 +46,17 @@ type ActionsMenuProps = {
   }[];
   playlist: {
     id: string;
+    is_editable: boolean;
     name: string;
     type: "playlist";
   };
   track: {
     id: string;
+    is_local: false;
+    isSaved: boolean;
     name: string;
     type: "track";
     uri: `spotify:track:${string}`;
-    isSaved: boolean;
   };
   addToQueue: () => void;
   toggleIsSaved: () => void;
@@ -104,6 +107,13 @@ export default function ActionsMenu({
               </DropdownMenuSubContent>
             </DropdownMenuPortal>
           </DropdownMenuSub>
+          {playlist.is_editable && (
+            <DropdownMenuItem className="flex gap-2" onClick={() => {}}>
+              {/* TODO: make button remove track from playlist */}
+              <TrashIcon size="18" />
+              Remove from Playlist
+            </DropdownMenuItem>
+          )}
           <DropdownMenuItem className="flex gap-2" onClick={toggleIsSaved}>
             <HeartIcon
               size={18}

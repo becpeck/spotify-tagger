@@ -17,6 +17,7 @@ interface TrackTableRowProps {
   row: Row<PlaylistTrack>;
   playlist: {
     id: string;
+    is_editable: boolean;
     name: string;
     type: "playlist";
     uri: `spotify:playlist:${string}`;
